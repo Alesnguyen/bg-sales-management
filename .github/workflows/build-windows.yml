@@ -1,0 +1,29 @@
+name: Build Windows installer
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - run: npm install
+      - name: Chọn chế độ phát hành
+        id: rel
+        shell: bash
+        run: |
+          V=$(node -p "require('./package.json').version")
+          if [ "${{ github.event_name }}" = "push" ] && ! git ls-remote --exit-code --tags origin "v$V" >/dev/null 2>&1; then echo "mode=always" >> "$GITHUB_OUTPUT"; else echo "mode=never" >> "$GITHUB_OUTPUT"; fi
+      - run: npx electron-builder --win nsis --publish ${{ steps.rel.outputs.mode }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BG-Sales-Management-Setup
+          path: dist/*.exe
