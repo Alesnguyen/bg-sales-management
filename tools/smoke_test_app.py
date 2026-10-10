@@ -1,0 +1,48 @@
+# Chạy: python3 tools/smoke_test_app.py <duong-dan-xlsx> [thu-muc-anh]   (pip install playwright && playwright install chromium)
+import sys,pathlib
+from playwright.sync_api import sync_playwright
+root=pathlib.Path(__file__).resolve().parent.parent
+xl=sys.argv[1]; shots=pathlib.Path(sys.argv[2]) if len(sys.argv)>2 else None
+if shots: shots.mkdir(exist_ok=True,parents=True)
+bad=[]
+def ok(c,m):
+    print(("PASS ","FAIL ")[not c]+m)
+    if not c: bad.append(m)
+with sync_playwright() as p:
+    b=p.chromium.launch();ctx=b.new_context(viewport={"width":1440,"height":900},accept_downloads=True);pg=ctx.new_page();errs=[]
+    pg.on("pageerror",lambda e:errs.append(str(e)));pg.on("dialog",lambda d:d.accept())
+    pg.goto((root/"index.html").as_uri());pg.wait_for_selector("#splash",state="detached")
+    go=lambda n:(pg.click(f'.nav button[data-page={n}]'),pg.wait_for_timeout(350))
+    shot=lambda n:shots and pg.screenshot(path=str(shots/(n+".png")))
+    ok("Chào" in pg.inner_text("#greet"),"lời chào hiển thị khi chưa có dữ liệu")
+    go("settings");pg.fill("#pf-name","Anh Tú");pg.press("#pf-name","Tab");pg.wait_for_timeout(300)
+    ok(pg.is_disabled("#upd-check"),"nút cập nhật vô hiệu ngoài bản cài Windows")
+    go("import");pg.set_input_files("#excel-file",xl);pg.wait_for_selector("#imp-go");pg.click("#imp-go");pg.wait_for_selector("#imp-body .notice:has-text('Đã nhập xong')")
+    go("overview");ok("Anh Tú" in pg.inner_text("#greet"),"lời chào có tên: "+pg.inner_text("#greet"))
+    ok(pg.locator("#trend svg polyline").count()==2,"biểu đồ đường 2025 và 2026")
+    ok(pg.locator("#top5 .bar-track").count()==5,"Top 5 khách hàng")
+    full=pg.inner_text("#kpis");pg.select_option("#ov-region","Quảng Ninh");pg.wait_for_timeout(200)
+    ok(pg.inner_text("#kpis")!=full and "4" in pg.inner_text("#kpis"),"lọc khu vực làm đổi KPI và biểu đồ")
+    pg.select_option("#ov-region","");shot("overview")
+    go("customers");ok(pg.locator("#customer-rows tr").count()==26,"bảng 26 dòng")
+    ok(pg.locator("#cust-head th").count()==22+24,"tiêu đề: 6 cột cố định + 4 quý + 12 tháng (2 hàng)")
+    pg.evaluate("document.querySelector('.wide').scrollLeft=700");pg.wait_for_timeout(100)
+    x=pg.evaluate("document.querySelector('#customer-rows tr td.fz1').getBoundingClientRect().left-document.querySelector('.wide').getBoundingClientRect().left")
+    ok(abs(x)<2,f"cột Khách hàng vẫn cố định khi cuộn ngang (lệch {x:.0f}px)");shot("customers-scrolled")
+    pg.evaluate("document.querySelector('.wide').scrollLeft=0")
+    pg.fill("#customer-search","hyundai");ok(pg.locator("#customer-rows tr").count()==9,"tìm 'hyundai'");pg.click("#clear-filters")
+    pg.click("#customer-rows tr:has-text('Skoda Bắc Giang')");pg.fill("#f_code","KH-099");pg.fill("#m_0_1","5000000");pg.fill("#m_1_1","3000000");pg.fill("#m_0_0","1000000")
+    pg.click("#recalc");ok(pg.input_value("#f_a26")=="8000000" and pg.input_value("#q_0")=="8000000" and pg.input_value("#f_a25")=="1000000","tính lại quý và tổng từ tháng")
+    shot("edit-dialog");pg.click("#dlg-form button.primary");pg.wait_for_selector("#customer-rows tr:has-text('KH-099')")
+    row=pg.inner_text("#customer-rows tr:has-text('KH-099')");ok("5,0 tr" in row and "3,0 tr" in row and "8,0 tr" in row,"quý/tháng nhập tay hiển thị: "+row.replace("\n"," ")[:90])
+    pg.click("#customer-rows tr:has-text('KH-099')");pg.click("#arch-btn");pg.wait_for_selector("#customer-rows tr:has-text('KH-099')",state="detached");ok(True,"lưu trữ trong hộp thoại sửa")
+    pg.click("#add-customer");pg.fill("#f_name","Khách thử nghiệm");pg.fill("#f_t26","1000");pg.click("#dlg-form button.primary");pg.wait_for_selector("#customer-rows tr:has-text('Khách thử nghiệm')");ok(True,"thêm khách hàng mới (quý/tháng để trống)")
+    go("calendar");pg.click("#add-work");pg.fill("#f_title","Thăm Kia Bắc Ninh");pg.click("#dlg-form button.primary");pg.wait_for_selector(".task:has-text('Thăm Kia Bắc Ninh')");ok(True,"thêm công việc")
+    go("settings");pg.click("#settings-theme");ok(pg.evaluate("document.documentElement.dataset.theme")=="dark","giao diện tối")
+    with pg.expect_download() as d: pg.click("#bk-export")
+    f=d.value.path();pg.click("#wipe");pg.wait_for_function("document.querySelector('#set-data').textContent.startsWith('0 khách')")
+    pg.set_input_files("#bk-file",f);pg.wait_for_function("document.querySelector('#set-data').textContent.startsWith('27 khách')");ok(True,"xóa rồi khôi phục từ sao lưu")
+    go("overview");ok("Anh Tú" in pg.inner_text("#greet"),"tên hiển thị được khôi phục");shot("overview-dark")
+    pg.reload();pg.wait_for_selector("#splash",state="detached");go("customers");ok(pg.locator("#customer-rows tr").count()==26,"dữ liệu còn sau khi mở lại")
+    ok(not errs,"không có lỗi JavaScript "+str(errs));b.close()
+print("KẾT QUẢ:", "ĐẠT" if not bad else "CÓ LỖI: "+"; ".join(bad))

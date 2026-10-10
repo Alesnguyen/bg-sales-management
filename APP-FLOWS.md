@@ -1,0 +1,18 @@
+# Luồng người dùng của ứng dụng (v0.6.0)
+
+Bản vẽ giao diện: `design/prototype-v0.2.1.html` (5 màn hình). Ứng dụng: `index.html` = bản vẽ + `src/body.html` + `src/app.js` (dựng bằng `python3 tools/build_app.py`).
+
+| Luồng | Các bước | Quy tắc |
+|---|---|---|
+| Nhập Excel | Chọn .xlsx → kiểm tra cấu trúc (sheet, dòng PTKD, người phụ trách) → xem trước Mới/Cập nhật/Không đổi → xác nhận | Khóa = tên chuẩn hóa; upsert; không xóa khách vắng mặt; giữ khu vực/mã/ghi chú/lưu trữ đã nhập tay; ghi trong một giao dịch (lỗi thì không đổi gì); bỏ dòng TỔNG CỘNG/TÍNH KPI |
+| Khách hàng | Tìm / lọc khu vực → nhấp dòng để sửa → Lưu; Thêm; Lưu trữ / Khôi phục; Xuất CSV | Không xóa cứng; tên trùng bị chặn; khu vực tự đoán từ tên, sửa được |
+| Lịch làm việc | Xem tuần (T2–T6, tự mở rộng T7–CN nếu có việc) → thêm theo ngày → nhấp để sửa/đổi trạng thái/xóa | Trạng thái: Dự kiến / Hoàn thành / Hủy; việc "Dự kiến" quá ngày hiện "Trễ hạn" |
+| Tổng quan | KPI, tiến độ theo khu vực, việc cần theo dõi 7 ngày | Số liệu tính từ khách hàng chưa lưu trữ |
+| Cài đặt | Đổi giao diện sáng/tối (được nhớ), sao lưu/khôi phục .json, xóa dữ liệu (xác nhận 2 lần) | Đổi giao diện không đổi dữ liệu |
+
+Quy ước dữ liệu: cột quý J/L/N/P ở dòng khách hàng là tỉ lệ nên không dùng làm mục tiêu quý; 12 cặp tháng 2025/2026 được lưu và hiển thị trong hộp thoại sửa khách hàng. Cột phụ AO:AT và bảng phụ AU:AZ chưa được đọc.
+
+## Bổ sung v0.6.0
+- **Tổng quan:** lời chào theo giờ + tên hiển thị; bộ lọc khu vực áp dụng cho KPI, biểu đồ đường và Top 5 (thanh theo khu vực luôn hiện tất cả khu vực).
+- **Khách hàng → Sửa:** nhập tay mã, quý (thực tế 2026) và 12 tháng (2025/2026). "Tính lại" lấy tổng 2025/2026 và các quý 2026 từ số liệu tháng, người dùng bấm Lưu để ghi. Nhập Excel lại sẽ ghi đè số liệu quý/tháng của khách có trong file, và giữ mã, khu vực, ghi chú, lưu trữ.
+- **Cập nhật:** Cài đặt → Cập nhật ứng dụng (chỉ hoạt động trong bản cài Windows).

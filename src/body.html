@@ -1,0 +1,75 @@
+<div id="splash" role="status" aria-label="Đang mở ứng dụng"><div class="splashbox"><div class="splash-logo"><img src="assets/BG-Logo.jpg" alt="Logo thương hiệu BG"></div><h2>BG Sales Management</h2><p>Quản lý khách hàng · Doanh số · Công việc</p><div class="splash-rail" aria-hidden="true"><div class="splash-progress"></div></div><p class="small">Đang mở dữ liệu cục bộ…</p><div class="splash-foot"><span>●</span><span>Ngoại tuyến</span><span>·</span><span>v{{VER}}</span></div></div></div>
+<div class="app">
+<aside class="sidebar" aria-label="Điều hướng chính">
+<div class="brand"><div class="brand-mark"><img class="brand-image" src="assets/BG-Logo.jpg" alt="Logo BG"></div><div><div class="brand-name">BG Sales Management</div><div class="brand-sub">Quản lý kinh doanh</div></div></div>
+<div class="nav-label">KHÔNG GIAN LÀM VIỆC</div>
+<nav class="nav">
+<button class="active" data-page="overview" aria-current="page"><span class="nav-ico">⌂</span>Tổng quan</button>
+<button data-page="customers"><span class="nav-ico">▤</span>Khách hàng</button>
+<button data-page="calendar"><span class="nav-ico">▦</span>Lịch làm việc</button>
+<button data-page="import"><span class="nav-ico">⇧</span>Nhập dữ liệu</button>
+<button data-page="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
+</nav>
+<div class="side-spacer"></div>
+<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Design System · v0.2.1 · App v{{VER}}</div></div>
+</aside>
+<main class="main">
+<header class="topbar">
+<div><div class="eyebrow" id="page-eyebrow">KHÔNG GIAN LÀM VIỆC</div><h1 id="page-title">Tổng quan</h1><div class="page-description" id="page-description"></div></div>
+<div class="top-actions"><div class="theme-control"><span id="theme-label">Giao diện sáng</span><button class="theme-button" id="theme-toggle" aria-label="Chuyển sang giao diện tối" title="Đổi giao diện"><span class="mode-icon selected" id="sun-icon">☀</span><span class="mode-icon" id="moon-icon">☾</span></button></div></div>
+</header>
+
+<section class="view active" data-view="overview" aria-labelledby="page-title">
+<div class="card hero"><div><h2 id="greet"></h2><div class="muted" id="quote"></div></div><div class="toolbar" style="margin:0"><button class="btn" id="quote-next" aria-label="Câu khác">↻</button><select id="ov-region" aria-label="Lọc tổng quan theo khu vực"></select></div></div>
+<div class="grid grid-4" id="kpis"></div>
+<div class="split section-gap">
+<article class="card"><div class="card-title-row"><div><h3>Tiến độ theo khu vực</h3><div class="muted small" style="margin-top:4px">Thực tế 2026 so với mục tiêu 2026</div></div><span class="tag yellow">Dữ liệu thật</span></div><div class="simple-bars" id="region-bars"></div></article>
+<article class="card"><div class="card-title-row"><h3>Việc cần theo dõi</h3><button class="btn" data-page="calendar">Xem lịch</button></div><div class="activity" id="follow"></div></article>
+</div>
+<div class="split section-gap">
+<article class="card"><div class="card-title-row"><div><h3>Doanh số theo tháng</h3><div class="muted small" style="margin-top:4px">Tổng doanh số thực tế mỗi tháng, 2025 so với 2026</div></div><span class="tag" id="trend-tag"></span></div><div id="trend"></div><div class="grid" id="insights" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px"></div></article>
+<article class="card"><div class="card-title-row"><h3>Top 5 khách hàng 2026</h3></div><div class="simple-bars" id="top5"></div></article>
+</div>
+<div class="notice section-gap" id="ov-note"></div>
+</section>
+
+<section class="view" data-view="customers" aria-labelledby="page-title">
+<div class="card"><div class="card-title-row"><div><h2>Danh sách khách hàng</h2><div class="muted small">Nhấp một dòng để sửa; kéo ngang để xem doanh số theo quý và tháng (6 cột đầu được cố định).</div></div><button class="btn primary" id="add-customer">＋ Thêm khách hàng</button></div>
+<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="customer-search" type="search" placeholder="Tìm theo tên hoặc khu vực…" aria-label="Tìm khách hàng"></div><select id="region-filter" aria-label="Lọc theo khu vực"></select><label class="small muted"><input type="checkbox" id="show-arch"> Hiện đã lưu trữ</label><button class="btn" id="clear-filters">Xóa lọc</button><button class="btn" data-page="import">⇧ Nhập Excel</button></div>
+<div class="table-wrap wide"><table><thead id="cust-head"></thead><tbody id="customer-rows"></tbody></table><div class="empty-state" id="customer-empty">Không tìm thấy khách hàng phù hợp. Hãy thử đổi từ khóa hoặc bộ lọc, hoặc nhập từ Excel.</div></div>
+<div class="table-foot"><span id="customer-count"></span><button class="btn" id="export-csv">Xuất CSV</button></div></div>
+</section>
+
+<section class="view" data-view="calendar" aria-labelledby="page-title">
+<div class="card"><div class="card-title-row"><div><h2>Lịch làm việc theo tuần</h2><div class="muted small">Nhấp vào một công việc để sửa, đổi trạng thái hoặc xóa.</div></div><button class="btn primary" id="add-work">＋ Thêm công việc</button></div>
+<div class="toolbar"><button class="btn" id="prev-week" aria-label="Tuần trước">← Tuần trước</button><span class="tag" id="week-label"></span><button class="btn" id="next-week" aria-label="Tuần sau">Tuần sau →</button><button class="btn" id="this-week">Tuần này</button></div>
+<div class="week-grid" id="week-grid"></div></div>
+</section>
+
+<section class="view" data-view="import" aria-labelledby="page-title">
+<div class="card"><div class="card-title-row"><div><h2>Nhập và quản lý dữ liệu</h2><div class="muted small">Đọc sheet “DOANH SỐ KH 2026” ngay trên máy này, xem trước rồi mới ghi. Không xóa khách hàng nào.</div></div><span class="tag" id="imp-tag">Sẵn sàng</span></div>
+<div class="import-steps" id="steps"></div>
+<div class="upload-zone"><div class="upload-icon" aria-hidden="true">⇧</div><h3 style="margin-top:8px">Chọn tệp Excel (.xlsx)</h3><p class="small">Dữ liệu được xử lý tại máy, không gửi đi đâu.</p><input id="excel-file" type="file" accept=".xlsx" aria-label="Chọn file Excel"><div id="file-note" class="file-note" aria-live="polite">Chưa chọn tệp.</div></div>
+<div id="imp-body" class="section-gap"></div></div>
+</section>
+
+<section class="view" data-view="settings" aria-labelledby="page-title">
+<div class="grid grid-2">
+<article class="card"><div class="card-title-row"><h2>Giao diện</h2><span class="tag yellow">Theme</span></div>
+<div class="settings-row"><div><div class="settings-title">Light / Dark Mode</div><div class="settings-desc">Áp dụng cùng một hệ token ngữ nghĩa, được ghi nhớ.</div></div><button class="btn" id="settings-theme">Đổi giao diện</button></div>
+<div class="settings-row"><div><div class="settings-title">Màu thương hiệu</div><div class="settings-desc">Vàng · Đen · Trắng</div></div><div class="settings-value">#FFDF1B<br>#000000 / #FFFFFF</div></div>
+<div class="settings-row"><div><div class="settings-title">Logo chính thức</div><div class="settings-desc">Bản gốc tại assets/BG-Logo.jpg.</div></div><span class="tag success">Đã có asset</span></div></article>
+<article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v{{VER}}</span></div>
+<div class="settings-row"><div><div class="settings-title">Tên hiển thị</div><div class="settings-desc">Dùng cho lời chào ở trang Tổng quan.</div></div><input id="pf-name" type="text" maxlength="40" placeholder="Tên của bạn" aria-label="Tên hiển thị" style="max-width:200px"></div>
+<div class="settings-row"><div><div class="settings-title">Cập nhật ứng dụng</div><div class="settings-desc" id="upd-msg">—</div></div><div class="toolbar" style="margin:0"><button class="btn" id="upd-check">Kiểm tra cập nhật</button><button class="btn primary" id="upd-install" hidden>Khởi động lại để cập nhật</button></div></div>
+<div class="settings-row"><div><div class="settings-title">Dữ liệu</div><div class="settings-desc" id="set-data">—</div></div></div>
+<div class="settings-row"><div><div class="settings-title">Lần nhập Excel gần nhất</div><div class="settings-desc" id="set-import">Chưa nhập</div></div></div>
+<div class="settings-row"><div><div class="settings-title">Sao lưu / Khôi phục</div><div class="settings-desc">Tệp .json gồm khách hàng, công việc và thông tin nhập.</div></div><div class="toolbar" style="margin:0"><button class="btn" id="bk-export">Sao lưu</button><button class="btn" id="bk-restore">Khôi phục</button><input type="file" id="bk-file" accept=".json" hidden></div></div>
+<div class="settings-row"><div><div class="settings-title">Xóa toàn bộ dữ liệu</div><div class="settings-desc">Không thể hoàn tác. Hãy sao lưu trước.</div></div><button class="btn" id="wipe" style="color:var(--danger)">Xóa dữ liệu</button></div></article>
+</div>
+<div class="notice section-gap"><strong>Lưu ý:</strong> dữ liệu nằm trong kho IndexedDB của ứng dụng trên máy này, không tự đồng bộ giữa các máy. Hãy sao lưu định kỳ.</div>
+</section>
+</main>
+</div>
+<dialog id="dlg" aria-labelledby="dlg-title"><form id="dlg-form" method="dialog"></form></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>

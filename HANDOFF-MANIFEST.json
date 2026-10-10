@@ -1,0 +1,28 @@
+{
+  "package": "BG-Sales-Management-Design-System-v0.2.1",
+  "updated": "2026-10-09",
+  "status": "Design direction approved for normalization; final design acceptance pending",
+  "changes": [
+    "Normalized token schema including brand, semantic themes, typography, spacing, radius, motion, shadows, layout and component contracts",
+    "Added token sync tool; JSON is canonical and CSS block is checked for drift",
+    "Added component specification and Round 2 design review minutes",
+    "Normalized status badge surfaces and button/field states in HTML preview",
+    "Removed duplicate Splash close timer in prototype JavaScript",
+    "Kept original BG logo and workbook source unchanged",
+    "Retained Excel source audit and draft Excel-to-SQLite mapping; import remains unimplemented"
+  ],
+  "sourceAudit": {
+    "sheet": "DOANH SỐ KH 2026",
+    "range": "A1:AZ53",
+    "rows": 53,
+    "columns": 52,
+    "formulaCells": 196,
+    "customerCandidateRows": "7-32"
+  },
+  "gates": {
+    "designNormalization": "In progress",
+    "designAcceptance": "Pending visual review and QA",
+    "windowsApplication": "Not started",
+    "realExcelImport": "Not implemented"
+  }
+}

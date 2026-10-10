@@ -1,0 +1,567 @@
+{
+  "project": "BG Sales Management",
+  "profile_version": "1.0",
+  "audited_at": "2026-10-09",
+  "source_file": "ALES-DANH SÁCH KH PHỤ TRÁCH 2026.xlsx",
+  "source_sha256": "95b50b6a702570e46dc85c839956fff40e7070bcac695f42842d4813aa25a26c",
+  "source_not_modified": true,
+  "selected_sheet_requested": "Doanh số KH 2026",
+  "selected_sheet_actual_name": "DOANH SỐ KH 2026",
+  "selected_sheet_used_range": "A1:AZ53",
+  "used_rows": 53,
+  "used_columns": 52,
+  "formula_cells_detected": 196,
+  "sheets_in_workbook": [
+    {
+      "name": "DOANH SỐ KH 2026",
+      "range": "A1:AZ53",
+      "selected_for_import": true
+    },
+    {
+      "name": "Plan số liệu KIA Bắc Ninh ",
+      "range": "A1:AB12",
+      "selected_for_import": false
+    },
+    {
+      "name": "Khu vực KH",
+      "range": "A1:H20",
+      "selected_for_import": false
+    },
+    {
+      "name": "DS Thaco PVD 2025",
+      "range": "A1:AA13",
+      "selected_for_import": false
+    },
+    {
+      "name": "Doanh số tính lương",
+      "range": "A1:M18",
+      "selected_for_import": false
+    },
+    {
+      "name": "DOANH SỐ KH 2024",
+      "range": "A1:AN51",
+      "selected_for_import": false
+    },
+    {
+      "name": "Cập nhật khách hàng",
+      "range": "A1:AD12",
+      "selected_for_import": false
+    }
+  ],
+  "row_classification": [
+    {
+      "range": "A1:A3",
+      "rows": "1-3",
+      "class": "Nhóm phân loại doanh số",
+      "import_as_customer": false
+    },
+    {
+      "range": "A4:AN4",
+      "rows": "4",
+      "class": "Header nhiều tầng; quý/tháng được biểu diễn qua cặp cột",
+      "import_as_customer": false
+    },
+    {
+      "range": "A5:AN5",
+      "rows": "5",
+      "class": "Dòng tổng/summary ALES và phụ đề năm theo cột tháng",
+      "import_as_customer": false
+    },
+    {
+      "range": "A6:AZ6",
+      "rows": "6",
+      "class": "Hàng trống phân cách",
+      "import_as_customer": false
+    },
+    {
+      "range": "A7:AP32",
+      "rows": "7-32",
+      "class": "26 hàng có tên ở cột A; ứng viên khách hàng cần ánh xạ và xác nhận",
+      "import_as_customer": "candidate_only"
+    },
+    {
+      "range": "A33:AN33",
+      "rows": "33",
+      "class": "TỔNG CỘNG",
+      "import_as_customer": false
+    },
+    {
+      "range": "A34:AN34",
+      "rows": "34",
+      "class": "TÍNH KPI",
+      "import_as_customer": false
+    },
+    {
+      "range": "A35:AT41",
+      "rows": "35-41",
+      "class": "Vùng công thức/tính toán hỗ trợ",
+      "import_as_customer": false
+    },
+    {
+      "range": "AU42:AZ53",
+      "rows": "42-53",
+      "class": "Bảng phụ/quản trị mục tiêu và chênh lệch; không phải bảng khách hàng chính",
+      "import_as_customer": false
+    }
+  ],
+  "customer_candidate_row_numbers": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32
+  ],
+  "customer_candidate_count": 26,
+  "columns": [
+    {
+      "column": "A",
+      "header_row_4": "PTKD",
+      "subheader_row_5": "ALES",
+      "nonempty_cells_in_used_range": 33,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tên PTKD/khách hàng hoặc nhãn tổng hợp; chỉ dùng làm tên record cho các hàng đã phân loại là khách hàng."
+    },
+    {
+      "column": "B",
+      "header_row_4": "Thực tế 2025",
+      "subheader_row_5": 7864111376,
+      "nonempty_cells_in_used_range": 28,
+      "formula_cells_in_used_range": 14,
+      "proposed_role": "Doanh số thực tế năm 2025."
+    },
+    {
+      "column": "C",
+      "header_row_4": "Mục tiêu 2026",
+      "subheader_row_5": 10122000000,
+      "nonempty_cells_in_used_range": 38,
+      "formula_cells_in_used_range": 13,
+      "proposed_role": "Mục tiêu doanh số năm 2026."
+    },
+    {
+      "column": "D",
+      "header_row_4": "Target TB",
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 35,
+      "formula_cells_in_used_range": 4,
+      "proposed_role": "Target trung bình tháng."
+    },
+    {
+      "column": "E",
+      "header_row_4": "Tỉ lệ gia tăng",
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 21,
+      "formula_cells_in_used_range": 15,
+      "proposed_role": "Tỉ lệ gia tăng."
+    },
+    {
+      "column": "F",
+      "header_row_4": "Thực tế 2026",
+      "subheader_row_5": 6346518557,
+      "nonempty_cells_in_used_range": 28,
+      "formula_cells_in_used_range": 14,
+      "proposed_role": "Doanh số thực tế năm 2026."
+    },
+    {
+      "column": "G",
+      "header_row_4": "TB thực tế",
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 35,
+      "formula_cells_in_used_range": 7,
+      "proposed_role": "Trung bình thực tế."
+    },
+    {
+      "column": "H",
+      "header_row_4": "Tiến độ hoàn thành",
+      "subheader_row_5": 0.627002426101561,
+      "nonempty_cells_in_used_range": 37,
+      "formula_cells_in_used_range": 14,
+      "proposed_role": "Tiến độ hoàn thành mục tiêu."
+    },
+    {
+      "column": "I",
+      "header_row_4": "Q1",
+      "subheader_row_5": 1770599131,
+      "nonempty_cells_in_used_range": 20,
+      "formula_cells_in_used_range": 11,
+      "proposed_role": "Q1 — giá trị thực tế theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "J",
+      "header_row_4": null,
+      "subheader_row_5": 1800000000,
+      "nonempty_cells_in_used_range": 9,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Q1 — target theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "K",
+      "header_row_4": "Q2",
+      "subheader_row_5": 2263380594,
+      "nonempty_cells_in_used_range": 34,
+      "formula_cells_in_used_range": 17,
+      "proposed_role": "Q2 — giá trị thực tế theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "L",
+      "header_row_4": null,
+      "subheader_row_5": 2200000000,
+      "nonempty_cells_in_used_range": 2,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Q2 — target theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "M",
+      "header_row_4": "Q3",
+      "subheader_row_5": 2312538832,
+      "nonempty_cells_in_used_range": 29,
+      "formula_cells_in_used_range": 10,
+      "proposed_role": "Q3 — giá trị thực tế theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "N",
+      "header_row_4": null,
+      "subheader_row_5": 2450000000,
+      "nonempty_cells_in_used_range": 3,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Q3 — target theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "O",
+      "header_row_4": "Q4",
+      "subheader_row_5": 0,
+      "nonempty_cells_in_used_range": 21,
+      "formula_cells_in_used_range": 9,
+      "proposed_role": "Q4 — giá trị thực tế theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "P",
+      "header_row_4": null,
+      "subheader_row_5": 2650000000,
+      "nonempty_cells_in_used_range": 10,
+      "formula_cells_in_used_range": 8,
+      "proposed_role": "Q4 — target theo cấu trúc tiêu đề cặp quý."
+    },
+    {
+      "column": "Q",
+      "header_row_4": "Tháng 1",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 20,
+      "formula_cells_in_used_range": 6,
+      "proposed_role": "Tháng 1 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "R",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 25,
+      "formula_cells_in_used_range": 8,
+      "proposed_role": "Tháng 1 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "S",
+      "header_row_4": "Tháng 2",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 18,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 2 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "T",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 17,
+      "formula_cells_in_used_range": 4,
+      "proposed_role": "Tháng 2 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "U",
+      "header_row_4": "Tháng 3",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 16,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 3 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "V",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 16,
+      "formula_cells_in_used_range": 3,
+      "proposed_role": "Tháng 3 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "W",
+      "header_row_4": "Tháng 4",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 14,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 4 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "X",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 17,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 4 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "Y",
+      "header_row_4": "Tháng 5",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 17,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Tháng 5 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "Z",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 14,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 5 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AA",
+      "header_row_4": "Tháng 6",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 14,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 6 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AB",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 17,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Tháng 6 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AC",
+      "header_row_4": "Tháng 7",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 15,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 7 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AD",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 19,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 7 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AE",
+      "header_row_4": "Tháng 8",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 15,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 8 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AF",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 19,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 8 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AG",
+      "header_row_4": "Tháng 9",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 15,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 9 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AH",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 11,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 9 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AI",
+      "header_row_4": "Tháng 10",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 15,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 10 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AJ",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 9,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 10 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AK",
+      "header_row_4": "Tháng 11",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 18,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 11 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AL",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 12,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 11 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AM",
+      "header_row_4": "Tháng 12",
+      "subheader_row_5": 2025,
+      "nonempty_cells_in_used_range": 15,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Tháng 12 — cột năm 2025 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AN",
+      "header_row_4": null,
+      "subheader_row_5": 2026,
+      "nonempty_cells_in_used_range": 11,
+      "formula_cells_in_used_range": 2,
+      "proposed_role": "Tháng 12 — cột năm 2026 theo hàng phụ đề năm."
+    },
+    {
+      "column": "AO",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 0,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Trường phụ/ô tính toán không có header rõ ở hàng 4; giữ nguyên dữ liệu thô và chưa ánh xạ nghiệp vụ."
+    },
+    {
+      "column": "AP",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 4,
+      "formula_cells_in_used_range": 3,
+      "proposed_role": "Trường phụ không có header rõ; có ghi chú ở một số hàng và giá trị dạng số ở hàng khác; giữ nguyên, cần xác minh ý nghĩa."
+    },
+    {
+      "column": "AQ",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 0,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Trường phụ/ô tính toán không có header rõ ở hàng 4; giữ nguyên dữ liệu thô và chưa ánh xạ nghiệp vụ."
+    },
+    {
+      "column": "AR",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 0,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Trường phụ/ô tính toán không có header rõ ở hàng 4; giữ nguyên dữ liệu thô và chưa ánh xạ nghiệp vụ."
+    },
+    {
+      "column": "AS",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 2,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Trường phụ/ô tính toán không có header rõ ở hàng 4; giữ nguyên dữ liệu thô và chưa ánh xạ nghiệp vụ."
+    },
+    {
+      "column": "AT",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 2,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Trường phụ/ô tính toán không có header rõ ở hàng 4; giữ nguyên dữ liệu thô và chưa ánh xạ nghiệp vụ."
+    },
+    {
+      "column": "AU",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 8,
+      "formula_cells_in_used_range": 0,
+      "proposed_role": "Vùng bảng phân tích phụ xuất hiện rõ từ hàng 42; không phải cột của bảng khách hàng chính. Giữ riêng theo vùng nguồn."
+    },
+    {
+      "column": "AV",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 9,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Vùng bảng phân tích phụ xuất hiện rõ từ hàng 42; không phải cột của bảng khách hàng chính. Giữ riêng theo vùng nguồn."
+    },
+    {
+      "column": "AW",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 9,
+      "formula_cells_in_used_range": 3,
+      "proposed_role": "Vùng bảng phân tích phụ xuất hiện rõ từ hàng 42; không phải cột của bảng khách hàng chính. Giữ riêng theo vùng nguồn."
+    },
+    {
+      "column": "AX",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 9,
+      "formula_cells_in_used_range": 6,
+      "proposed_role": "Vùng bảng phân tích phụ xuất hiện rõ từ hàng 42; không phải cột của bảng khách hàng chính. Giữ riêng theo vùng nguồn."
+    },
+    {
+      "column": "AY",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 7,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Vùng bảng phân tích phụ xuất hiện rõ từ hàng 42; không phải cột của bảng khách hàng chính. Giữ riêng theo vùng nguồn."
+    },
+    {
+      "column": "AZ",
+      "header_row_4": null,
+      "subheader_row_5": null,
+      "nonempty_cells_in_used_range": 6,
+      "formula_cells_in_used_range": 1,
+      "proposed_role": "Vùng bảng phân tích phụ xuất hiện rõ từ hàng 42; không phải cột của bảng khách hàng chính. Giữ riêng theo vùng nguồn."
+    }
+  ],
+  "import_guardrails": [
+    "Chỉ xử lý sheet DOANH SỐ KH 2026; các sheet còn lại phải bỏ qua khi import.",
+    "Không dùng row 5 ALES, row 33 TỔNG CỘNG, row 34 TÍNH KPI hoặc các vùng tính toán/phụ làm khách hàng.",
+    "Giữ toàn bộ 52 cột trong bản lưu nguồn; chưa được bỏ các cột AO:AZ dù header chưa rõ.",
+    "Chưa import vào database cho đến khi chủ dự án duyệt data mapping, khóa định danh, quy tắc cập nhật trùng và cách xử lý dữ liệu thiếu.",
+    "Các giá trị công thức được giữ nguyên trong workbook gốc; audit này không sửa hoặc tính lại công thức."
+  ],
+  "brand_asset": {
+    "file": "assets/BG-Logo.jpg",
+    "source_copy_unmodified": true,
+    "sha256": "4e00c815fb146a9919095247010fcb77b7b35c6bfcb4e0ceb0d9b8d7d48b3e42",
+    "note": "Logo gốc được sao chép nguyên bản; không vẽ lại hoặc biến dạng."
+  }
+}

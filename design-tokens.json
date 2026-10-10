@@ -1,0 +1,211 @@
+{
+  "version": "0.2.1",
+  "status": "Round 2 — Design direction approved for normalization; final design QA pending",
+  "updated": "2026-10-09",
+  "brand": {
+    "yellow": "#FFDF1B",
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "logoAssetStatus": "Original BG logo supplied by project owner and included unmodified at assets/BG-Logo.jpg.",
+    "logoAssetPath": "assets/BG-Logo.jpg"
+  },
+  "themes": {
+    "light": {
+      "background": "#F5F6F8",
+      "surface": "#FFFFFF",
+      "surfaceRaised": "#FFFFFF",
+      "surfaceSubtle": "#EFF1F4",
+      "text": "#171717",
+      "textSecondary": "#454545",
+      "border": "#D3D7DE",
+      "accent": "#FFDF1B",
+      "accentHover": "#E5C700",
+      "accentPressed": "#CBB000",
+      "onAccent": "#000000",
+      "focus": "#111111",
+      "focusHalo": "#FFDF1B",
+      "success": "#147D46",
+      "successSurface": "#E9F7EF",
+      "warning": "#845500",
+      "warningSurface": "#FFF5D6",
+      "danger": "#B42318",
+      "dangerSurface": "#FDECEA",
+      "info": "#1D5E9D",
+      "infoSurface": "#EAF3FB",
+      "disabledText": "#666666",
+      "disabledSurface": "#E8EAEE"
+    },
+    "dark": {
+      "background": "#101010",
+      "surface": "#191919",
+      "surfaceRaised": "#222222",
+      "surfaceSubtle": "#292929",
+      "text": "#F8F8F8",
+      "textSecondary": "#C4C4C4",
+      "border": "#4A4A4A",
+      "accent": "#FFDF1B",
+      "accentHover": "#FFE84D",
+      "accentPressed": "#E5C700",
+      "onAccent": "#000000",
+      "focus": "#FFDF1B",
+      "focusHalo": "#000000",
+      "success": "#75D6A2",
+      "successSurface": "#183528",
+      "warning": "#F6C66C",
+      "warningSurface": "#3A2C13",
+      "danger": "#FF9B9B",
+      "dangerSurface": "#3B1E1B",
+      "info": "#8BC7FF",
+      "infoSurface": "#172A3D",
+      "disabledText": "#9A9A9A",
+      "disabledSurface": "#303030"
+    }
+  },
+  "typography": {
+    "family": "Segoe UI, Arial, sans-serif",
+    "lineHeight": "1.5",
+    "sizes": {
+      "2xs": "10px",
+      "xs": "11px",
+      "sm": "12px",
+      "compact": "13px",
+      "md": "14px",
+      "md-plus": "15px",
+      "icon": "16px",
+      "lg": "18px",
+      "heading": "19px",
+      "title-compact": "23px",
+      "xl": "24px",
+      "title": "26px",
+      "metric": "27px",
+      "2xl": "28px"
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "extrabold": 800
+    }
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "7": "28px",
+    "8": "32px",
+    "10": "40px",
+    "12": "48px"
+  },
+  "radius": {
+    "xs": "4px",
+    "sm": "6px",
+    "control": "9px",
+    "md": "10px",
+    "table": "12px",
+    "lg": "14px",
+    "pill": "999px"
+  },
+  "motion": {
+    "fast": "120ms",
+    "normal": "180ms",
+    "slow": "240ms",
+    "easing": "cubic-bezier(0.2, 0, 0, 1)",
+    "reducedMotionSupported": true
+  },
+  "shadows": {
+    "card": "0 10px 28px rgba(0,0,0,.055)",
+    "splash": "0 15px 45px rgba(0,0,0,.12)",
+    "toast": "0 12px 32px rgba(0,0,0,.18)"
+  },
+  "layout": {
+    "sidebarWidth": "248px",
+    "contentMaxWidth": "1800px",
+    "controlHeightSm": "32px",
+    "controlHeightMd": "38px",
+    "controlHeightLg": "44px",
+    "focusWidth": "3px",
+    "focusOffset": "2px",
+    "gridGap": "16px"
+  },
+  "components": {
+    "button": {
+      "variants": [
+        "primary",
+        "secondary",
+        "danger",
+        "quiet"
+      ],
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus-visible",
+        "disabled"
+      ],
+      "minHeight": "38px",
+      "primaryText": "onAccent",
+      "primaryBackground": "accent"
+    },
+    "field": {
+      "states": [
+        "default",
+        "hover",
+        "focus-visible",
+        "disabled",
+        "invalid"
+      ],
+      "minHeight": "38px",
+      "borderWidth": "1px"
+    },
+    "table": {
+      "states": [
+        "default",
+        "hover",
+        "selected",
+        "empty",
+        "loading",
+        "error"
+      ],
+      "rowHover": "surfaceSubtle",
+      "headerBackground": "surfaceSubtle"
+    },
+    "status": {
+      "mustPairColorWithTextOrIcon": true,
+      "variants": [
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ]
+    },
+    "focus": {
+      "visibleOnKeyboard": true,
+      "outlineWidth": "3px",
+      "outlineOffset": "2px"
+    }
+  },
+  "splash": {
+    "prototypeMinimumDisplayMs": 1400,
+    "productionCloseRule": "AppReady AND MinimumDisplayTimeReached",
+    "noFakePercentage": true,
+    "productionMustUseRealReadinessSignal": true
+  },
+  "accessibility": {
+    "minimumTextContrastRatio": 4.5,
+    "largeTextContrastRatio": 3.0,
+    "keyboardFocusMustBeVisible": true,
+    "colorMustNotBeTheOnlyStatusSignal": true,
+    "reducedMotionMustBeRespected": true
+  },
+  "dataSource": {
+    "file": "ALES-DANH SÁCH KH PHỤ TRÁCH 2026.xlsx",
+    "sheet": "DOANH SỐ KH 2026",
+    "usedRange": "A1:AZ53",
+    "customerCandidateRows": 26,
+    "importStatus": "Audited only; import not implemented; mapping pending approval."
+  }
+}

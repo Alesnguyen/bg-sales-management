@@ -1,0 +1,25 @@
+{
+  "name": "bg-sales-management",
+  "productName": "BG Sales Management",
+  "version": "0.6.0",
+  "description": "Quản lý doanh số, kế hoạch công tác và tác vụ khách hàng BG",
+  "main": "main.js",
+  "author": "BG",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --publish never"
+  },
+  "dependencies": { "electron-updater": "latest" },
+  "devDependencies": { "electron": "latest", "electron-builder": "latest" },
+  "build": {
+    "appId": "vn.bg.salesmanagement",
+    "productName": "BG Sales Management",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "index.html", "assets/**", "package.json"],
+    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "BG Sales Management" },
+    "publish": [{ "provider": "github", "owner": "Alesnguyen", "repo": "bg-sales-management", "releaseType": "release" }]
+  }
+}
