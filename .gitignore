@@ -1,0 +1,9 @@
+# Local business data — never commit real customer workbooks
+source-data/
+*.xlsx
+*.xls
+*.db
+*.sqlite
+*.sqlite3
+node_modules/
+dist/
