@@ -204,17 +204,31 @@ td .btn{white-space:nowrap;min-height:var(--control-height-sm);padding:4px 10px;
 .wide thead tr:nth-child(2) th{top:38px;height:32px}
 .wide .fz{position:sticky;z-index:1}.wide tbody td.fz{background:var(--surface)}.wide thead th.fz{z-index:4;text-align:left}
 .wide tbody tr:hover td{background:var(--surface-subtle)}
-.fz1{left:0;width:270px;min-width:270px;max-width:270px}.fz2{left:270px;width:100px;min-width:100px;max-width:100px}.fz3{left:370px;width:90px;min-width:90px;max-width:90px}.fz4{left:460px;width:90px;min-width:90px;max-width:90px}.fz5{left:550px;width:90px;min-width:90px;max-width:90px}.fz6{left:640px;width:90px;min-width:90px;max-width:90px;box-shadow:2px 0 0 var(--border)}
-.wide .customer-name{overflow:hidden;text-overflow:ellipsis}.wide .customer-code{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px}.mcell{display:grid;gap:3px;font-size:var(--font-size-xs);color:var(--text-secondary)}.mcell>div{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .mcell input{min-height:var(--control-height-sm);padding:4px 6px;font-size:var(--font-size-sm)}
 @media(max-width:1150px){.fz2,.fz3,.fz4,.fz5,.fz6{left:auto}.hero{flex-direction:column;align-items:flex-start}}
 @media(max-width:760px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.wide .customer-code .tag{padding:1px 8px;font-size:11px;line-height:1.5}
+[hidden]{display:none!important}
+.settings-row .btn{white-space:nowrap}
+/* Bảng khách hàng: khối tên + mã + trạng thái, dòng cao cố định, cột cố định gọn */
+.wide{font-size:13px}
+.wide th,.wide td{padding:6px 8px}
+.wide tbody td{height:72px;vertical-align:middle}
+.fz1{left:0;width:220px;min-width:220px;max-width:220px}.fz2{left:220px;width:88px;min-width:88px;max-width:88px;white-space:normal!important;line-height:1.3}
+.fz3{left:308px;width:78px;min-width:78px;max-width:78px}.fz4{left:386px;width:78px;min-width:78px;max-width:78px}.fz5{left:464px;width:78px;min-width:78px;max-width:78px}
+.fz6{left:542px;width:84px;min-width:84px;max-width:84px;box-shadow:2px 0 0 var(--border)}
+.wide tbody td:not(.fz){min-width:72px}
+.cname{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;line-height:1.3;font-weight:var(--font-weight-semibold);overflow-wrap:anywhere}
+.cmeta{display:flex;align-items:center;gap:6px;margin-top:4px;white-space:nowrap;font-size:11px;color:var(--text-secondary)}
+.cmeta .ccode{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cmeta .tag{flex-shrink:0;padding:1px 7px;font-size:11px;line-height:1.5}
+body[data-page=customers] .main{max-width:none;padding-left:24px;padding-right:20px}
+body.focus .sidebar{display:none}body.focus .main{margin-left:0}
+.wide thead th.fz{white-space:normal;line-height:1.2;letter-spacing:0;font-size:11px}
 </style>
 </head>
 <body>
-<div id="splash" role="status" aria-label="Đang mở ứng dụng"><div class="splashbox"><div class="splash-logo"><img src="assets/BG-Logo.jpg" alt="Logo thương hiệu BG"></div><h2>BG Sales Management</h2><p>Quản lý khách hàng · Doanh số · Công việc</p><div class="splash-rail" aria-hidden="true"><div class="splash-progress"></div></div><p class="small">Đang mở dữ liệu cục bộ…</p><div class="splash-foot"><span>●</span><span>Ngoại tuyến</span><span>·</span><span>v0.6.0</span></div></div></div>
+<div id="splash" role="status" aria-label="Đang mở ứng dụng"><div class="splashbox"><div class="splash-logo"><img src="assets/BG-Logo.jpg" alt="Logo thương hiệu BG"></div><h2>BG Sales Management</h2><p>Quản lý khách hàng · Doanh số · Công việc</p><div class="splash-rail" aria-hidden="true"><div class="splash-progress"></div></div><p class="small">Đang mở dữ liệu cục bộ…</p><div class="splash-foot"><span>●</span><span>Ngoại tuyến</span><span>·</span><span>v0.6.1</span></div></div></div>
 <div class="app">
 <aside class="sidebar" aria-label="Điều hướng chính">
 <div class="brand"><div class="brand-mark"><img class="brand-image" src="assets/BG-Logo.jpg" alt="Logo BG"></div><div><div class="brand-name">BG Sales Management</div><div class="brand-sub">Quản lý kinh doanh</div></div></div>
@@ -227,7 +241,7 @@ td .btn{white-space:nowrap;min-height:var(--control-height-sm);padding:4px 10px;
 <button data-page="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
 </nav>
 <div class="side-spacer"></div>
-<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Design System · v0.2.1 · App v0.6.0</div></div>
+<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Hệ thống thiết kế v0.2.1 · Ứng dụng v0.6.1</div></div>
 </aside>
 <main class="main">
 <header class="topbar">
@@ -251,7 +265,7 @@ td .btn{white-space:nowrap;min-height:var(--control-height-sm);padding:4px 10px;
 
 <section class="view" data-view="customers" aria-labelledby="page-title">
 <div class="card"><div class="card-title-row"><div><h2>Danh sách khách hàng</h2><div class="muted small">Nhấp một dòng để sửa; kéo ngang để xem doanh số theo quý và tháng (6 cột đầu được cố định).</div></div><button class="btn primary" id="add-customer">＋ Thêm khách hàng</button></div>
-<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="customer-search" type="search" placeholder="Tìm theo tên hoặc khu vực…" aria-label="Tìm khách hàng"></div><select id="region-filter" aria-label="Lọc theo khu vực"></select><label class="small muted"><input type="checkbox" id="show-arch"> Hiện đã lưu trữ</label><button class="btn" id="clear-filters">Xóa lọc</button><button class="btn" data-page="import">⇧ Nhập Excel</button></div>
+<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="customer-search" type="search" placeholder="Tìm theo tên hoặc khu vực…" aria-label="Tìm khách hàng"></div><select id="region-filter" aria-label="Lọc theo khu vực"></select><label class="small muted"><input type="checkbox" id="show-arch"> Hiện đã lưu trữ</label><button class="btn" id="clear-filters">Xóa lọc</button><button class="btn" data-page="import">⇧ Nhập Excel</button><button class="btn" id="focus-toggle" aria-pressed="false" title="Ẩn thanh bên để xem bảng rộng hơn">⤢ Mở rộng bảng</button></div>
 <div class="table-wrap wide"><table><thead id="cust-head"></thead><tbody id="customer-rows"></tbody></table><div class="empty-state" id="customer-empty">Không tìm thấy khách hàng phù hợp. Hãy thử đổi từ khóa hoặc bộ lọc, hoặc nhập từ Excel.</div></div>
 <div class="table-foot"><span id="customer-count"></span><button class="btn" id="export-csv">Xuất CSV</button></div></div>
 </section>
@@ -265,17 +279,17 @@ td .btn{white-space:nowrap;min-height:var(--control-height-sm);padding:4px 10px;
 <section class="view" data-view="import" aria-labelledby="page-title">
 <div class="card"><div class="card-title-row"><div><h2>Nhập và quản lý dữ liệu</h2><div class="muted small">Đọc sheet “DOANH SỐ KH 2026” ngay trên máy này, xem trước rồi mới ghi. Không xóa khách hàng nào.</div></div><span class="tag" id="imp-tag">Sẵn sàng</span></div>
 <div class="import-steps" id="steps"></div>
-<div class="upload-zone"><div class="upload-icon" aria-hidden="true">⇧</div><h3 style="margin-top:8px">Chọn tệp Excel (.xlsx)</h3><p class="small">Dữ liệu được xử lý tại máy, không gửi đi đâu.</p><input id="excel-file" type="file" accept=".xlsx" aria-label="Chọn file Excel"><div id="file-note" class="file-note" aria-live="polite">Chưa chọn tệp.</div></div>
+<div class="upload-zone"><div class="upload-icon" aria-hidden="true">⇧</div><h3 style="margin-top:8px">Chọn tệp Excel (.xlsx)</h3><p class="small">Dữ liệu được xử lý tại máy, không gửi đi đâu.</p><input id="excel-file" type="file" accept=".xlsx" hidden><button class="btn primary" id="pick-file" type="button">Chọn tệp Excel…</button><div id="file-note" class="file-note" aria-live="polite">Chưa chọn tệp.</div></div>
 <div id="imp-body" class="section-gap"></div></div>
 </section>
 
 <section class="view" data-view="settings" aria-labelledby="page-title">
 <div class="grid grid-2">
-<article class="card"><div class="card-title-row"><h2>Giao diện</h2><span class="tag yellow">Theme</span></div>
-<div class="settings-row"><div><div class="settings-title">Light / Dark Mode</div><div class="settings-desc">Áp dụng cùng một hệ token ngữ nghĩa, được ghi nhớ.</div></div><button class="btn" id="settings-theme">Đổi giao diện</button></div>
+<article class="card"><div class="card-title-row"><h2>Giao diện</h2><span class="tag yellow">Sáng / Tối</span></div>
+<div class="settings-row"><div><div class="settings-title">Chế độ sáng / tối</div><div class="settings-desc">Đổi giữa nền sáng và nền tối; lựa chọn được ghi nhớ.</div></div><button class="btn" id="settings-theme">Đổi giao diện</button></div>
 <div class="settings-row"><div><div class="settings-title">Màu thương hiệu</div><div class="settings-desc">Vàng · Đen · Trắng</div></div><div class="settings-value">#FFDF1B<br>#000000 / #FFFFFF</div></div>
 <div class="settings-row"><div><div class="settings-title">Logo chính thức</div><div class="settings-desc">Bản gốc tại assets/BG-Logo.jpg.</div></div><span class="tag success">Đã có asset</span></div></article>
-<article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v0.6.0</span></div>
+<article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v0.6.1</span></div>
 <div class="settings-row"><div><div class="settings-title">Tên hiển thị</div><div class="settings-desc">Dùng cho lời chào ở trang Tổng quan.</div></div><input id="pf-name" type="text" maxlength="40" placeholder="Tên của bạn" aria-label="Tên hiển thị" style="max-width:200px"></div>
 <div class="settings-row"><div><div class="settings-title">Cập nhật ứng dụng</div><div class="settings-desc" id="upd-msg">—</div></div><div class="toolbar" style="margin:0"><button class="btn" id="upd-check">Kiểm tra cập nhật</button><button class="btn primary" id="upd-install" hidden>Khởi động lại để cập nhật</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Dữ liệu</div><div class="settings-desc" id="set-data">—</div></div></div>
@@ -300,7 +314,8 @@ const pct=x=>x==null?"–":(x*100).toFixed(1).replace(".",",")+"%";
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const dmy=s=>s?s.split("-").reverse().join("/"):"";
 const monday=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
-const VER="0.6.0",S={cus:[],work:[],meta:{},prefs:{id:"prefs"},week:monday(new Date())};
+const vi=m=>/[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơưạ-ỹ]/.test(m||"")?m:"lỗi không xác định, vui lòng thử lại";
+const VER="0.6.1",S={cus:[],work:[],meta:{},prefs:{id:"prefs"},week:monday(new Date())};
 /* ===== Lưu trữ IndexedDB ===== */
 let db;
 const open=()=>new Promise((ok,no)=>{const r=indexedDB.open("bgsm",1);r.onupgradeneeded=()=>["c","w","m"].forEach(n=>r.result.createObjectStore(n,{keyPath:"id"}));r.onsuccess=()=>{db=r.result;ok()};r.onerror=()=>no(r.error)});
@@ -309,8 +324,9 @@ const getAll=s=>run(s,"readonly",o=>o.getAll()),put=(s,a)=>run(s,"readwrite",o=>
 async function load(){S.cus=await getAll("c");S.work=await getAll("w");const ms=await getAll("m");S.meta=ms.find(x=>x.id==="meta")||{};S.prefs=ms.find(x=>x.id==="prefs")||{id:"prefs"};S.cus.sort((a,b)=>(b.a26||0)-(a.a26||0))}
 /* ===== Thông báo, điều hướng, giao diện ===== */
 let tt;const notify=m=>{const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2800)};
+const setFocus=on=>{document.body.classList.toggle("focus",on);const b=$("#focus-toggle");b.setAttribute("aria-pressed",String(on));b.textContent=on?"⤡ Thu nhỏ bảng":"⤢ Mở rộng bảng"};
 const META={overview:["KHÔNG GIAN LÀM VIỆC","Tổng quan","Bức tranh nhanh về dữ liệu kinh doanh của bạn."],customers:["QUẢN LÝ DỮ LIỆU","Danh sách khách hàng","Tìm kiếm, lọc, thêm và sửa khách hàng."],calendar:["KẾ HOẠCH CÔNG VIỆC","Lịch làm việc","Kế hoạch công tác và tác vụ theo tuần."],import:["QUẢN LÝ DỮ LIỆU","Nhập dữ liệu","Nhập Excel có xem trước và xác nhận."],settings:["TÙY CHỈNH","Cài đặt","Giao diện, sao lưu và thông tin ứng dụng."]};
-function go(p){if(!META[p])return;$$("[data-view]").forEach(v=>v.classList.toggle("active",v.dataset.view===p));$$(".nav button").forEach(b=>{const a=b.dataset.page===p;b.classList.toggle("active",a);a?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});$("#page-eyebrow").textContent=META[p][0];$("#page-title").textContent=META[p][1];$("#page-description").textContent=META[p][2];render()}
+function go(p){if(!META[p])return;setFocus(false);document.body.dataset.page=p;$$("[data-view]").forEach(v=>v.classList.toggle("active",v.dataset.view===p));$$(".nav button").forEach(b=>{const a=b.dataset.page===p;b.classList.toggle("active",a);a?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});$("#page-eyebrow").textContent=META[p][0];$("#page-title").textContent=META[p][1];$("#page-description").textContent=META[p][2];render()}
 function theme(t,say){t=t==="dark"?"dark":"light";root.dataset.theme=t;try{localStorage.setItem("bgsm-theme",t)}catch(_){}const d=t==="dark";$("#theme-label").textContent=d?"Giao diện tối":"Giao diện sáng";$("#theme-toggle").setAttribute("aria-label",d?"Chuyển sang giao diện sáng":"Chuyển sang giao diện tối");$("#sun-icon").classList.toggle("selected",!d);$("#moon-icon").classList.toggle("selected",d);if(say)notify(d?"Đã chuyển sang giao diện tối":"Đã chuyển sang giao diện sáng")}
 const flip=()=>theme(root.dataset.theme==="dark"?"light":"dark",true);
 /* ===== Nghiệp vụ ===== */
@@ -353,7 +369,7 @@ function head(){const f=["Khách hàng","Khu vực","Thực tế 2025","Mục ti
  $("#cust-head").innerHTML=`<tr>${f.map((x,i)=>`<th rowspan="2" class="fz fz${i+1}">${x}</th>`).join("")}${[1,2,3,4].map(q=>`<th rowspan="2">Q${q} 2026</th>`).join("")}${Array.from({length:12},(_,i)=>`<th colspan="2">THÁNG ${i+1}</th>`).join("")}</tr><tr>${Array.from({length:12},()=>"<th>2025</th><th>2026</th>").join("")}</tr>`}
 function cust(){const sel=$("#region-filter"),cur=sel.value;sel.innerHTML='<option value="">Tất cả khu vực</option>'+regions().map(r=>`<option>${esc(r)}</option>`).join("");sel.value=regions().includes(cur)?cur:"";
  const q=key($("#customer-search").value),r=sel.value,ar=$("#show-arch").checked,a=S.cus.filter(c=>(ar||!c.archived)&&(!r||(c.region||"Khác")===r)&&key(c.name+" "+(c.region||"")+" "+(c.code||"")).includes(q));
- $("#customer-rows").innerHTML=a.map(c=>{const p=comp(c),s=stat(c);return`<tr data-id="${esc(c.id)}" style="cursor:pointer"><td class="fz fz1"><div class="customer-name" title="${esc(c.name)}">${esc(c.name)}</div><div class="customer-code">${c.code?"MÃ · "+esc(c.code):"Chưa có mã"} <span class="tag ${s[1]}">${s[0]}</span></div></td><td class="fz fz2">${esc(c.region||"Khác")}</td><td class="num fz fz3">${fmtB(c.a25)}</td><td class="num fz fz4">${fmtB(c.t26)}</td><td class="num fz fz5">${fmtB(c.a26)}</td><td class="progress-cell fz fz6"><div class="mini-track"><div class="mini-fill" style="width:${Math.min(100,(p||0)*100)}%"></div></div><span class="tiny">${pct(p)}</span></td>`+[0,1,2,3].map(k=>`<td class="num">${tr(c.q?.[k]?.[0])}</td>`).join("")+Array.from({length:12},(_,i)=>`<td class="num">${tr(c.m?.[i]?.[0])}</td><td class="num">${tr(c.m?.[i]?.[1])}</td>`).join("")+"</tr>"}).join("");
+ $("#customer-rows").innerHTML=a.map(c=>{const p=comp(c),s=stat(c);return`<tr data-id="${esc(c.id)}" style="cursor:pointer"><td class="fz fz1"><div class="cname" title="${esc(c.name)}">${esc(c.name)}</div><div class="cmeta"><span class="ccode">${c.code?"Mã · "+esc(c.code):"Chưa có mã"}</span><span class="tag ${s[1]}">${s[0]}</span></div></td><td class="fz fz2">${esc(c.region||"Khác")}</td><td class="num fz fz3">${fmtB(c.a25)}</td><td class="num fz fz4">${fmtB(c.t26)}</td><td class="num fz fz5">${fmtB(c.a26)}</td><td class="progress-cell fz fz6"><div class="mini-track"><div class="mini-fill" style="width:${Math.min(100,(p||0)*100)}%"></div></div><span class="tiny">${pct(p)}</span></td>`+[0,1,2,3].map(k=>`<td class="num">${tr(c.q?.[k]?.[0])}</td>`).join("")+Array.from({length:12},(_,i)=>`<td class="num">${tr(c.m?.[i]?.[0])}</td><td class="num">${tr(c.m?.[i]?.[1])}</td>`).join("")+"</tr>"}).join("");
  $("#customer-empty").classList.toggle("show",!a.length);$("#customer-count").textContent="Đang hiển thị "+a.length+"/"+S.cus.length+" khách hàng"}
 function cal(){const mon=S.week,days=[...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d}),n=days.slice(5).some(d=>S.work.some(w=>w.date===iso(d)))?7:5,N=["THỨ HAI","THỨ BA","THỨ TƯ","THỨ NĂM","THỨ SÁU","THỨ BẢY","CHỦ NHẬT"],a=days[0],b=days[n-1];
  $("#week-label").textContent="Tuần "+(a.getMonth()===b.getMonth()?String(a.getDate()).padStart(2,"0"):String(a.getDate()).padStart(2,"0")+"/"+String(a.getMonth()+1).padStart(2,"0"))+"–"+String(b.getDate()).padStart(2,"0")+"/"+String(b.getMonth()+1).padStart(2,"0")+"/"+b.getFullYear();
@@ -363,8 +379,8 @@ function sett(){$("#pf-name").value=S.prefs?.name||"";const m=S.meta.lastImport;
 /* ===== Hộp thoại biểu mẫu dùng chung ===== */
 function form(title,fields,v,save,extra,remove){const f=$("#dlg-form");
  f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">${esc(title)}</h3>`+fields.map(([k,l,t,o,req])=>{const x=v[k]??"",id="f_"+k;return`<label class="flabel" for="${id}">${l}</label>`+(t==="sel"?`<select id="${id}">${o.map(z=>`<option${z===x?" selected":""}>${z}</option>`).join("")}</select>`:t==="area"?`<textarea id="${id}" rows="2">${esc(x)}</textarea>`:`<input id="${id}" type="${t}"${o?` list="${o}"`:""}${req?" required":""}${t==="number"?' step="any"':""} value="${esc(x)}">`)}).join("")+(extra||"")+`<div class="dlg-actions">${remove?'<button type="button" class="btn" id="dlg-del" style="color:var(--danger)">Xóa</button>':""}<span style="flex:1"></span><button type="button" class="btn" id="dlg-x">Hủy</button><button class="btn primary" type="submit">Lưu</button></div>`;
- $("#dlg-x").onclick=()=>$("#dlg").close();if(remove)$("#dlg-del").onclick=async()=>{if(confirm("Xóa mục này? Không thể hoàn tác.")){try{await remove();$("#dlg").close()}catch(e){notify("Lỗi: "+e.message)}}};
- f.onsubmit=async e=>{e.preventDefault();const o={};fields.forEach(([k,,t])=>{const el=$("#f_"+k);o[k]=t==="number"?(el.value===""?null:Number(el.value)):el.value.trim()});try{if(await save(o)!==false)$("#dlg").close()}catch(er){notify("Lỗi: "+er.message)}};
+ $("#dlg-x").onclick=()=>$("#dlg").close();if(remove)$("#dlg-del").onclick=async()=>{if(confirm("Xóa mục này? Không thể hoàn tác.")){try{await remove();$("#dlg").close()}catch(e){notify("Lỗi: "+vi(e.message))}}};
+ f.onsubmit=async e=>{e.preventDefault();const o={};fields.forEach(([k,,t])=>{const el=$("#f_"+k);o[k]=t==="number"?(el.value===""?null:Number(el.value)):el.value.trim()});try{if(await save(o)!==false)$("#dlg").close()}catch(er){notify("Lỗi: "+vi(er.message))}};
  $("#dlg").style.width=(extra||"").includes("mgrid")?"min(780px,94vw)":"";$("#dlg").showModal();const first=f.querySelector("input,select");if(first)first.focus()}
 const sels=["Dự kiến","Hoàn thành","Hủy"],types=["Thăm khách hàng","Họp","Gọi điện","Báo giá","Đào tạo","Khác"];
 function editCus(c){const nw=!c,inp=(id,v,ph,al)=>`<input id="${id}" type="number" step="any" value="${v??""}" placeholder="${ph}" aria-label="${al}">`;
@@ -421,20 +437,20 @@ async function pick(f){const b=$("#imp-body");steps(1);b.innerHTML="";$("#file-n
   $("#imp-no").onclick=()=>{$("#excel-file").value="";pick(null);$("#imp-tag").textContent="Sẵn sàng"};
   $("#imp-go").onclick=async e=>{e.target.disabled=true;try{const rec=res.rows.map(c=>{const o=ex.get(c.id);return o?{...c,region:o.region||c.region,code:o.code,note:o.note,archived:o.archived}:{...c,archived:false,src:"excel"}}),meta={id:"meta",owner:res.owner,qt:res.qt,lastImport:{file:f.name,at:Date.now(),n:res.rows.length,nw:cnt("Mới"),up:cnt("Cập nhật")}};
    await run(["c","m"],"readwrite",(c,m)=>{rec.forEach(r=>c.put(r));m.put(meta)});await load();steps(5);$("#imp-tag").textContent="Đã nhập";$("#excel-file").value="";
-   b.innerHTML=`<div class="notice" style="border-left-color:var(--success)"><strong>Đã nhập xong.</strong> Mới ${meta.lastImport.nw}, cập nhật ${meta.lastImport.up}. <button class="btn" data-page="customers">Xem danh sách khách hàng</button></div>`;render();notify("Nhập Excel thành công")}catch(er){e.target.disabled=false;notify("Nhập thất bại, dữ liệu không bị thay đổi: "+er.message)}}
- }catch(er){steps(2);$("#imp-tag").textContent="Lỗi";b.innerHTML=`<div class="notice" style="border-left-color:var(--danger)"><strong>Không đọc được file:</strong> ${esc(er.message)}</div>`}}
+   b.innerHTML=`<div class="notice" style="border-left-color:var(--success)"><strong>Đã nhập xong.</strong> Mới ${meta.lastImport.nw}, cập nhật ${meta.lastImport.up}. <button class="btn" data-page="customers">Xem danh sách khách hàng</button></div>`;render();notify("Nhập Excel thành công")}catch(er){e.target.disabled=false;notify("Nhập thất bại, dữ liệu không bị thay đổi: "+vi(er.message))}}
+ }catch(er){steps(2);$("#imp-tag").textContent="Lỗi";b.innerHTML=`<div class="notice" style="border-left-color:var(--danger)"><strong>Không đọc được file:</strong> ${esc(vi(er.message))}</div>`}}
 /* ===== Sao lưu / CSV ===== */
 function dl(name,blob){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4e3)}
 const stamp=()=>iso(new Date());
 async function restore(f){try{const j=JSON.parse(await f.text());if(j.app!=="bgsm"||!Array.isArray(j.customers)||!Array.isArray(j.work))throw Error("Không phải tệp sao lưu của ứng dụng này.");
  if(!confirm("Khôi phục "+j.customers.length+" khách hàng và "+j.work.length+" công việc? Dữ liệu trùng sẽ bị ghi đè."))return;
- await run(["c","w","m"],"readwrite",(c,w,m)=>{j.customers.forEach(x=>c.put(x));j.work.forEach(x=>w.put(x));if(j.meta?.id)m.put(j.meta);if(j.prefs?.id)m.put(j.prefs)});await load();render();notify("Đã khôi phục dữ liệu")}catch(e){notify("Khôi phục thất bại: "+e.message)}}
+ await run(["c","w","m"],"readwrite",(c,w,m)=>{j.customers.forEach(x=>c.put(x));j.work.forEach(x=>w.put(x));if(j.meta?.id)m.put(j.meta);if(j.prefs?.id)m.put(j.prefs)});await load();render();notify("Đã khôi phục dữ liệu")}catch(e){notify("Khôi phục thất bại: "+vi(e.message))}}
 function csv(){const q=s=>'"'+String(s??"").replace(/"/g,'""')+'"',h=["Khách hàng","Khu vực","Mã","Thực tế 2025","Mục tiêu 2026","Thực tế 2026","Tiến độ","Ghi chú","Q1 2026","Q2 2026","Q3 2026","Q4 2026"].concat(Array.from({length:12},(_,i)=>["T"+(i+1)+" 2025","T"+(i+1)+" 2026"]).flat());
  dl("khach-hang-"+stamp()+".csv",new Blob(["\ufeff"+[h.map(q).join(",")].concat(S.cus.filter(c=>!c.archived).map(c=>[c.name,c.region,c.code,c.a25,c.t26,c.a26,comp(c)==null?"":comp(c).toFixed(4),c.note,...[0,1,2,3].map(k=>c.q?.[k]?.[0]),...Array.from({length:12},(_,i)=>[c.m?.[i]?.[0],c.m?.[i]?.[1]]).flat()].map(q).join(","))).join("\r\n")],{type:"text/csv;charset=utf-8"}));notify("Đã xuất CSV")}
 /* ===== Sự kiện ===== */
 document.addEventListener("click",e=>{const t=e.target.closest("button[data-page]");if(t)go(t.dataset.page);
  const r=e.target.closest("tr[data-id]"),ab=e.target.closest("[data-arch]");
- if(ab){const c=S.cus.find(x=>x.id===ab.dataset.arch);c.archived=!c.archived;put("c",[c]).then(load).then(()=>{render();notify(c.archived?"Đã lưu trữ":"Đã khôi phục")}).catch(er=>notify("Lỗi: "+er.message));return}
+ if(ab){const c=S.cus.find(x=>x.id===ab.dataset.arch);c.archived=!c.archived;put("c",[c]).then(load).then(()=>{render();notify(c.archived?"Đã lưu trữ":"Đã khôi phục")}).catch(er=>notify("Lỗi: "+vi(er.message)));return}
  if(r)editCus(S.cus.find(x=>x.id===r.dataset.id));
  const w=e.target.closest("[data-work]");if(w)editWork(S.work.find(x=>x.id===w.dataset.work));
  const d=e.target.closest("[data-add-day]");if(d)editWork(null,d.dataset.addDay)});
@@ -443,13 +459,16 @@ $("#theme-toggle").onclick=flip;$("#settings-theme").onclick=flip;
 $("#customer-search").oninput=cust;$("#region-filter").onchange=cust;$("#show-arch").onchange=cust;$("#clear-filters").onclick=()=>{$("#customer-search").value="";$("#region-filter").value="";$("#show-arch").checked=false;cust()};
 $("#add-customer").onclick=()=>editCus(null);$("#add-work").onclick=()=>editWork(null);$("#export-csv").onclick=csv;
 $("#prev-week").onclick=()=>{S.week.setDate(S.week.getDate()-7);cal()};$("#next-week").onclick=()=>{S.week.setDate(S.week.getDate()+7);cal()};$("#this-week").onclick=()=>{S.week=monday(new Date());cal()};
+$("#pick-file").onclick=()=>$("#excel-file").click();$("#focus-toggle").onclick=()=>setFocus(!document.body.classList.contains("focus"));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("focus")&&!$("#dlg").open)setFocus(false)});
 $("#excel-file").onchange=e=>pick(e.target.files[0]);
 $("#bk-export").onclick=()=>{dl("bgsm-sao-luu-"+stamp()+".json",new Blob([JSON.stringify({app:"bgsm",v:1,ver:VER,at:new Date().toISOString(),customers:S.cus,work:S.work,meta:S.meta,prefs:S.prefs})],{type:"application/json"}));notify("Đã tạo tệp sao lưu")};
 $("#bk-restore").onclick=()=>$("#bk-file").click();$("#bk-file").onchange=e=>{if(e.target.files[0])restore(e.target.files[0]);e.target.value=""};
 $("#wipe").onclick=async()=>{if(confirm("Xóa TOÀN BỘ khách hàng, công việc và thông tin nhập? Không thể hoàn tác.")&&confirm("Xác nhận lần cuối: xóa toàn bộ dữ liệu?")){await clr();await load();render();notify("Đã xóa toàn bộ dữ liệu")}};
 /* ===== Cập nhật ứng dụng (bản cài Windows) ===== */
+const updErr=m=>{m=String(m||"");return/latest\.yml|404|Not Found/i.test(m)?"Chưa có thông tin bản cập nhật trên nơi phát hành. Hãy thử lại sau hoặc tải bản mới từ trang phát hành.":/401|403|auth|token/i.test(m)?"Không truy cập được nơi đăng bản cập nhật (kho lưu trữ riêng tư cần quyền truy cập).":/ENOTFOUND|ECONN|ETIMEDOUT|INTERNET|net::|network/i.test(m)?"Không kết nối được Internet để kiểm tra cập nhật.":"Không kiểm tra được cập nhật lúc này. Vui lòng thử lại sau."};
 const U=window.bgsm,um=t=>{$("#upd-msg").textContent=t};
-if(U){um("Phiên bản "+VER+". Ứng dụng tự kiểm tra khi mở.");U.onUpdate(s=>{if(s.s==="checking")um("Đang kiểm tra bản cập nhật…");else if(s.s==="none")um("Bạn đang dùng phiên bản mới nhất ("+VER+").");else if(s.s==="available")um("Có bản "+s.v+", đang tải…");else if(s.s==="progress")um("Đang tải bản cập nhật… "+s.p+"%");else if(s.s==="ready"){um("Bản "+s.v+" đã tải xong. Dữ liệu của bạn được giữ nguyên.");$("#upd-install").hidden=false}else if(s.s==="error")um("Không kiểm tra được cập nhật: "+String(s.m||"").slice(0,120))});
+if(U){um("Phiên bản "+VER+". Ứng dụng tự kiểm tra khi mở.");U.onUpdate(s=>{if(s.s==="checking")um("Đang kiểm tra bản cập nhật…");else if(s.s==="none")um("Bạn đang dùng phiên bản mới nhất ("+VER+").");else if(s.s==="available")um("Có bản "+s.v+", đang tải…");else if(s.s==="progress")um("Đang tải bản cập nhật… "+s.p+"%");else if(s.s==="ready"){um("Bản "+s.v+" đã tải xong. Dữ liệu của bạn được giữ nguyên.");$("#upd-install").hidden=false}else if(s.s==="error")um(updErr(s.m))});
  $("#upd-check").onclick=()=>U.check().then(r=>{if(r&&r.s==="dev")um("Chỉ kiểm tra được trong bản đã cài đặt.")});$("#upd-install").onclick=()=>U.install()}
 else{um("Phiên bản "+VER+". Tự cập nhật chỉ có trong bản cài Windows.");$("#upd-check").disabled=true}
 $("#pf-name").onchange=async e=>{S.prefs={...S.prefs,id:"prefs",name:e.target.value.trim()};await put("m",[S.prefs]);notify("Đã lưu tên hiển thị")};
@@ -457,7 +476,7 @@ $("#ov-region").onchange=ovw;$("#quote-next").onclick=()=>{qi=(qi+1)%QUOTES.leng
 /* ===== Khởi động ===== */
 let th="light";try{th=localStorage.getItem("bgsm-theme")||"light"}catch(_){}theme(th,false);steps(1);head();
 const hide=()=>{const s=$("#splash");s.style.opacity="0";setTimeout(()=>s.remove(),260)};
-open().then(load).then(()=>{go("overview");setTimeout(hide,500)}).catch(e=>{hide();go("overview");notify("Không mở được kho dữ liệu: "+e.message+". Hãy dùng Edge/Chrome ở chế độ thường.")});
+open().then(load).then(()=>{go("overview");setTimeout(hide,500)}).catch(e=>{hide();go("overview");notify("Không mở được kho dữ liệu: "+vi(e.message)+". Hãy dùng Edge/Chrome ở chế độ thường.")});
 })();
 </script>
 </body>

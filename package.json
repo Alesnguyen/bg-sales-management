@@ -1,7 +1,7 @@
 {
   "name": "bg-sales-management",
   "productName": "BG Sales Management",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Quản lý doanh số, kế hoạch công tác và tác vụ khách hàng BG",
   "main": "main.js",
   "author": "BG",
@@ -11,8 +11,8 @@
     "start": "electron .",
     "dist": "electron-builder --win nsis --publish never"
   },
-   "dependencies": { "electron-updater": "^6.3.9" },
-   "devDependencies": { "electron": "^39.8.5", "electron-builder": "^26.15.3" },
+  "dependencies": { "electron-updater": "^6.3.9" },
+  "devDependencies": { "electron": "^39.8.5", "electron-builder": "^26.15.3" },
   "build": {
     "appId": "vn.bg.salesmanagement",
     "productName": "BG Sales Management",

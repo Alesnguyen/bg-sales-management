@@ -11,7 +11,7 @@
 <button data-page="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
 </nav>
 <div class="side-spacer"></div>
-<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Design System · v0.2.1 · App v{{VER}}</div></div>
+<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Hệ thống thiết kế v0.2.1 · Ứng dụng v{{VER}}</div></div>
 </aside>
 <main class="main">
 <header class="topbar">
@@ -35,7 +35,7 @@
 
 <section class="view" data-view="customers" aria-labelledby="page-title">
 <div class="card"><div class="card-title-row"><div><h2>Danh sách khách hàng</h2><div class="muted small">Nhấp một dòng để sửa; kéo ngang để xem doanh số theo quý và tháng (6 cột đầu được cố định).</div></div><button class="btn primary" id="add-customer">＋ Thêm khách hàng</button></div>
-<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="customer-search" type="search" placeholder="Tìm theo tên hoặc khu vực…" aria-label="Tìm khách hàng"></div><select id="region-filter" aria-label="Lọc theo khu vực"></select><label class="small muted"><input type="checkbox" id="show-arch"> Hiện đã lưu trữ</label><button class="btn" id="clear-filters">Xóa lọc</button><button class="btn" data-page="import">⇧ Nhập Excel</button></div>
+<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="customer-search" type="search" placeholder="Tìm theo tên hoặc khu vực…" aria-label="Tìm khách hàng"></div><select id="region-filter" aria-label="Lọc theo khu vực"></select><label class="small muted"><input type="checkbox" id="show-arch"> Hiện đã lưu trữ</label><button class="btn" id="clear-filters">Xóa lọc</button><button class="btn" data-page="import">⇧ Nhập Excel</button><button class="btn" id="focus-toggle" aria-pressed="false" title="Ẩn thanh bên để xem bảng rộng hơn">⤢ Mở rộng bảng</button></div>
 <div class="table-wrap wide"><table><thead id="cust-head"></thead><tbody id="customer-rows"></tbody></table><div class="empty-state" id="customer-empty">Không tìm thấy khách hàng phù hợp. Hãy thử đổi từ khóa hoặc bộ lọc, hoặc nhập từ Excel.</div></div>
 <div class="table-foot"><span id="customer-count"></span><button class="btn" id="export-csv">Xuất CSV</button></div></div>
 </section>
@@ -49,14 +49,14 @@
 <section class="view" data-view="import" aria-labelledby="page-title">
 <div class="card"><div class="card-title-row"><div><h2>Nhập và quản lý dữ liệu</h2><div class="muted small">Đọc sheet “DOANH SỐ KH 2026” ngay trên máy này, xem trước rồi mới ghi. Không xóa khách hàng nào.</div></div><span class="tag" id="imp-tag">Sẵn sàng</span></div>
 <div class="import-steps" id="steps"></div>
-<div class="upload-zone"><div class="upload-icon" aria-hidden="true">⇧</div><h3 style="margin-top:8px">Chọn tệp Excel (.xlsx)</h3><p class="small">Dữ liệu được xử lý tại máy, không gửi đi đâu.</p><input id="excel-file" type="file" accept=".xlsx" aria-label="Chọn file Excel"><div id="file-note" class="file-note" aria-live="polite">Chưa chọn tệp.</div></div>
+<div class="upload-zone"><div class="upload-icon" aria-hidden="true">⇧</div><h3 style="margin-top:8px">Chọn tệp Excel (.xlsx)</h3><p class="small">Dữ liệu được xử lý tại máy, không gửi đi đâu.</p><input id="excel-file" type="file" accept=".xlsx" hidden><button class="btn primary" id="pick-file" type="button">Chọn tệp Excel…</button><div id="file-note" class="file-note" aria-live="polite">Chưa chọn tệp.</div></div>
 <div id="imp-body" class="section-gap"></div></div>
 </section>
 
 <section class="view" data-view="settings" aria-labelledby="page-title">
 <div class="grid grid-2">
-<article class="card"><div class="card-title-row"><h2>Giao diện</h2><span class="tag yellow">Theme</span></div>
-<div class="settings-row"><div><div class="settings-title">Light / Dark Mode</div><div class="settings-desc">Áp dụng cùng một hệ token ngữ nghĩa, được ghi nhớ.</div></div><button class="btn" id="settings-theme">Đổi giao diện</button></div>
+<article class="card"><div class="card-title-row"><h2>Giao diện</h2><span class="tag yellow">Sáng / Tối</span></div>
+<div class="settings-row"><div><div class="settings-title">Chế độ sáng / tối</div><div class="settings-desc">Đổi giữa nền sáng và nền tối; lựa chọn được ghi nhớ.</div></div><button class="btn" id="settings-theme">Đổi giao diện</button></div>
 <div class="settings-row"><div><div class="settings-title">Màu thương hiệu</div><div class="settings-desc">Vàng · Đen · Trắng</div></div><div class="settings-value">#FFDF1B<br>#000000 / #FFFFFF</div></div>
 <div class="settings-row"><div><div class="settings-title">Logo chính thức</div><div class="settings-desc">Bản gốc tại assets/BG-Logo.jpg.</div></div><span class="tag success">Đã có asset</span></div></article>
 <article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v{{VER}}</span></div>

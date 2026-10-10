@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu, shell, ipcMain } = require("electron");
 const path = require("path");
+app.commandLine.appendSwitch("lang", "vi");
 const autoUpdater = app.isPackaged ? require("electron-updater").autoUpdater : null;
 
 if (!app.requestSingleInstanceLock()) {
