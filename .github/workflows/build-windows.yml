@@ -23,6 +23,23 @@ jobs:
       - run: npx electron-builder --win nsis --publish ${{ steps.rel.outputs.mode }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bảo đảm bản phát hành có latest.yml (cho tự cập nhật)
+        if: steps.rel.outputs.mode == 'always'
+        shell: bash
+        run: |
+          V=$(node -p "require('./package.json').version")
+          if [ ! -f dist/latest.yml ]; then
+            cat > "$RUNNER_TEMP/ly.js" <<'EOF'
+          const c=require("crypto"),fs=require("fs"),p=process.argv[2],n=process.argv[3],v=process.argv[4];
+          const b=fs.readFileSync(p),h=c.createHash("sha512").update(b).digest("base64");
+          fs.writeFileSync("dist/latest.yml","version: "+v+"\nfiles:\n  - url: "+n+"\n    sha512: "+h+"\n    size: "+b.length+"\npath: "+n+"\nsha512: "+h+"\nreleaseDate: '"+new Date().toISOString()+"'\n");
+          EOF
+            EXE=$(ls dist/*.exe | head -n1)
+            node "$RUNNER_TEMP/ly.js" "$EXE" "$(basename "$EXE")" "$V"
+          fi
+          gh release upload "v$V" dist/latest.yml $(ls dist/*.blockmap 2>/dev/null) --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: BG-Sales-Management-Setup
