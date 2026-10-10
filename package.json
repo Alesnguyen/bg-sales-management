@@ -11,8 +11,8 @@
     "start": "electron .",
     "dist": "electron-builder --win nsis --publish never"
   },
-  "dependencies": { "electron-updater": "latest" },
-  "devDependencies": { "electron": "latest", "electron-builder": "latest" },
+   "dependencies": { "electron-updater": "^6.3.9" },
+   "devDependencies": { "electron": "^39.8.5", "electron-builder": "^26.15.3" },
   "build": {
     "appId": "vn.bg.salesmanagement",
     "productName": "BG Sales Management",
