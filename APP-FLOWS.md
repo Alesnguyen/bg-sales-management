@@ -16,3 +16,12 @@ Quy ước dữ liệu: cột quý J/L/N/P ở dòng khách hàng là tỉ lệ 
 - **Tổng quan:** lời chào theo giờ + tên hiển thị; bộ lọc khu vực áp dụng cho KPI, biểu đồ đường và Top 5 (thanh theo khu vực luôn hiện tất cả khu vực).
 - **Khách hàng → Sửa:** nhập tay mã, quý (thực tế 2026) và 12 tháng (2025/2026). "Tính lại" lấy tổng 2025/2026 và các quý 2026 từ số liệu tháng, người dùng bấm Lưu để ghi. Nhập Excel lại sẽ ghi đè số liệu quý/tháng của khách có trong file, và giữ mã, khu vực, ghi chú, lưu trữ.
 - **Cập nhật:** Cài đặt → Cập nhật ứng dụng (chỉ hoạt động trong bản cài Windows).
+
+## Bổ sung v0.7.0
+- **Khách hàng → trang sửa:** nhấp một dòng (hoặc Enter) mở trang con có breadcrumb; "Quay lại danh sách" hoặc breadcrumb đều hỏi xác nhận nếu có thay đổi chưa lưu. Số tiền nhập có dấu chấm ngăn cách.
+- **Lịch làm việc:** thứ 2 đến thứ 7; "Thống kê tháng" tính theo trạng thái (Hoàn thành / Dự kiến / Trễ hạn / Hủy) và tỉ lệ hoàn thành = Hoàn thành chia (Tổng trừ Hủy).
+
+## Bổ sung v0.8.0
+- **Hoàn tác:** thông báo có nút "Hoàn tác" trong 8 giây (hoặc Ctrl+Z khi không đang gõ). Hoàn tác nhập Excel khôi phục đúng danh sách khách hàng trước đó và xóa khách mới thêm.
+- **Cột bảng:** lựa chọn cột lưu trong cài đặt cá nhân (cùng nơi lưu tên hiển thị); sắp xếp không được lưu và quay về "Thực tế 2026 giảm dần" mỗi lần mở.
+- **Mục tiêu theo quý** lấy từ dòng người phụ trách trong Excel, nên không hiển thị khi đang lọc theo khu vực.

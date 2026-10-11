@@ -1,7 +1,7 @@
 {
   "name": "bg-sales-management",
   "productName": "BG Sales Management",
-  "version": "0.6.1",
+  "version": "0.8.0",
   "description": "Quản lý doanh số, kế hoạch công tác và tác vụ khách hàng BG",
   "main": "main.js",
   "author": "BG",
@@ -17,6 +17,7 @@
     "appId": "vn.bg.salesmanagement",
     "productName": "BG Sales Management",
     "directories": { "output": "dist", "buildResources": "build" },
+    "electronLanguages": ["vi", "en-US"],
     "files": ["main.js", "preload.js", "index.html", "assets/**", "package.json"],
     "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "build/icon.png" },
     "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "BG Sales Management" },

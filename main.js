@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, shell, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require("electron");
 const path = require("path");
 app.commandLine.appendSwitch("lang", "vi");
 const autoUpdater = app.isPackaged ? require("electron-updater").autoUpdater : null;
@@ -31,6 +31,10 @@ if (!app.requestSingleInstanceLock()) {
       title: "BG Sales Management", backgroundColor: "#101010",
       icon: path.join(__dirname, "build", "icon.png"),
       webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, preload: path.join(__dirname, "preload.js") }
+    });
+    win.webContents.on("will-prevent-unload", (e) => {
+      const c = dialog.showMessageBoxSync(win, { type: "question", buttons: ["Ở lại", "Thoát, bỏ thay đổi"], defaultId: 0, cancelId: 0, title: "Thay đổi chưa lưu", message: "Bạn có thay đổi chưa lưu.", detail: "Thoát bây giờ sẽ mất các thay đổi chưa lưu." });
+      if (c === 1) e.preventDefault();
     });
     win.loadFile(path.join(__dirname, "index.html"));
     win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: "deny" }; });
