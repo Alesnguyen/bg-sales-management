@@ -4,7 +4,9 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
+env:
+  REL_REPO: Alesnguyen/bg-sales-management-releases
 jobs:
   build:
     runs-on: windows-latest
@@ -13,16 +15,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      - name: Kiểm tra mã truy cập kho phát hành
+        shell: bash
+        run: |
+          if [ -z "$RELEASES_TOKEN" ]; then echo "::error::Thiếu secret RELEASES_TOKEN. Xem PHAT-HANH-RIENG-TU.md"; exit 1; fi
+        env:
+          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - run: npm install
       - name: Chọn chế độ phát hành
         id: rel
         shell: bash
         run: |
           V=$(node -p "require('./package.json').version")
-          if [ "${{ github.event_name }}" = "push" ] && ! git ls-remote --exit-code --tags origin "v$V" >/dev/null 2>&1; then echo "mode=always" >> "$GITHUB_OUTPUT"; else echo "mode=never" >> "$GITHUB_OUTPUT"; fi
+          if [ "${{ github.event_name }}" = "push" ] && ! gh release view "v$V" --repo "$REL_REPO" >/dev/null 2>&1; then echo "mode=always" >> "$GITHUB_OUTPUT"; else echo "mode=never" >> "$GITHUB_OUTPUT"; fi
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - run: npx electron-builder --win nsis --publish ${{ steps.rel.outputs.mode }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - name: Bảo đảm bản phát hành có latest.yml (cho tự cập nhật)
         if: steps.rel.outputs.mode == 'always'
         shell: bash
@@ -37,9 +47,9 @@ jobs:
             EXE=$(ls dist/*.exe | head -n1)
             node "$RUNNER_TEMP/ly.js" "$EXE" "$(basename "$EXE")" "$V"
           fi
-          gh release upload "v$V" dist/latest.yml $(ls dist/*.blockmap 2>/dev/null) --clobber
+          gh release upload "v$V" dist/latest.yml $(ls dist/*.blockmap 2>/dev/null) --repo "$REL_REPO" --clobber
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: BG-Sales-Management-Setup
