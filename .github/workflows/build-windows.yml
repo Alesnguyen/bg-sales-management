@@ -38,16 +38,23 @@ jobs:
         shell: bash
         run: |
           V=$(node -p "require('./package.json').version")
+          EXE=$(ls dist/*.exe | head -n1)
+          SAFE=$(basename "$EXE" | tr ' ' '-')
           if [ ! -f dist/latest.yml ]; then
-            cat > "$RUNNER_TEMP/ly.js" <<'EOF'
+            cat > "dist/ly.js" <<'EOF'
           const c=require("crypto"),fs=require("fs"),p=process.argv[2],n=process.argv[3],v=process.argv[4];
           const b=fs.readFileSync(p),h=c.createHash("sha512").update(b).digest("base64");
           fs.writeFileSync("dist/latest.yml","version: "+v+"\nfiles:\n  - url: "+n+"\n    sha512: "+h+"\n    size: "+b.length+"\npath: "+n+"\nsha512: "+h+"\nreleaseDate: '"+new Date().toISOString()+"'\n");
           EOF
-            EXE=$(ls dist/*.exe | head -n1)
-            node "$RUNNER_TEMP/ly.js" "$EXE" "$(basename "$EXE")" "$V"
+            node dist/ly.js "$EXE" "$SAFE" "$V"
           fi
-          gh release upload "v$V" dist/latest.yml $(ls dist/*.blockmap 2>/dev/null) --repo "$REL_REPO" --clobber
+          # Tên tệp do công cụ build tạo ra có dấu cách; sao chép sang tên có dấu gạch ngang rồi mới tải lên.
+          mkdir -p dist/up
+          for f in dist/latest.yml dist/*.blockmap; do
+            [ -e "$f" ] && cp "$f" "dist/up/$(basename "$f" | tr ' ' '-')"
+          done
+          ls -la dist/up
+          gh release upload "v$V" dist/up/* --repo "$REL_REPO" --clobber
         env:
           GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - uses: actions/upload-artifact@v4
