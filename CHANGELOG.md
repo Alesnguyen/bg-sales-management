@@ -1,5 +1,10 @@
 # Lịch sử phiên bản
 
+## 0.9.1
+- Sửa lỗi ô số tiền: khi gõ hoặc xóa, ứng dụng không còn tự chèn dấu chấm và đổi nội dung ô (có thể xung đột với bộ gõ tiếng Việt, làm chữ số "5" tự xuất hiện). Nay ô giữ nguyên khi đang gõ; dòng gợi ý bên dưới hiện ngay số đầy đủ có dấu chấm (= 500.000.000 ≈ 500 triệu); rời ô thì ô được định dạng. Chặn chữ và ký tự lạ; dán số có dấu chấm vẫn đúng.
+- Sửa lỗi tính SaleBoots đang chạy: trước đây "Cùng kỳ 2025" lấy cả thời gian chương trình trong khi "Thực đạt" mới có đến hôm nay, nên Doanh số tăng thêm và Tăng trưởng bị âm sai. Nay chương trình đang chạy chỉ so sánh phần đã diễn ra với đúng khoảng thời gian đó của 2025.
+- Thêm giải thích: chú thích khi rê chuột, dòng thông báo khoảng thời gian đang so sánh, và mục "Cách tính các con số này" kèm số liệu thật.
+
 ## 0.9.0
 - **SaleBoots** (chương trình thúc đẩy doanh số), mục con của Khách hàng: chỉ hiện ở thanh bên khi đang ở Khách hàng, được viền (không tô vàng) khi mở. Mỗi chương trình gắn với một khách hàng; trang khách hàng liệt kê các chương trình đã gắn và thêm nhanh chương trình mới.
 - Tự tính thực đạt từ số liệu tháng của khách hàng (tháng chưa đủ ngày chia theo tỉ lệ ngày), so với cùng kỳ 2025, tỉ lệ đạt mục tiêu, tiến độ so với thời gian, hiệu quả ngân sách; cảnh báo trùng thời gian, chi vượt ngân sách, thiếu số liệu. Trạng thái tự động theo ngày (sắp diễn ra, đang chạy, đạt hoặc chưa đạt mục tiêu), hoặc tạm dừng / hủy.

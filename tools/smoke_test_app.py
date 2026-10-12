@@ -43,9 +43,10 @@ with sync_playwright() as p:
     pg.click("#customer-rows tr:has-text('Skoda Bắc Giang')");pg.wait_for_selector("#ce-form #ce_name")
     ok("Khu vực: Bắc Giang" in pg.inner_text("#crumbs") and "Skoda Bắc Giang" in pg.inner_text("#crumbs"),"breadcrumb theo thuộc tính: "+pg.inner_text("#crumbs").replace("\n"," "))
     pg.fill("#ce_code","KH-099");pg.fill("#ce_t26","300000000")
-    ok(pg.input_value("#ce_t26")=="300.000.000","ô số tiền tự định dạng 300.000.000")
-    pg.click("#ce_m0_1");pg.keyboard.type("5000000");pg.fill("#ce_m1_1","3.000.000");pg.fill("#ce_m0_0","1000000")
-    ok(pg.input_value("#ce_m0_1")=="5.000.000","gõ từng số vẫn tự chèn dấu chấm")
+    ok("300.000.000" in pg.inner_text("#ce-form .fgrid3 >> nth=0") and "300 triệu" in pg.inner_text("#ce-form"),"dòng gợi ý hiện số đầy đủ 300.000.000 khi đang gõ");pg.press("#ce_t26","Tab")
+    ok(pg.input_value("#ce_t26")=="300.000.000","rời ô: ô số tiền định dạng 300.000.000")
+    pg.click("#ce_m0_1");pg.keyboard.type("5000000");pg.fill("#ce_m1_1","3.000.000");pg.fill("#ce_m0_0","1000000");pg.press("#ce_m0_0","Tab")
+    ok(pg.input_value("#ce_m1_1")=="3.000.000","nhập có dấu chấm vẫn được hiểu đúng")
     pg.click("#ce-recalc");ok(pg.input_value("#ce_a26")=="8.000.000" and pg.input_value("#ce_q0")=="8.000.000" and pg.input_value("#ce_a25")=="1.000.000","tính lại quý và tổng từ tháng")
     ok(pg.inner_text("#sum26").strip()=="8.000.000","dòng tổng 2026 cập nhật trực tiếp")
     shot("edit-page");pg.click("#ce-form button[type=submit]");pg.wait_for_selector("#customer-rows tr:has-text('KH-099')")
@@ -75,6 +76,14 @@ with sync_playwright() as p:
     pg.click("[data-sbopen]");pg.wait_for_selector("#sb_name");ok(pg.inner_text("#page-title")=="Sửa SaleBoots" and "SaleBoots" in pg.inner_text("#crumbs") and pg.input_value("#sb_name")=="Tăng tốc quý 3","mở chương trình từ trang khách hàng, breadcrumb có SaleBoots")
     pg.click("#add-sb") if False else None
     pg.click('#crumbs [data-crumb=saleboots]');pg.wait_for_selector("#sb-rows tr")
+    pg.click("#add-sb");pg.click("#sb_target");seq=[]
+    pg.keyboard.type("500000000",delay=25);seq.append(pg.input_value("#sb_target"))
+    for i in range(6): pg.keyboard.press("Backspace");seq.append(pg.input_value("#sb_target"))
+    ok(seq==["500000000","50000000","5000000","500000","50000","5000","500"],"gõ 500000000 rồi xóa từng số: không có chữ số lạ xuất hiện "+str(seq[-3:]))
+    pg.keyboard.type("abc!");ok(pg.input_value("#sb_target")=="500","chữ và ký tự lạ bị chặn");pg.keyboard.type("000000")
+    ok("500.000.000" in pg.inner_text("#sb-form .fgrid4 >> nth=0"),"gợi ý dưới ô hiện 500.000.000");pg.press("#sb_target","Tab");ok(pg.input_value("#sb_target")=="500.000.000","rời ô được định dạng");pg.click("#sb_target");ok(pg.input_value("#sb_target")=="500.000.000","vào lại ô không bị đổi nội dung")
+    pg.keyboard.press("Control+a");pg.keyboard.type("777");ok(pg.input_value("#sb_target")=="777","bôi đen rồi gõ đè hoạt động bình thường")
+    pg.click("#sb-cancel");pg.wait_for_selector("#sb-rows tr")
     pg.click("#add-sb");pg.fill("#sb_cus","Kia Bắc Ninh (CÔNG TY TNHH DƯƠNG TUẤN)");pg.fill("#sb_start","2026-08-01");pg.fill("#sb_end","2026-08-31");ok("trùng thời gian" in pg.inner_text("#sb-res"),"cảnh báo chương trình trùng thời gian");pg.click("#sb-cancel");pg.wait_for_selector("#sb-rows tr")
     go("customers");pg.click("#customer-rows tr:has-text('Kia Bắc Ninh (CÔNG TY')");pg.click("#ce-addsb");ok(pg.input_value("#sb_cus").startswith("Kia Bắc Ninh (CÔNG TY"),"thêm SaleBoots từ trang khách hàng: tự điền khách hàng");pg.click("#sb-cancel")
     pg.wait_for_selector("#sb-rows tr");pg.select_option("#sb-status","Đang chạy");ok("không có chương trình phù hợp" in pg.inner_text("#sb-empty").lower() or pg.locator("#sb-rows tr").count()==0,"lọc theo trạng thái Đang chạy");pg.select_option("#sb-status","")
@@ -95,6 +104,14 @@ with sync_playwright() as p:
     go("customers");pg.click("#nav-sb");pg.wait_for_selector("#sb-rows tr");ok(pg.locator("#sb-rows tr").count()==1,"SaleBoots được sao lưu và khôi phục cùng dữ liệu")
     go("overview");ok("Anh Tú" in pg.inner_text("#greet"),"tên hiển thị được khôi phục");shot("overview-dark")
     pg.reload();pg.wait_for_selector("#splash",state="detached");go("customers");ok(pg.locator("#customer-rows tr").count()==26,"dữ liệu còn sau khi mở lại")
+    import datetime
+    rec=pg.evaluate("""async()=>{const db=await new Promise(r=>{const q=indexedDB.open('bgsm');q.onsuccess=()=>r(q.result)});const all=await new Promise(r=>{const t=db.transaction('c').objectStore('c').getAll();t.onsuccess=()=>r(t.result)});return all.find(c=>c.name.startsWith('Kia Bắc Ninh (CÔNG TY'))}""")
+    a25,a26=rec["m"][6]
+    for today,run,base in ((datetime.datetime(2026,7,16,10,0),True,a25*16/31),(datetime.datetime(2026,8,5,10,0),False,a25)):
+        pg3=ctx.new_page();pg3.clock.install(time=today);pg3.goto((root/"index.html").as_uri());pg3.wait_for_selector("#splash",state="detached")
+        pg3.click('.nav button[data-page=customers]');pg3.click("#nav-sb");pg3.click("#add-sb");pg3.fill("#sb_cus",rec["name"]);pg3.fill("#sb_name","T7");pg3.fill("#sb_start","2026-07-01");pg3.fill("#sb_end","2026-07-31");pg3.fill("#sb_target","500000000");pg3.press("#sb_target","Tab");pg3.wait_for_timeout(200)
+        t=pg3.inner_text("#sb-res");g=f"{(a26/base-1)*100:.1f}".replace(".",",")+"%"
+        ok(g in t and (("chỉ so sánh phần đã diễn ra" in t)==run),"so sánh cùng kỳ công bằng khi "+("đang chạy" if run else "đã kết thúc")+f": tăng trưởng {g}");pg3.close()
     pg2=ctx.new_page();pg2.on("pageerror",lambda e:errs.append("pg2:"+str(e)));pg2.on("dialog",lambda d:d.accept())
     pg2.add_init_script("""window.__saved=[];window.__flush=null;window.__ready=[];window.bgsm={check:async()=>({}),install:async()=>{},onUpdate:()=>{},backup:{save:async t=>{window.__saved.push(t);return{name:'bgsm-test.json',dir:'C:\\\\Sao luu'}},list:async()=>({dir:'C:\\\\Sao luu',items:[{name:'bgsm-2026-10-12_0800.json',mtime:Date.now(),size:2048}]}),read:async n=>window.__saved[window.__saved.length-1],open:async()=>{},onFlush:cb=>{window.__flush=cb},ready:d=>window.__ready.push(d)}}""")
     pg2.goto((root/"index.html").as_uri());pg2.wait_for_selector("#splash",state="detached");pg2.wait_for_timeout(500)

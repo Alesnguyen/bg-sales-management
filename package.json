@@ -1,7 +1,7 @@
 {
   "name": "bg-sales-management",
   "productName": "BG Sales Management",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Quản lý doanh số, kế hoạch công tác và tác vụ khách hàng BG",
   "main": "main.js",
   "author": "BG",

@@ -104,3 +104,4 @@ kbd{font:inherit;font-size:var(--font-size-xs);padding:1px 6px;border:1px solid 
 #sb-form input:not([type=checkbox]),#sb-form textarea,#sb-form select{width:100%}
 #sb-form textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-control);padding:8px 10px}
 #sb-rows td:nth-child(-n+2){min-width:170px;max-width:240px}
+.how{margin-top:12px}.how summary{cursor:pointer;font-weight:var(--font-weight-semibold)}.how summary:focus-visible{outline:var(--focus-width) solid var(--focus);outline-offset:2px}
