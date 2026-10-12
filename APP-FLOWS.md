@@ -25,3 +25,8 @@ Quy ước dữ liệu: cột quý J/L/N/P ở dòng khách hàng là tỉ lệ 
 - **Hoàn tác:** thông báo có nút "Hoàn tác" trong 8 giây (hoặc Ctrl+Z khi không đang gõ). Hoàn tác nhập Excel khôi phục đúng danh sách khách hàng trước đó và xóa khách mới thêm.
 - **Cột bảng:** lựa chọn cột lưu trong cài đặt cá nhân (cùng nơi lưu tên hiển thị); sắp xếp không được lưu và quay về "Thực tế 2026 giảm dần" mỗi lần mở.
 - **Mục tiêu theo quý** lấy từ dòng người phụ trách trong Excel, nên không hiển thị khi đang lọc theo khu vực.
+
+## Bổ sung v0.9.0
+- **SaleBoots:** mục con của Khách hàng (thanh bên chỉ hiện khi ở Khách hàng hoặc các trang con). Dữ liệu liên kết bằng mã khách hàng (không sao chép tên), nên đổi tên khách hàng không làm mất liên kết; khách hàng chỉ lưu trữ chứ không xóa.
+- **Thực đạt** = số nhập tay nếu có, nếu không thì tổng doanh số tháng của khách hàng trong kỳ (tháng chưa đủ ngày chia theo ngày). **Cùng kỳ 2025** chỉ tính khi chương trình nằm trọn trong 2026. **Hiệu quả ngân sách** = (thực đạt trừ cùng kỳ 2025) chia cho số đã chi.
+- **Sao lưu tự động:** chỉ ghi khi dữ liệu thay đổi (so sánh dấu vân tay nội dung), ghi tệp tạm rồi đổi tên để không để lại tệp dở dang, tối đa chờ 5 giây khi đóng ứng dụng.

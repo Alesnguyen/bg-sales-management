@@ -7,6 +7,7 @@
 <nav class="nav">
 <button class="active" data-page="overview" aria-current="page"><span class="nav-ico">⌂</span>Tổng quan</button>
 <button data-page="customers"><span class="nav-ico">▤</span>Khách hàng</button>
+<button class="sub" data-page="saleboots" id="nav-sb" hidden><span class="nav-ico" aria-hidden="true">⚡</span>SaleBoots</button>
 <button data-page="calendar"><span class="nav-ico">▦</span>Lịch làm việc</button>
 <button data-page="import"><span class="nav-ico">⇧</span>Nhập dữ liệu</button>
 <button data-page="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
@@ -49,6 +50,15 @@
 
 <section class="view" data-view="customer-edit" aria-labelledby="page-title"><form id="ce-form" novalidate></form></section>
 
+<section class="view" data-view="saleboots" aria-labelledby="page-title">
+<div class="card"><div class="card-title-row"><div><h2>Danh sách SaleBoots</h2><div class="muted small">Theo dõi các chương trình thúc đẩy doanh số, mỗi chương trình gắn với một khách hàng. Nhấp một dòng để sửa.</div></div><button class="btn primary" id="add-sb">＋ Thêm SaleBoots</button></div>
+<div class="stat-kpi" id="sb-kpi"></div>
+<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="sb-search" type="search" placeholder="Tìm theo chương trình, khách hàng hoặc khu vực…" aria-label="Tìm chương trình SaleBoots"></div><select id="sb-region" aria-label="Lọc theo khu vực"></select><select id="sb-status" aria-label="Lọc theo trạng thái"><option value="">Tất cả trạng thái</option><option>Sắp diễn ra</option><option>Đang chạy</option><option>Đã kết thúc</option><option>Tạm dừng</option><option>Đã hủy</option></select><label class="small muted"><input type="checkbox" id="sb-arch"> Hiện đã lưu trữ</label><button class="btn" id="sb-clear">Xóa lọc</button></div>
+<div class="table-wrap wide" id="sb-wrap"><table aria-label="Danh sách chương trình SaleBoots"><thead id="sb-head"></thead><tbody id="sb-rows"></tbody></table><div class="empty-state" id="sb-empty"></div></div>
+<div class="table-foot"><span id="sb-count"></span></div></div>
+</section>
+<section class="view" data-view="saleboot-edit" aria-labelledby="page-title"><form id="sb-form" novalidate></form></section>
+
 <section class="view" data-view="calendar" aria-labelledby="page-title">
 <div class="card"><div class="card-title-row"><div><h2>Lịch làm việc theo tuần</h2><div class="muted small">Nhấp vào một công việc để sửa, đổi trạng thái hoặc xóa.</div></div><div style="display:grid;gap:8px"><button class="btn primary" id="add-work">＋ Thêm công việc</button><button class="btn" id="month-stats">▤ Thống kê tháng</button></div></div>
 <div class="toolbar"><button class="btn" id="prev-week" aria-label="Tuần trước">← Tuần trước</button><span class="tag" id="week-label"></span><button class="btn" id="next-week" aria-label="Tuần sau">Tuần sau →</button><button class="btn" id="this-week">Tuần này</button></div>
@@ -74,6 +84,7 @@
 <div class="settings-row"><div><div class="settings-title">Cập nhật ứng dụng</div><div class="settings-desc" id="upd-msg">—</div></div><div class="toolbar" style="margin:0"><button class="btn" id="upd-check">Kiểm tra cập nhật</button><button class="btn primary" id="upd-install" hidden>Khởi động lại để cập nhật</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Dữ liệu</div><div class="settings-desc" id="set-data">—</div></div></div>
 <div class="settings-row"><div><div class="settings-title">Lần nhập Excel gần nhất</div><div class="settings-desc" id="set-import">Chưa nhập</div></div></div>
+<div class="settings-row"><div><div class="settings-title">Sao lưu tự động</div><div class="settings-desc" id="bk-auto-msg">—</div></div><div class="toolbar" style="margin:0"><label class="chk"><input type="checkbox" id="bk-auto"> Bật</label><button class="btn" id="bk-open">Mở thư mục</button><button class="btn" id="bk-list">Khôi phục từ bản tự động…</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Sao lưu / Khôi phục</div><div class="settings-desc">Tệp .json gồm khách hàng, công việc và thông tin nhập.<span id="set-backup"></span></div></div><div class="toolbar" style="margin:0"><button class="btn" id="bk-export">Sao lưu</button><button class="btn" id="bk-restore">Khôi phục</button><input type="file" id="bk-file" accept=".json" hidden></div></div>
 <div class="settings-row"><div><div class="settings-title">Xóa toàn bộ dữ liệu</div><div class="settings-desc">Không thể hoàn tác. Hãy sao lưu trước.</div></div><button class="btn" id="wipe" style="color:var(--danger)">Xóa dữ liệu</button></div></article>
 </div>

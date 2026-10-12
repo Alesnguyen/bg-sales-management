@@ -274,10 +274,22 @@ kbd{font:inherit;font-size:var(--font-size-xs);padding:1px 6px;border:1px solid 
 .stbl{font-size:var(--font-size-sm)}.stbl th,.stbl td{padding:8px 7px;white-space:nowrap}
 .stbl thead th{letter-spacing:0;text-transform:none;font-size:var(--font-size-xs)}
 .stbl{min-width:0!important;width:100%}
+
+/* ===== v0.9: SaleBoots (mục con của Khách hàng) ===== */
+.nav button.sub{margin:2px 0 4px 14px;width:calc(100% - 14px);min-height:44px;font-size:var(--font-size-sm)}
+.nav button.sub.sel{background:var(--surface-subtle);box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--text);font-weight:var(--font-weight-semibold)}
+#sb-kpi{margin:12px 0}
+#sb-rows td:nth-child(-n+2){min-width:200px;max-width:300px}
+#sb-rows .mini-track{width:110px}
+.sbres .tag{vertical-align:middle}
+#sb-form .card{margin-bottom:16px}
+#sb-form input:not([type=checkbox]),#sb-form textarea,#sb-form select{width:100%}
+#sb-form textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-control);padding:8px 10px}
+#sb-rows td:nth-child(-n+2){min-width:170px;max-width:240px}
 </style>
 </head>
 <body>
-<div id="splash" role="status" aria-label="Đang mở ứng dụng"><div class="splashbox"><div class="splash-logo"><img src="assets/BG-Logo.jpg" alt="Logo thương hiệu BG"></div><h2>BG Sales Management</h2><p>Quản lý khách hàng · Doanh số · Công việc</p><div class="splash-rail" aria-hidden="true"><div class="splash-progress"></div></div><p class="small">Đang mở dữ liệu cục bộ…</p><div class="splash-foot"><span>●</span><span>Ngoại tuyến</span><span>·</span><span>v0.8.0</span></div></div></div>
+<div id="splash" role="status" aria-label="Đang mở ứng dụng"><div class="splashbox"><div class="splash-logo"><img src="assets/BG-Logo.jpg" alt="Logo thương hiệu BG"></div><h2>BG Sales Management</h2><p>Quản lý khách hàng · Doanh số · Công việc</p><div class="splash-rail" aria-hidden="true"><div class="splash-progress"></div></div><p class="small">Đang mở dữ liệu cục bộ…</p><div class="splash-foot"><span>●</span><span>Ngoại tuyến</span><span>·</span><span>v0.9.0</span></div></div></div>
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
 <div class="app">
 <aside class="sidebar" aria-label="Điều hướng chính">
@@ -286,12 +298,13 @@ kbd{font:inherit;font-size:var(--font-size-xs);padding:1px 6px;border:1px solid 
 <nav class="nav">
 <button class="active" data-page="overview" aria-current="page"><span class="nav-ico">⌂</span>Tổng quan</button>
 <button data-page="customers"><span class="nav-ico">▤</span>Khách hàng</button>
+<button class="sub" data-page="saleboots" id="nav-sb" hidden><span class="nav-ico" aria-hidden="true">⚡</span>SaleBoots</button>
 <button data-page="calendar"><span class="nav-ico">▦</span>Lịch làm việc</button>
 <button data-page="import"><span class="nav-ico">⇧</span>Nhập dữ liệu</button>
 <button data-page="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
 </nav>
 <div class="side-spacer"></div>
-<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Hệ thống thiết kế v0.2.1 · Ứng dụng v0.8.0</div></div>
+<div class="local-status"><div class="local-line"><span class="status-dot"></span>Dữ liệu lưu cục bộ</div><div id="side-count">—</div><div class="side-version">Hệ thống thiết kế v0.2.1 · Ứng dụng v0.9.0</div></div>
 </aside>
 <main class="main" id="main" tabindex="-1">
 <header class="topbar">
@@ -328,6 +341,15 @@ kbd{font:inherit;font-size:var(--font-size-xs);padding:1px 6px;border:1px solid 
 
 <section class="view" data-view="customer-edit" aria-labelledby="page-title"><form id="ce-form" novalidate></form></section>
 
+<section class="view" data-view="saleboots" aria-labelledby="page-title">
+<div class="card"><div class="card-title-row"><div><h2>Danh sách SaleBoots</h2><div class="muted small">Theo dõi các chương trình thúc đẩy doanh số, mỗi chương trình gắn với một khách hàng. Nhấp một dòng để sửa.</div></div><button class="btn primary" id="add-sb">＋ Thêm SaleBoots</button></div>
+<div class="stat-kpi" id="sb-kpi"></div>
+<div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input id="sb-search" type="search" placeholder="Tìm theo chương trình, khách hàng hoặc khu vực…" aria-label="Tìm chương trình SaleBoots"></div><select id="sb-region" aria-label="Lọc theo khu vực"></select><select id="sb-status" aria-label="Lọc theo trạng thái"><option value="">Tất cả trạng thái</option><option>Sắp diễn ra</option><option>Đang chạy</option><option>Đã kết thúc</option><option>Tạm dừng</option><option>Đã hủy</option></select><label class="small muted"><input type="checkbox" id="sb-arch"> Hiện đã lưu trữ</label><button class="btn" id="sb-clear">Xóa lọc</button></div>
+<div class="table-wrap wide" id="sb-wrap"><table aria-label="Danh sách chương trình SaleBoots"><thead id="sb-head"></thead><tbody id="sb-rows"></tbody></table><div class="empty-state" id="sb-empty"></div></div>
+<div class="table-foot"><span id="sb-count"></span></div></div>
+</section>
+<section class="view" data-view="saleboot-edit" aria-labelledby="page-title"><form id="sb-form" novalidate></form></section>
+
 <section class="view" data-view="calendar" aria-labelledby="page-title">
 <div class="card"><div class="card-title-row"><div><h2>Lịch làm việc theo tuần</h2><div class="muted small">Nhấp vào một công việc để sửa, đổi trạng thái hoặc xóa.</div></div><div style="display:grid;gap:8px"><button class="btn primary" id="add-work">＋ Thêm công việc</button><button class="btn" id="month-stats">▤ Thống kê tháng</button></div></div>
 <div class="toolbar"><button class="btn" id="prev-week" aria-label="Tuần trước">← Tuần trước</button><span class="tag" id="week-label"></span><button class="btn" id="next-week" aria-label="Tuần sau">Tuần sau →</button><button class="btn" id="this-week">Tuần này</button></div>
@@ -347,12 +369,13 @@ kbd{font:inherit;font-size:var(--font-size-xs);padding:1px 6px;border:1px solid 
 <div class="settings-row"><div><div class="settings-title">Chế độ sáng / tối</div><div class="settings-desc">Đổi giữa nền sáng và nền tối; lựa chọn được ghi nhớ.</div></div><button class="btn" id="settings-theme">Đổi giao diện</button></div>
 <div class="settings-row"><div><div class="settings-title">Màu thương hiệu</div><div class="settings-desc">Vàng · Đen · Trắng</div></div><div class="settings-value">#FFDF1B<br>#000000 / #FFFFFF</div></div>
 <div class="settings-row"><div><div class="settings-title">Logo chính thức</div><div class="settings-desc">Bản gốc tại assets/BG-Logo.jpg.</div></div><span class="tag success">Đã có asset</span></div></article>
-<article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v0.8.0</span></div>
+<article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v0.9.0</span></div>
 <div class="settings-row"><div><div class="settings-title">Tên hiển thị</div><div class="settings-desc">Dùng cho lời chào ở trang Tổng quan.</div></div><input id="pf-name" type="text" maxlength="40" placeholder="Tên của bạn" aria-label="Tên hiển thị" style="max-width:200px"></div>
 <div class="settings-row"><div><div class="settings-title">Phím tắt</div><div class="settings-desc">Xem các phím tắt, hoặc nhấn phím ? ở bất kỳ đâu.</div></div><button class="btn" id="open-keys">Xem phím tắt</button></div>
 <div class="settings-row"><div><div class="settings-title">Cập nhật ứng dụng</div><div class="settings-desc" id="upd-msg">—</div></div><div class="toolbar" style="margin:0"><button class="btn" id="upd-check">Kiểm tra cập nhật</button><button class="btn primary" id="upd-install" hidden>Khởi động lại để cập nhật</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Dữ liệu</div><div class="settings-desc" id="set-data">—</div></div></div>
 <div class="settings-row"><div><div class="settings-title">Lần nhập Excel gần nhất</div><div class="settings-desc" id="set-import">Chưa nhập</div></div></div>
+<div class="settings-row"><div><div class="settings-title">Sao lưu tự động</div><div class="settings-desc" id="bk-auto-msg">—</div></div><div class="toolbar" style="margin:0"><label class="chk"><input type="checkbox" id="bk-auto"> Bật</label><button class="btn" id="bk-open">Mở thư mục</button><button class="btn" id="bk-list">Khôi phục từ bản tự động…</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Sao lưu / Khôi phục</div><div class="settings-desc">Tệp .json gồm khách hàng, công việc và thông tin nhập.<span id="set-backup"></span></div></div><div class="toolbar" style="margin:0"><button class="btn" id="bk-export">Sao lưu</button><button class="btn" id="bk-restore">Khôi phục</button><input type="file" id="bk-file" accept=".json" hidden></div></div>
 <div class="settings-row"><div><div class="settings-title">Xóa toàn bộ dữ liệu</div><div class="settings-desc">Không thể hoàn tác. Hãy sao lưu trước.</div></div><button class="btn" id="wipe" style="color:var(--danger)">Xóa dữ liệu</button></div></article>
 </div>
@@ -374,19 +397,25 @@ const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+Stri
 const dmy=s=>s?s.split("-").reverse().join("/"):"";
 const monday=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
 const vi=m=>/[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơưạ-ỹ]/.test(m||"")?m:"lỗi không xác định, vui lòng thử lại";
-const VER="0.8.0",S={cus:[],work:[],meta:{},prefs:{id:"prefs"},sort:{k:"a26",d:-1},week:monday(new Date())};
+const VER="0.9.0",S={cus:[],work:[],sb:[],meta:{},prefs:{id:"prefs"},sort:{k:"a26",d:-1},week:monday(new Date())};
 /* ===== Lưu trữ IndexedDB ===== */
 let db;
-const open=()=>new Promise((ok,no)=>{const r=indexedDB.open("bgsm",1);r.onupgradeneeded=()=>["c","w","m"].forEach(n=>r.result.createObjectStore(n,{keyPath:"id"}));r.onsuccess=()=>{db=r.result;ok()};r.onerror=()=>no(r.error)});
-const run=(st,mode,fn)=>new Promise((ok,no)=>{const t=db.transaction(st,mode);let r;try{r=fn(...[].concat(st).map(s=>t.objectStore(s)))}catch(e){try{t.abort()}catch(_){}no(e);return}t.oncomplete=()=>ok(r&&"result"in r?r.result:undefined);t.onerror=t.onabort=()=>no(t.error||Error("Giao dịch bị hủy"))});
-const getAll=s=>run(s,"readonly",o=>o.getAll()),put=(s,a)=>run(s,"readwrite",o=>{a.forEach(x=>o.put(x))}),del=(s,id)=>run(s,"readwrite",o=>o.delete(id)),clr=()=>run(["c","w","m"],"readwrite",(c,w,m)=>{c.clear();w.clear();m.clear()});
-async function load(){S.cus=await getAll("c");S.work=await getAll("w");const ms=await getAll("m");S.meta=ms.find(x=>x.id==="meta")||{};S.prefs=ms.find(x=>x.id==="prefs")||{id:"prefs"};S.cus.sort((a,b)=>(b.a26||0)-(a.a26||0))}
+const open=()=>new Promise((ok,no)=>{const r=indexedDB.open("bgsm",2);r.onupgradeneeded=()=>["c","w","m","s"].forEach(n=>r.result.objectStoreNames.contains(n)||r.result.createObjectStore(n,{keyPath:"id"}));r.onsuccess=()=>{db=r.result;ok()};r.onerror=()=>no(r.error)});
+const run=(st,mode,fn)=>new Promise((ok,no)=>{const t=db.transaction(st,mode);if(mode==="readwrite"&&[].concat(st).some(x=>x!=="m"))S.changed=true;let r;try{r=fn(...[].concat(st).map(s=>t.objectStore(s)))}catch(e){try{t.abort()}catch(_){}no(e);return}t.oncomplete=()=>ok(r&&"result"in r?r.result:undefined);t.onerror=t.onabort=()=>no(t.error||Error("Giao dịch bị hủy"))});
+const getAll=s=>run(s,"readonly",o=>o.getAll()),put=(s,a)=>run(s,"readwrite",o=>{a.forEach(x=>o.put(x))}),del=(s,id)=>run(s,"readwrite",o=>o.delete(id)),clr=()=>run(["c","w","m","s"],"readwrite",(c,w,m,s)=>{c.clear();w.clear();m.clear();s.clear()});
+async function load(){S.cus=await getAll("c");S.work=await getAll("w");S.sb=await getAll("s");const ms=await getAll("m");S.meta=ms.find(x=>x.id==="meta")||{};S.prefs=ms.find(x=>x.id==="prefs")||{id:"prefs"};S.cus.sort((a,b)=>(b.a26||0)-(a.a26||0))}
 /* ===== Thông báo, điều hướng, giao diện ===== */
 let tt;const notify=(m,undo)=>{const t=$("#toast");t.textContent=m;S.undo=undo||null;if(undo){const b=document.createElement("button");b.type="button";b.className="btn";b.textContent="Hoàn tác";b.onclick=()=>doUndo();t.append(b)}t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>{t.classList.remove("show");S.undo=null},undo?8000:2800)};
 const doUndo=async()=>{const u=S.undo;if(!u)return;S.undo=null;$("#toast").classList.remove("show");try{await u();await load();render();notify("Đã hoàn tác")}catch(e){notify("Không hoàn tác được: "+vi(e.message))}};
 const setFocus=on=>{document.body.classList.toggle("focus",on);const b=$("#focus-toggle");b.setAttribute("aria-pressed",String(on));b.textContent=on?"⤡ Thu nhỏ bảng":"⤢ Mở rộng bảng"};
-const META={"customer-edit":["QUẢN LÝ DỮ LIỆU","Sửa khách hàng","Cập nhật thông tin và số liệu doanh số của khách hàng."],overview:["KHÔNG GIAN LÀM VIỆC","Tổng quan","Bức tranh nhanh về dữ liệu kinh doanh của bạn."],customers:["QUẢN LÝ DỮ LIỆU","Danh sách khách hàng","Tìm kiếm, lọc, thêm và sửa khách hàng."],calendar:["KẾ HOẠCH CÔNG VIỆC","Lịch làm việc","Kế hoạch công tác và tác vụ theo tuần (thứ 2 đến thứ 7)."],import:["QUẢN LÝ DỮ LIỆU","Nhập dữ liệu","Nhập Excel có xem trước và xác nhận."],settings:["TÙY CHỈNH","Cài đặt","Giao diện, sao lưu và thông tin ứng dụng."]};
-function go(p){if(!META[p])return;if(S.view==="customer-edit"&&p!=="customer-edit"&&S.dirty&&!confirm("Bạn có thay đổi chưa lưu. Rời khỏi trang này và bỏ các thay đổi?"))return;S.view=p;S.dirty=false;setFocus(false);document.body.dataset.page=p;const nav=p==="customer-edit"?"customers":p;$$("[data-view]").forEach(v=>v.classList.toggle("active",v.dataset.view===p));$$(".nav button").forEach(b=>{const a=b.dataset.page===nav;b.classList.toggle("active",a);a?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});$("#page-eyebrow").textContent=META[p][0];$("#page-title").textContent=p==="customer-edit"&&!S.edit?"Thêm khách hàng":META[p][1];$("#page-description").textContent=META[p][2];crumbs(p);if(p==="customer-edit")ceRender();render();window.scrollTo(0,0)}
+const META={saleboots:["QUẢN LÝ CHƯƠNG TRÌNH","SaleBoots","Tìm kiếm, lọc, thêm và sửa chương trình SaleBoots."],"saleboot-edit":["QUẢN LÝ CHƯƠNG TRÌNH","Sửa SaleBoots","Cập nhật chương trình thúc đẩy doanh số của khách hàng."],"customer-edit":["QUẢN LÝ DỮ LIỆU","Sửa khách hàng","Cập nhật thông tin và số liệu doanh số của khách hàng."],overview:["KHÔNG GIAN LÀM VIỆC","Tổng quan","Bức tranh nhanh về dữ liệu kinh doanh của bạn."],customers:["QUẢN LÝ DỮ LIỆU","Danh sách khách hàng","Tìm kiếm, lọc, thêm và sửa khách hàng."],calendar:["KẾ HOẠCH CÔNG VIỆC","Lịch làm việc","Kế hoạch công tác và tác vụ theo tuần (thứ 2 đến thứ 7)."],import:["QUẢN LÝ DỮ LIỆU","Nhập dữ liệu","Nhập Excel có xem trước và xác nhận."],settings:["TÙY CHỈNH","Cài đặt","Giao diện, sao lưu và thông tin ứng dụng."]};
+function go(p){if(!META[p])return;const cur=S.view;if((cur==="customer-edit"||cur==="saleboot-edit")&&p!==cur&&S.dirty&&!confirm("Bạn có thay đổi chưa lưu. Rời khỏi trang này và bỏ các thay đổi?"))return;S.view=p;S.dirty=false;setFocus(false);document.body.dataset.page=p;
+ const nav={"customer-edit":"customers",saleboots:"customers","saleboot-edit":"customers"}[p]||p,sub=p==="saleboots"||p==="saleboot-edit";
+ $$("[data-view]").forEach(v=>v.classList.toggle("active",v.dataset.view===p));
+ $$(".nav button:not(.sub)").forEach(b=>{const a=b.dataset.page===nav;b.classList.toggle("active",a);a?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
+ const sb=$("#nav-sb");sb.hidden=nav!=="customers";sb.classList.toggle("sel",sub);sub?sb.setAttribute("aria-current","page"):sb.removeAttribute("aria-current");
+ $("#page-eyebrow").textContent=META[p][0];$("#page-title").textContent=p==="customer-edit"&&!S.edit?"Thêm khách hàng":p==="saleboot-edit"&&!S.sbEdit?"Thêm SaleBoots":META[p][1];$("#page-description").textContent=META[p][2];
+ crumbs(p);if(p==="customer-edit")ceRender();if(p==="saleboot-edit")sbRender();render();window.scrollTo(0,0)}
 function theme(t,say){t=t==="dark"?"dark":"light";root.dataset.theme=t;try{localStorage.setItem("bgsm-theme",t)}catch(_){}const d=t==="dark";$("#theme-label").textContent=d?"Giao diện tối":"Giao diện sáng";$("#theme-toggle").setAttribute("aria-label",d?"Chuyển sang giao diện sáng":"Chuyển sang giao diện tối");$("#sun-icon").classList.toggle("selected",!d);$("#moon-icon").classList.toggle("selected",d);if(say)notify(d?"Đã chuyển sang giao diện tối":"Đã chuyển sang giao diện sáng")}
 const flip=()=>theme(root.dataset.theme==="dark"?"light":"dark",true);
 /* ===== Nghiệp vụ ===== */
@@ -399,7 +428,7 @@ const regions=()=>[...new Set(S.cus.filter(c=>!c.archived).map(c=>c.region||"Kh�
 /* ===== Hiển thị ===== */
 function render(){const p=($(".view.active")||{dataset:{}}).dataset.view;
  $("#side-count").textContent=S.cus.length+" khách hàng · "+S.work.length+" công việc";
- if(p==="overview")ovw();if(p==="customers")cust();if(p==="calendar")cal();if(p==="settings")sett()}
+ if(p==="overview")ovw();if(p==="customers")cust();if(p==="calendar")cal();if(p==="saleboots")sbList();if(p==="settings")sett()}
 const QUOTES=["Mỗi cuộc gọi hôm nay là một cơ hội mới. Bắt đầu thôi!","Doanh số là kết quả của những việc nhỏ làm đều mỗi ngày.","Khách hàng nhớ người giữ lời hứa, và bạn đang làm rất tốt.","Tiến độ chậm vẫn là tiến độ. Cứ vững bước!","Một lần ghé thăm hôm nay có thể là đơn hàng của tháng sau.","Bạn không cần hoàn hảo, chỉ cần kiên trì.","Hôm nay hãy làm thật tốt một việc quan trọng nhất.","Mục tiêu lớn được tạo nên từ từng ngày chăm chỉ.","Cảm ơn bạn đã nỗ lực mỗi ngày. Thành quả sẽ đến.","Giữ nhịp đều đặn, kết quả sẽ tự tìm đến bạn."];
 let qi=Math.floor(Date.now()/864e5)%QUOTES.length;
 const greet=()=>{const h=new Date().getHours(),n=S.prefs?.name;return"Chào "+(h<11?"buổi sáng":h<14?"buổi trưa":h<18?"buổi chiều":"buổi tối")+(n?", "+n:"")+"!"};
@@ -419,7 +448,7 @@ function insights(mt,last){let b=-1;mt.forEach((m,i)=>{if(m[1]>0&&(b<0||m[1]>mt[
 function ovw(){const rg=$("#ov-region"),rl=regions(),cur=rg.value;rg.innerHTML='<option value="">Tất cả khu vực</option>'+rl.map(r=>`<option>${esc(r)}</option>`).join("");rg.value=rl.includes(cur)?cur:"";
  $("#greet").textContent=greet();$("#quote").textContent=QUOTES[qi];
  const dAgo=t=>Math.floor((Date.now()-t)/864e5);
- {const lb=S.prefs?.lastBackup,old=S.cus.length&&(!lb||dAgo(lb)>=14);
+ {const lb=Math.max(S.prefs?.lastBackup||0,S.prefs?.lastAuto||0)||null,old=S.cus.length&&(!lb||dAgo(lb)>=14);
  $("#guide").innerHTML=(!S.cus.length&&!S.prefs?.hideGuide?`<div class="card" style="margin-bottom:16px;border-left:4px solid var(--accent)"><div class="card-title-row"><h3>Bắt đầu nhanh</h3><button class="btn" id="guide-hide">Ẩn hướng dẫn</button></div><ol class="guide"><li><strong>Nhập dữ liệu:</strong> chọn file Excel danh sách khách hàng.<button class="btn" data-page="import">Nhập Excel</button></li><li><strong>Kiểm tra khách hàng:</strong> xem khu vực, thêm mã khách hàng.<button class="btn" data-page="customers">Mở danh sách</button></li><li><strong>Lên lịch công tác:</strong> thêm việc theo ngày trong tuần.<button class="btn" data-page="calendar">Mở lịch</button></li><li><strong>Sao lưu định kỳ:</strong> vào Cài đặt, mục Sao lưu, để không mất dữ liệu.<button class="btn" data-page="settings">Mở cài đặt</button></li></ol><p class="small muted" style="margin:10px 0 0">Mẹo: nhấn <kbd>?</kbd> để xem các phím tắt.</p></div>`:"")+(old?`<div class="notice" style="margin-bottom:16px">⚠ ${lb?"Lần sao lưu gần nhất cách đây "+dAgo(lb)+" ngày.":"Bạn chưa sao lưu dữ liệu lần nào."} <button class="btn" data-page="settings">Sao lưu ngay</button></div>`:"")}
 
  const all=S.cus.filter(c=>!c.archived),a=rg.value?all.filter(c=>(c.region||"Khác")===rg.value):all,sum=f=>a.reduce((s,c)=>s+(f(c)||0),0),T=sum(c=>c.t26),R=sum(c=>c.a26),Y=sum(c=>c.a25);
@@ -430,6 +459,7 @@ function ovw(){const rg=$("#ov-region"),rl=regions(),cur=rg.value;rg.innerHTML='
  $("#region-bars").innerHTML=rb.length?rb.map(([n,v])=>{const p=v.r/v.t;return`<div class="bar-row"><span>${esc(n)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,p*100)}%"></div></div><strong>${Math.round(p*100)}%</strong></div>`}).join(""):'<p class="muted small">Chưa có dữ liệu. Vào “Nhập dữ liệu” để nạp từ Excel.</p>';
  const lim=iso(new Date(Date.now()+7*864e5)),f=S.work.filter(w=>w.st==="Dự kiến"&&w.date<=lim).sort((x,y)=>(x.date+(x.time||"")).localeCompare(y.date+(y.time||""))).slice(0,5);
  $("#follow").innerHTML=f.length?f.map(w=>`<div class="activity-item"><div class="activity-dot">${late(w)?"!":"▦"}</div><div><strong class="small">${esc(w.title)}</strong><div class="muted tiny">${dmy(w.date)}${w.time?" · "+esc(w.time):""}${w.cus?" · "+esc(w.cus):""}${late(w)?" · Trễ hạn":""}</div></div></div>`).join(""):'<p class="muted small">Không có công việc nào trong 7 ngày tới.</p>';
+ {const t0=iso(new Date()),en=S.sb.filter(x=>!x.archived&&!x.hold&&x.start<=t0&&x.end>=t0&&x.end<=lim);if(en.length){const h=en.map(x=>`<div class="activity-item"><div class="activity-dot">⚡</div><div><strong class="small">${esc(x.name)}</strong><div class="muted tiny">SaleBoots kết thúc ${dmy(x.end)} · ${esc(S.cus.find(c=>c.id===x.cid)?.name||"")}</div></div></div>`).join("");$("#follow").innerHTML=(f.length?$("#follow").innerHTML:"")+h}}
  const mt=Array.from({length:12},(_,i)=>[0,1].map(y=>a.reduce((s,c)=>s+(c.m?.[i]?.[y]||0),0))),last=mt.reduce((l,m,i)=>m[1]>0?i:l,-1);
  $("#trend").innerHTML=trend(mt,last);$("#insights").innerHTML=insights(mt,last);$("#trend-tag").textContent=rg.value||"Tất cả khu vực";
  {const q25=[0,1,2,3].map(k=>mt.slice(3*k,3*k+3).reduce((s,m)=>s+m[0],0)),q26=[0,1,2,3].map(k=>a.reduce((s,c)=>s+(c.q?.[k]?.[0]||0),0)),qt=rg.value?null:(S.meta.qt||null),
@@ -456,7 +486,7 @@ function cal(){const mon=S.week,days=[...Array(7)].map((_,i)=>{const d=new Date(
  $("#week-label").textContent="Tuần "+(a.getMonth()===b.getMonth()?String(a.getDate()).padStart(2,"0"):String(a.getDate()).padStart(2,"0")+"/"+String(a.getMonth()+1).padStart(2,"0"))+"–"+String(b.getDate()).padStart(2,"0")+"/"+String(b.getMonth()+1).padStart(2,"0")+"/"+b.getFullYear();
  const g=$("#week-grid");g.style.gridTemplateColumns=`repeat(${n},minmax(0,1fr))`;
  g.innerHTML=days.slice(0,n).map((d,i)=>{const s=iso(d),w=S.work.filter(x=>x.date===s).sort((x,y)=>(x.time||"").localeCompare(y.time||""));return`<div class="day-card"${s===iso(new Date())?' style="border-color:var(--accent)"':""}><div class="day-head"><span class="day-name">${N[i]}</span><span class="day-date">${String(d.getDate()).padStart(2,"0")}</span></div>${w.map(x=>`<div class="task${x.st==="Hoàn thành"?" done":""}${x.st==="Hủy"?" cancel":""}" tabindex="0" role="button" data-work="${esc(x.id)}" style="cursor:pointer${late(x)?";border-left-color:var(--danger)":""}"><div class="task-title">${esc(x.title)}</div><div class="task-meta">${esc(x.time||"Cả ngày")} · ${esc(x.cus||x.type)}${x.st!=="Dự kiến"?" · "+x.st:""}${late(x)?" · Trễ hạn":""}</div></div>`).join("")}<button class="btn" data-add-day="${s}" style="width:100%;min-height:30px" aria-label="Thêm công việc ngày ${dmy(s)}">＋</button></div>`}).join("")}
-function sett(){$("#pf-name").value=S.prefs?.name||"";{const lb=S.prefs?.lastBackup;$("#set-backup").textContent=lb?" Lần gần nhất: "+new Date(lb).toLocaleString("vi-VN")+".":" Chưa sao lưu lần nào."}const m=S.meta.lastImport;$("#set-data").textContent=S.cus.length+" khách hàng · "+S.work.length+" công việc · lưu cục bộ (IndexedDB)";$("#set-import").textContent=m?`${m.file} · ${new Date(m.at).toLocaleString("vi-VN")} · ${m.n} dòng (mới ${m.nw}, cập nhật ${m.up})`:"Chưa nhập"}
+function sett(){$("#pf-name").value=S.prefs?.name||"";bkStatus();{const lb=S.prefs?.lastBackup;$("#set-backup").textContent=lb?" Lần gần nhất: "+new Date(lb).toLocaleString("vi-VN")+".":" Chưa sao lưu lần nào."}const m=S.meta.lastImport;$("#set-data").textContent=S.cus.length+" khách hàng · "+S.work.length+" công việc · lưu cục bộ (IndexedDB)";$("#set-import").textContent=m?`${m.file} · ${new Date(m.at).toLocaleString("vi-VN")} · ${m.n} dòng (mới ${m.nw}, cập nhật ${m.up})`:"Chưa nhập"}
 /* ===== Hộp thoại biểu mẫu dùng chung ===== */
 function form(title,fields,v,save,extra,remove){const f=$("#dlg-form");
  f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">${esc(title)}</h3>`+fields.map(([k,l,t,o,req])=>{const x=v[k]??"",id="f_"+k;return`<label class="flabel" for="${id}">${l}</label>`+(t==="sel"?`<select id="${id}">${o.map(z=>`<option${z===x?" selected":""}>${z}</option>`).join("")}</select>`:t==="area"?`<textarea id="${id}" rows="2">${esc(x)}</textarea>`:`<input id="${id}" type="${t}"${o?` list="${o}"`:""}${req?" required":""}${t==="number"?' step="any"':""} value="${esc(x)}">`)}).join("")+(extra||"")+`<div class="dlg-actions">${remove?'<button type="button" class="btn" id="dlg-del" style="color:var(--danger)">Xóa</button>':""}<span style="flex:1"></span><button type="button" class="btn" id="dlg-x">Hủy</button><button class="btn primary" type="submit">Lưu</button></div>`;
@@ -479,7 +509,7 @@ function ceRender(){const c=S.edit,nw=!c,f=$("#ce-form");S.dirty=false;
  <div class="card"><h3 class="ch">Doanh số tổng (VND)</h3><div class="fgrid3"><div>${fl("ce_a25","Thực tế 2025")}${mi("ce_a25",c?.a25,"Thực tế 2025",1)}</div><div>${fl("ce_t26","Mục tiêu 2026")}${mi("ce_t26",c?.t26,"Mục tiêu 2026",1)}</div><div>${fl("ce_a26","Thực tế 2026")}${mi("ce_a26",c?.a26,"Thực tế 2026",1)}</div></div></div>
  <div class="card"><h3 class="ch">Doanh số theo quý — thực tế 2026 (VND)</h3><div class="fgrid4">${[0,1,2,3].map(k=>`<div>${fl("ce_q"+k,"Quý "+(k+1))}${mi("ce_q"+k,c?.q?.[k]?.[0],"Quý "+(k+1)+" năm 2026")}</div>`).join("")}</div></div>
  <div class="card"><div class="card-title-row"><h3 class="ch" style="margin:0">Doanh số theo tháng — thực tế (VND)</h3><button type="button" class="btn" id="ce-recalc">Tính lại quý và tổng từ các tháng</button></div><div class="table-wrap" style="margin-top:12px"><table class="egrid"><thead><tr><th>Tháng</th><th>2025</th><th>2026</th></tr></thead><tbody>${Array.from({length:12},(_,i)=>`<tr><th scope="row">Tháng ${i+1}</th><td>${mi(`ce_m${i}_0`,c?.m?.[i]?.[0],`Tháng ${i+1} năm 2025`)}</td><td>${mi(`ce_m${i}_1`,c?.m?.[i]?.[1],`Tháng ${i+1} năm 2026`)}</td></tr>`).join("")}</tbody><tfoot><tr><th>Tổng</th><td id="sum25"></td><td id="sum26"></td></tr></tfoot></table></div><div id="sumwarn" class="notice" role="status" hidden style="margin-top:10px"></div></div>
- <div class="actionbar"><button type="button" class="btn" id="ce-cancel">← Quay lại danh sách</button><span style="flex:1"></span>${nw?"":`<button type="button" class="btn" id="ce-arch">${c.archived?"Khôi phục khách hàng":"Lưu trữ khách hàng"}</button>`}<button type="submit" class="btn primary">${nw?"Thêm khách hàng":"Lưu thay đổi"}</button></div>`;
+ ${nw?"":sbCard(c)}<div class="actionbar"><button type="button" class="btn" id="ce-cancel">← Quay lại danh sách</button><span style="flex:1"></span>${nw?"":`<button type="button" class="btn" id="ce-arch">${c.archived?"Khôi phục khách hàng":"Lưu trữ khách hàng"}</button>`}<button type="submit" class="btn primary">${nw?"Thêm khách hàng":"Lưu thay đổi"}</button></div>`;
  f.querySelectorAll(".money").forEach(hint);sums();$("#ce_name").focus()}
 async function ceSave(e){e.preventDefault();const c=S.edit,old=c?{...c}:null,nw=!c,g=i=>$("#"+i).value,name=g("ce_name").trim(),id=nw?key(name):c?.id;
  if(!name){setErr("ce_name","Hãy nhập tên khách hàng.");return}
@@ -489,10 +519,76 @@ async function ceSave(e){e.preventDefault();const c=S.edit,old=c?{...c}:null,nw=
 $("#ce-form").addEventListener("input",e=>{S.dirty=true;if(e.target.classList.contains("money")){moneyKey(e.target);hint(e.target);sums()}});
 $("#ce-form").addEventListener("submit",ceSave);
 $("#ce-form").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;
- if(b.id==="ce-cancel")go("customers");
+ if(b.id==="ce-cancel")go("customers");if(b.dataset.sbopen)sbOpen(S.sb.find(x=>x.id===b.dataset.sbopen));if(b.id==="ce-addsb")sbOpen(null,S.edit.id);
  if(b.id==="ce-arch"){const old={...S.edit};S.edit.archived=!S.edit.archived;await put("c",[S.edit]);S.dirty=false;await load();go("customers");notify(S.edit.archived?"Đã lưu trữ khách hàng":"Đã khôi phục khách hàng",()=>put("c",[old]))}
  if(b.id==="ce-recalc"){const v=i=>pm($("#"+i).value)||0,s=y=>Array.from({length:12},(_,i)=>v(`ce_m${i}_${y}`)).reduce((a,b)=>a+b,0);if(!s(0)&&!s(1)){notify("Chưa có số liệu tháng để tính.");return}
   const set=(i,x)=>{$("#"+i).value=fm(x);hint($("#"+i))};set("ce_a25",s(0));set("ce_a26",s(1));[0,1,2,3].forEach(k=>set("ce_q"+k,[0,1,2].reduce((a,j)=>a+v(`ce_m${3*k+j}_1`),0)));S.dirty=true;notify("Đã tính lại từ số liệu 12 tháng. Bấm Lưu để ghi.")}});
+/* ===== SaleBoots: chương trình thúc đẩy doanh số, gắn với khách hàng ===== */
+const SB_TYPES=["Chiết khấu doanh số","Thưởng đạt mục tiêu","Quà tặng / khuyến mại","Hỗ trợ trưng bày","Hỗ trợ bán hàng / đào tạo","Khác"],SB_HOLD=["Tự động theo ngày","Tạm dừng","Hủy"];
+const dp=s=>{const a=String(s||"").split("-").map(Number);return a.length===3&&a[0]?new Date(a[0],a[1]-1,a[2]):null},ddiff=(a,b)=>Math.round((b-a)/864e5);
+function sbCalc(p,c){const s=dp(p.start),e=dp(p.end);if(!s||!e||e<s)return null;let act=0,base=0,hasA=false,hasB=false,has25=false;
+ for(let d=new Date(s.getFullYear(),s.getMonth(),1);d<=e;d.setMonth(d.getMonth()+1)){const y=d.getFullYear(),mo=d.getMonth(),dim=new Date(y,mo+1,0).getDate(),ms=new Date(y,mo,1),me=new Date(y,mo,dim),a=ms>s?ms:s,b=me<e?me:e,f=(ddiff(a,b)+1)/dim,m=c?.m?.[mo];
+  if(y===2026){if(m?.[1]!=null){act+=m[1]*f;hasA=true}if(m?.[0]!=null){base+=m[0]*f;hasB=true}}else if(y===2025){has25=true;if(m?.[0]!=null){act+=m[0]*f;hasA=true}}}
+ const actual=p.actual!=null?p.actual:(hasA?Math.round(act):null),b0=hasB&&!has25?Math.round(base):null,tot=ddiff(s,e)+1,el=Math.max(0,Math.min(1,(ddiff(s,dp(iso(new Date())))+1)/tot));
+ return{actual,auto:p.actual==null,base:b0,extra:actual!=null&&b0!=null?actual-b0:null,growth:actual!=null&&b0>0?actual/b0-1:null,pt:p.target>0&&actual!=null?actual/p.target:null,el,roi:p.spent>0&&actual!=null&&b0!=null?(actual-b0)/p.spent:null}}
+function sbStat(p,c){const t=dp(iso(new Date())),s=dp(p.start),e=dp(p.end);if(p.hold==="Hủy")return["Đã hủy","","Đã hủy"];if(p.hold==="Tạm dừng")return["Tạm dừng","warning","Tạm dừng"];if(!s||!e)return["Chưa rõ","","Sắp diễn ra"];
+ if(t<s)return["Sắp diễn ra","info","Sắp diễn ra"];if(t<=e)return["Đang chạy","success","Đang chạy"];
+ const m=sbCalc(p,c);if(p.target>0&&m?.pt!=null)return m.pt>=1?["Đạt mục tiêu","success","Đã kết thúc"]:["Chưa đạt mục tiêu","warning","Đã kết thúc"];return["Đã kết thúc","","Đã kết thúc"]}
+const sbPace=(p,m)=>{if(!m||m.pt==null||!(p.target>0)||m.el>=1)return"";return m.pt-m.el>=0?"Đúng hoặc vượt tiến độ":"Chậm tiến độ ("+Math.round(m.el*100)+"% thời gian đã qua, mới đạt "+Math.round(m.pt*100)+"% mục tiêu)"};
+function sbHead(){$("#sb-head").innerHTML='<tr><th scope="col" style="text-align:left">Chương trình</th><th scope="col" style="text-align:left">Khách hàng</th><th scope="col" style="text-align:left">Khu vực</th><th scope="col" style="text-align:left">Thời gian</th><th scope="col" class="nr">Mục tiêu</th><th scope="col" class="nr">Thực đạt</th><th scope="col" style="text-align:left">Tiến độ</th><th scope="col" class="nr" title="So với cùng kỳ năm 2025">Tăng trưởng</th><th scope="col" class="nr">Ngân sách</th></tr>'}
+function sbList(){const rg=$("#sb-region"),cur=rg.value;rg.innerHTML='<option value="">Tất cả khu vực</option>'+regions().map(r=>`<option>${esc(r)}</option>`).join("");rg.value=regions().includes(cur)?cur:"";
+ const q=key($("#sb-search").value),st=$("#sb-status").value,ar=$("#sb-arch").checked,cm=new Map(S.cus.map(c=>[c.id,c])),rank={"Đang chạy":0,"Sắp diễn ra":1,"Tạm dừng":2,"Đã kết thúc":3,"Đã hủy":4},
+ all=S.sb.filter(p=>ar||!p.archived).map(p=>{const c=cm.get(p.cid);return{p,c,s:sbStat(p,c),m:sbCalc(p,c)}}),
+ a=all.filter(x=>(!rg.value||(x.c?.region||"Khác")===rg.value)&&(!st||x.s[2]===st)&&key(x.p.name+" "+(x.c?.name||"")+" "+(x.c?.region||"")+" "+x.p.type).includes(q)).sort((x,y)=>rank[x.s[2]]-rank[y.s[2]]||(y.p.end||"").localeCompare(x.p.end||""));
+ const run=all.filter(x=>x.s[2]==="Đang chạy"),lim=iso(new Date(Date.now()+7*864e5)),soon=run.filter(x=>x.p.end<=lim),ended=all.filter(x=>x.s[0]==="Đạt mục tiêu"||x.s[0]==="Chưa đạt mục tiêu"),hit=ended.filter(x=>x.s[0]==="Đạt mục tiêu");
+ $("#sb-kpi").innerHTML=[["Đang chạy",run.length],["Sắp kết thúc (7 ngày)",soon.length],["Đã đạt mục tiêu",ended.length?hit.length+"/"+ended.length:"–"],["Ngân sách đang chạy",fmtB(run.reduce((s,x)=>s+(x.p.budget||0),0))]].map(([l,v])=>`<div><small class="muted">${l}</small><strong>${v}</strong></div>`).join("");
+ $("#sb-rows").innerHTML=a.map(({p,c,s,m})=>{const pr=s[2]==="Đang chạy"?sbPace(p,m):"";return`<tr data-sb="${esc(p.id)}" tabindex="0" style="cursor:pointer"><td><div class="cname" title="${esc(p.name)}">${esc(p.name)}</div><div class="cmeta"><span class="ccode">${esc(p.type)}</span><span class="tag ${s[1]}">${s[0]}</span></div></td><td><div class="cname" title="${esc(c?.name||"")}">${esc(c?.name||"(Không tìm thấy khách hàng)")}</div>${c?.archived?'<div class="cmeta"><span class="tag">Khách hàng đã lưu trữ</span></div>':""}</td><td>${esc(c?.region||"–")}</td><td>${dmy(p.start)}<br>${dmy(p.end)}</td><td class="num">${fmtB(p.target)}</td><td class="num">${fmtB(m?.actual)}${m&&m.auto&&m.actual!=null?'<div class="tiny muted">tự tính</div>':""}</td><td><div class="mini-track"><div class="mini-fill" style="width:${Math.min(100,(m?.pt||0)*100)}%"></div></div><span class="tiny">${pct(m?.pt)}${s[2]==="Đang chạy"&&m?" · thời gian "+Math.round(m.el*100)+"%":""}</span>${pr.startsWith("Chậm")?'<div class="tiny" style="color:var(--danger)">⚠ Chậm tiến độ</div>':""}</td><td class="num">${pct(m?.growth)}</td><td class="num">${fmtB(p.budget)}</td></tr>`}).join("");
+ $("#sb-empty").innerHTML=S.sb.length?"Không có chương trình phù hợp với bộ lọc.":'Chưa có chương trình SaleBoots nào. <button class="btn primary" id="sb-first">＋ Thêm SaleBoots đầu tiên</button>';$("#sb-empty").classList.toggle("show",!a.length);
+ $("#sb-count").textContent="Đang hiển thị "+a.length+"/"+S.sb.length+" chương trình"}
+const sbOpen=(p,cid)=>{S.sbEdit=p||null;S.sbPre=cid||"";go("saleboot-edit")};
+function sbRender(){const p=S.sbEdit,nw=!p,f=$("#sb-form"),cm=S.cus.find(x=>x.id===(p?.cid||S.sbPre)),cl=S.cus.filter(c=>!c.archived||c.id===cm?.id);S.dirty=false;
+ const mi=(id,v,al)=>`<div class="mi"><input class="money" id="${id}" inputmode="numeric" autocomplete="off" value="${fm(v)}" aria-label="${al}"><span class="hint"></span></div>`,fl=(id,l)=>`<label class="flabel" for="${id}">${l}</label>`,sel=(id,o,v)=>`<select id="${id}">${o.map(z=>`<option${z===v?" selected":""}>${z}</option>`).join("")}</select>`,
+ d0=iso(new Date()),d1=iso(new Date(Date.now()+30*864e5));
+ f.innerHTML=`<div class="card"><h3 class="ch">Thông tin chương trình</h3><div class="fgrid"><div class="span2">${fl("sb_cus","Khách hàng áp dụng *")}<input id="sb_cus" list="sb_cl" autocomplete="off" value="${esc(cm?.name)}" placeholder="Gõ để tìm khách hàng…"><datalist id="sb_cl">${cl.map(c=>`<option value="${esc(c.name)}">`).join("")}</datalist><div class="hint" id="sb-cinfo" style="text-align:left"></div></div>
+ <div>${fl("sb_name","Tên chương trình *")}<input id="sb_name" value="${esc(p?.name)}"></div><div>${fl("sb_type","Loại chương trình")}${sel("sb_type",SB_TYPES,p?.type||SB_TYPES[0])}</div><div>${fl("sb_hold","Trạng thái")}${sel("sb_hold",SB_HOLD,p?.hold||SB_HOLD[0])}</div>
+ <div>${fl("sb_start","Ngày bắt đầu *")}<input id="sb_start" type="date" value="${p?.start||d0}"></div><div>${fl("sb_end","Ngày kết thúc *")}<input id="sb_end" type="date" value="${p?.end||d1}"></div><div></div>
+ <div class="span2">${fl("sb_note","Nội dung, cơ chế thưởng / hỗ trợ")}<textarea id="sb_note" rows="2">${esc(p?.note)}</textarea></div></div></div>
+ <div class="card"><h3 class="ch">Mục tiêu và ngân sách (VND)</h3><div class="fgrid4"><div>${fl("sb_target","Mục tiêu doanh số trong kỳ")}${mi("sb_target",p?.target,"Mục tiêu doanh số trong kỳ")}</div><div>${fl("sb_actual","Thực đạt (trống = tự tính)")}${mi("sb_actual",p?.actual,"Thực đạt")}</div><div>${fl("sb_budget","Ngân sách")}${mi("sb_budget",p?.budget,"Ngân sách")}</div><div>${fl("sb_spent","Đã chi")}${mi("sb_spent",p?.spent,"Đã chi")}</div></div></div>
+ <div class="card sbres"><h3 class="ch">Kết quả theo số liệu của khách hàng</h3><div id="sb-res" aria-live="polite"></div></div>
+ <div class="actionbar"><button type="button" class="btn" id="sb-cancel">← Quay lại danh sách</button><span style="flex:1"></span>${nw?"":`<button type="button" class="btn" id="sb-arch">${p.archived?"Khôi phục":"Lưu trữ"}</button><button type="button" class="btn" id="sb-del" style="color:var(--danger)">Xóa</button>`}<button type="submit" class="btn primary">${nw?"Thêm SaleBoots":"Lưu thay đổi"}</button></div>`;
+ f.querySelectorAll(".money").forEach(hint);sbPreview();(cm?$("#sb_name"):$("#sb_cus")).focus()}
+function sbPreview(){const box=$("#sb-res");if(!box)return;const g=i=>$("#"+i)?.value||"",nm=g("sb_cus"),c=S.cus.find(x=>key(x.name)===key(nm));
+ $("#sb-cinfo").textContent=c?`Khu vực: ${c.region||"Khác"} · Thực tế 2026: ${fmtB(c.a26)} · Mục tiêu 2026: ${fmtB(c.t26)}`:(nm?"Chưa tìm thấy khách hàng này trong danh sách.":"");
+ const p={start:g("sb_start"),end:g("sb_end"),target:pm(g("sb_target")),actual:pm(g("sb_actual")),budget:pm(g("sb_budget")),spent:pm(g("sb_spent")),hold:g("sb_hold")==="Tự động theo ngày"?"":g("sb_hold")},m=c?sbCalc(p,c):null;
+ if(!c||!m){box.innerHTML='<p class="muted small">Chọn khách hàng và ngày bắt đầu, ngày kết thúc hợp lệ để xem kết quả.</p>';return}
+ const s=sbStat(p,c),pr=s[2]==="Đang chạy"?sbPace(p,m):"",w=[];
+ if(S.sb.some(x=>x.cid===c.id&&x.id!==S.sbEdit?.id&&!x.archived&&!x.hold&&x.start<=p.end&&x.end>=p.start))w.push("Khách hàng này đã có chương trình khác trùng thời gian.");
+ if(p.budget>0&&p.spent>p.budget)w.push("Đã chi vượt ngân sách.");
+ if(m.actual==null)w.push("Chưa có số liệu tháng của khách hàng trong kỳ này. Hãy nhập số liệu tháng ở trang sửa khách hàng hoặc nhập tay ô Thực đạt.");
+ const bx=(l,v)=>`<div><small class="muted">${l}</small><strong>${v}</strong></div>`;
+ box.innerHTML=`<div class="stat-kpi">${bx("Trạng thái",`<span class="tag ${s[1]}">${s[0]}</span>`)}${bx("Thực đạt"+(m.auto&&m.actual!=null?" (tự tính)":""),fmtB(m.actual))}${bx("Cùng kỳ 2025",fmtB(m.base))}${bx("Doanh số tăng thêm",fmtB(m.extra))}${bx("% đạt mục tiêu",pct(m.pt))}${bx("Tăng trưởng cùng kỳ",pct(m.growth))}${bx("Thời gian đã qua",Math.round(m.el*100)+"%")}${bx("Hiệu quả ngân sách",m.roi==null?"–":"×"+m.roi.toFixed(1).replace(".",","))}</div>`+(pr?`<div class="notice" style="margin-top:8px">${pr.startsWith("Chậm")?"⚠ ":"✓ "}${pr}</div>`:"")+w.map(x=>`<div class="notice" style="margin-top:8px">⚠ ${esc(x)}</div>`).join("")+'<p class="muted tiny" style="margin:10px 0 0">Số liệu lấy từ doanh số tháng của khách hàng; tháng chưa đủ ngày được chia theo tỉ lệ ngày. “Hiệu quả ngân sách” là doanh số tăng thêm so với cùng kỳ 2025 chia cho số tiền đã chi.</p>'}
+async function sbSave(e){e.preventDefault();const p0=S.sbEdit,nw=!p0,g=i=>$("#"+i).value.trim(),c=S.cus.find(x=>key(x.name)===key(g("sb_cus")));
+ if(!c){setErr("sb_cus",g("sb_cus")?"Không tìm thấy khách hàng này. Hãy chọn từ danh sách gợi ý.":"Hãy chọn khách hàng áp dụng.");return}
+ if(!g("sb_name")){setErr("sb_name","Hãy nhập tên chương trình.");return}
+ if(!g("sb_start")){setErr("sb_start","Hãy chọn ngày bắt đầu.");return}
+ if(!g("sb_end")){setErr("sb_end","Hãy chọn ngày kết thúc.");return}
+ if(g("sb_end")<g("sb_start")){setErr("sb_end","Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.");return}
+ const n=i=>pm($("#"+i).value),rec={...(p0||{archived:false,created:Date.now()}),id:p0?.id||crypto.randomUUID(),cid:c.id,name:g("sb_name"),type:g("sb_type"),hold:g("sb_hold")==="Tự động theo ngày"?"":g("sb_hold"),start:g("sb_start"),end:g("sb_end"),target:n("sb_target"),actual:n("sb_actual"),budget:n("sb_budget"),spent:n("sb_spent"),note:g("sb_note"),updated:Date.now()};
+ try{await put("s",[rec]);S.dirty=false;await load();go("saleboots");notify(nw?"Đã thêm chương trình SaleBoots":"Đã lưu chương trình",async()=>{p0?await put("s",[p0]):await del("s",rec.id)})}catch(er){notify("Lỗi: "+vi(er.message))}}
+const sbCard=c=>{const L=S.sb.filter(p=>p.cid===c.id&&!p.archived).sort((a,b)=>b.start.localeCompare(a.start));
+ return`<div class="card"><div class="card-title-row"><div><h3 class="ch" style="margin:0">Chương trình SaleBoots của khách hàng</h3><div class="muted small">Các chương trình thúc đẩy doanh số đang gắn với khách hàng này.</div></div><button type="button" class="btn" id="ce-addsb">＋ Thêm SaleBoots</button></div>${L.length?`<div class="table-wrap" style="margin-top:12px"><table class="stbl"><thead><tr><th scope="col" style="text-align:left">Chương trình</th><th scope="col" style="text-align:left">Thời gian</th><th scope="col">Trạng thái</th><th scope="col">% đạt</th><th scope="col"><span class="sr">Mở</span></th></tr></thead><tbody>${L.map(p=>{const s=sbStat(p,c),m=sbCalc(p,c);return`<tr><th scope="row">${esc(p.name)}</th><td style="text-align:left">${dmy(p.start)} – ${dmy(p.end)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${pct(m?.pt)}</td><td><button type="button" class="btn" data-sbopen="${esc(p.id)}">Mở</button></td></tr>`}).join("")}</tbody></table></div>`:'<p class="muted small" style="margin:12px 0 0">Chưa có chương trình nào.</p>'}</div>`};
+["sb-search","sb-region","sb-status","sb-arch"].forEach(i=>{$("#"+i).addEventListener("input",sbList);$("#"+i).addEventListener("change",sbList)});
+$("#sb-clear").onclick=()=>{$("#sb-search").value="";$("#sb-region").value="";$("#sb-status").value="";$("#sb-arch").checked=false;sbList()};
+$("#add-sb").onclick=()=>sbOpen(null);
+$("#sb-rows").addEventListener("click",e=>{const r=e.target.closest("tr[data-sb]");if(r)sbOpen(S.sb.find(x=>x.id===r.dataset.sb))});
+$("#sb-rows").addEventListener("keydown",e=>{if(e.key==="Enter"){const r=e.target.closest("tr[data-sb]");if(r)sbOpen(S.sb.find(x=>x.id===r.dataset.sb))}});
+document.addEventListener("click",e=>{if(e.target.id==="sb-first")sbOpen(null)});
+$("#sb-form").addEventListener("input",e=>{S.dirty=true;if(e.target.classList.contains("money")){moneyKey(e.target);hint(e.target)}sbPreview()});
+$("#sb-form").addEventListener("change",sbPreview);$("#sb-form").addEventListener("submit",sbSave);
+$("#sb-form").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const p=S.sbEdit;
+ if(b.id==="sb-cancel")go("saleboots");
+ if(b.id==="sb-arch"){const old={...p};p.archived=!p.archived;await put("s",[p]);S.dirty=false;await load();go("saleboots");notify(p.archived?"Đã lưu trữ chương trình":"Đã khôi phục chương trình",()=>put("s",[old]))}
+ if(b.id==="sb-del"&&confirm("Xóa chương trình này? Bạn có thể hoàn tác ngay sau khi xóa.")){await del("s",p.id);S.dirty=false;await load();go("saleboots");notify("Đã xóa chương trình",()=>put("s",[p]))}});
 /* ===== Thống kê công tác theo tháng ===== */
 function stats(ym){S.stat=ym;const y=ym.getFullYear(),mo=ym.getMonth(),pre=y+"-"+String(mo+1).padStart(2,"0"),W=S.work.filter(w=>(w.date||"").startsWith(pre)),
  cn=a=>({t:a.length,ok:a.filter(w=>w.st==="Hoàn thành").length,pl:a.filter(w=>w.st==="Dự kiến"&&!late(w)).length,lt:a.filter(late).length,cx:a.filter(w=>w.st==="Hủy").length}),
@@ -514,6 +610,8 @@ $("#month-stats").onclick=()=>{const n=new Date(S.week);stats(new Date(n.getFull
 function crumbs(p){const c=S.edit,L=[["Tổng quan","overview"]];
  if(p==="customers")L.push(["Danh sách khách hàng"]);
  else if(p==="customer-edit"){L.push(["Danh sách khách hàng","customers"]);if(c)L.push(["Khu vực: "+(c.region||"Khác"),"region"]);L.push([c?c.name:"Thêm khách hàng"])}
+ else if(p==="saleboots")L.push(["Danh sách khách hàng","customers"],["SaleBoots"]);
+ else if(p==="saleboot-edit")L.push(["Danh sách khách hàng","customers"],["SaleBoots","saleboots"],[S.sbEdit?S.sbEdit.name:"Thêm SaleBoots"]);
  else if(p!=="overview")L.push([META[p][1]]);else L.length=0,L.push(["Tổng quan"]);
  $("#crumbs").innerHTML=L.map((x,i)=>{const last=i===L.length-1;return(i?'<span class="sep" aria-hidden="true">›</span>':"")+(last?`<span aria-current="page" title="${esc(x[0])}">${esc(x[0])}</span>`:`<button type="button" data-crumb="${x[1]}">${esc(x[0])}</button>`)}).join("")}
 $("#crumbs").addEventListener("click",e=>{const b=e.target.closest("[data-crumb]");if(!b)return;const t=b.dataset.crumb,r=S.edit?.region||"";if(t==="region"){go("customers");if(S.view==="customers"){$("#region-filter").value=r;cust()}}else go(t)});
@@ -563,9 +661,10 @@ async function pick(f){const b=$("#imp-body");steps(1);b.innerHTML="";$("#file-n
 /* ===== Sao lưu / CSV ===== */
 function dl(name,blob){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4e3)}
 const stamp=()=>iso(new Date());
-async function restore(f){try{const j=JSON.parse(await f.text());if(j.app!=="bgsm"||!Array.isArray(j.customers)||!Array.isArray(j.work))throw Error("Không phải tệp sao lưu của ứng dụng này.");
- if(!confirm("Khôi phục "+j.customers.length+" khách hàng và "+j.work.length+" công việc? Dữ liệu trùng sẽ bị ghi đè."))return;
- await run(["c","w","m"],"readwrite",(c,w,m)=>{j.customers.forEach(x=>c.put(x));j.work.forEach(x=>w.put(x));if(j.meta?.id)m.put(j.meta);if(j.prefs?.id)m.put(j.prefs)});await load();render();notify("Đã khôi phục dữ liệu")}catch(e){notify("Khôi phục thất bại: "+vi(e.message))}}
+async function restoreFrom(j){try{if(j.app!=="bgsm"||!Array.isArray(j.customers)||!Array.isArray(j.work))throw Error("Không phải tệp sao lưu của ứng dụng này.");const sb=Array.isArray(j.saleboots)?j.saleboots:[];
+ if(!confirm("Khôi phục "+j.customers.length+" khách hàng, "+j.work.length+" công việc"+(sb.length?" và "+sb.length+" chương trình SaleBoots":"")+"? Dữ liệu trùng sẽ bị ghi đè."))return false;
+ await run(["c","w","m","s"],"readwrite",(c,w,m,s)=>{j.customers.forEach(x=>c.put(x));j.work.forEach(x=>w.put(x));sb.forEach(x=>s.put(x));if(j.meta?.id)m.put(j.meta);if(j.prefs?.id)m.put(j.prefs)});await load();render();notify("Đã khôi phục dữ liệu");return true}catch(e){notify("Khôi phục thất bại: "+vi(e.message));return false}}
+async function restore(f){try{await restoreFrom(JSON.parse(await f.text()))}catch(e){notify("Khôi phục thất bại: "+vi(e.message))}}
 function csv(){const q=s=>'"'+String(s??"").replace(/"/g,'""')+'"',h=["Khách hàng","Khu vực","Mã","Thực tế 2025","Mục tiêu 2026","Thực tế 2026","Tiến độ","Ghi chú","Q1 2026","Q2 2026","Q3 2026","Q4 2026"].concat(Array.from({length:12},(_,i)=>["T"+(i+1)+" 2025","T"+(i+1)+" 2026"]).flat());
  dl("khach-hang-"+stamp()+".csv",new Blob(["\ufeff"+[h.map(q).join(",")].concat(S.cus.filter(c=>!c.archived).map(c=>[c.name,c.region,c.code,c.a25,c.t26,c.a26,comp(c)==null?"":comp(c).toFixed(4),c.note,...[0,1,2,3].map(k=>c.q?.[k]?.[0]),...Array.from({length:12},(_,i)=>[c.m?.[i]?.[0],c.m?.[i]?.[1]]).flat()].map(q).join(","))).join("\r\n")],{type:"text/csv;charset=utf-8"}));notify("Đã xuất CSV")}
 /* ===== Sự kiện ===== */
@@ -583,7 +682,7 @@ $("#prev-week").onclick=()=>{S.week.setDate(S.week.getDate()-7);cal()};$("#next-
 $("#pick-file").onclick=()=>$("#excel-file").click();$("#focus-toggle").onclick=()=>setFocus(!document.body.classList.contains("focus"));
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("focus")&&!$("#dlg").open)setFocus(false)});
 $("#excel-file").onchange=e=>pick(e.target.files[0]);
-$("#bk-export").onclick=()=>{dl("bgsm-sao-luu-"+stamp()+".json",new Blob([JSON.stringify({app:"bgsm",v:1,ver:VER,at:new Date().toISOString(),customers:S.cus,work:S.work,meta:S.meta,prefs:S.prefs})],{type:"application/json"}));S.prefs={...S.prefs,id:"prefs",lastBackup:Date.now()};put("m",[S.prefs]);notify("Đã tạo tệp sao lưu")};
+$("#bk-export").onclick=()=>{dl("bgsm-sao-luu-"+stamp()+".json",new Blob([backupJSON()],{type:"application/json"}));S.prefs={...S.prefs,id:"prefs",lastBackup:Date.now()};put("m",[S.prefs]);notify("Đã tạo tệp sao lưu")};
 $("#bk-restore").onclick=()=>$("#bk-file").click();$("#bk-file").onchange=e=>{if(e.target.files[0])restore(e.target.files[0]);e.target.value=""};
 $("#wipe").onclick=async()=>{if(confirm("Xóa TOÀN BỘ khách hàng, công việc và thông tin nhập? Không thể hoàn tác.")&&confirm("Xác nhận lần cuối: xóa toàn bộ dữ liệu?")){await clr();await load();render();notify("Đã xóa toàn bộ dữ liệu")}};
 /* ===== Cập nhật ứng dụng (bản cài Windows) ===== */
@@ -594,9 +693,26 @@ if(U){um("Phiên bản "+VER+". Ứng dụng tự kiểm tra khi mở.");U.onUpd
 else{um("Phiên bản "+VER+". Tự cập nhật chỉ có trong bản cài Windows.");$("#upd-check").disabled=true}
 $("#pf-name").onchange=async e=>{S.prefs={...S.prefs,id:"prefs",name:e.target.value.trim()};await put("m",[S.prefs]);notify("Đã lưu tên hiển thị")};
 $("#ov-region").onchange=ovw;$("#quote-next").onclick=()=>{qi=(qi+1)%QUOTES.length;ovw()};
+/* ===== Sao lưu tự động (bản cài Windows) ===== */
+const BK=window.bgsm?.backup;
+const hashStr=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(16)+":"+s.length};
+const backupJSON=()=>JSON.stringify({app:"bgsm",v:2,ver:VER,at:new Date().toISOString(),customers:S.cus,work:S.work,saleboots:S.sb,meta:S.meta,prefs:S.prefs});
+async function autoBackup(why){if(!BK||S.prefs?.autoBackup===false||(!S.cus.length&&!S.work.length&&!S.sb.length))return false;const h=hashStr(JSON.stringify([S.cus,S.work,S.sb,S.meta]));if(S.prefs.autoHash===h&&why!=="manual")return false;
+ try{const r=await BK.save(backupJSON());S.prefs={...S.prefs,id:"prefs",autoHash:h,lastAuto:Date.now(),autoName:r.name,autoDir:r.dir};S.bkErr="";await put("m",[S.prefs]);S.changed=false;return true}catch(e){S.bkErr=vi(e.message);return false}}
+function bkStatus(){const m=$("#bk-auto-msg"),c=$("#bk-auto");if(!m)return;
+ if(!BK){m.textContent="Chỉ có trong bản cài Windows. Trên trình duyệt, hãy dùng Sao lưu thủ công bên dưới.";c.disabled=true;c.checked=false;$("#bk-open").disabled=true;$("#bk-list").disabled=true;return}
+ c.checked=S.prefs?.autoBackup!==false;const la=S.prefs?.lastAuto;
+ m.textContent=(c.checked?"Đang bật: tự lưu khi mở ứng dụng, vài phút sau khi có thay đổi và khi đóng ứng dụng; giữ 30 bản gần nhất. ":"Đang tắt. ")+(la?"Lần gần nhất: "+new Date(la).toLocaleString("vi-VN")+(S.prefs.autoDir?" · "+S.prefs.autoDir:"")+".":"Chưa có bản tự động nào.")+(S.bkErr?" Lỗi gần nhất: "+S.bkErr:"")}
+$("#bk-auto").onchange=async e=>{S.prefs={...S.prefs,id:"prefs",autoBackup:e.target.checked};await put("m",[S.prefs]);bkStatus();if(e.target.checked)autoBackup("manual").then(bkStatus)};
+$("#bk-open").onclick=()=>BK&&BK.open();
+async function bkDialog(){let r;try{r=await BK.list()}catch(e){notify("Không đọc được thư mục sao lưu: "+vi(e.message));return}const f=$("#dlg-form");f.onsubmit=null;
+ f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">Khôi phục từ bản sao lưu tự động</h3><p class="small muted" style="margin:0 0 8px">Thư mục: ${esc(r.dir)}. Khôi phục ghi đè các mục trùng và giữ nguyên mục chỉ có ở hiện tại.</p>${r.items.length?`<div class="table-wrap" style="max-height:340px"><table class="stbl"><thead><tr><th scope="col" style="text-align:left">Thời điểm</th><th scope="col">Dung lượng</th><th scope="col"><span class="sr">Khôi phục</span></th></tr></thead><tbody>${r.items.map(x=>`<tr><th scope="row">${new Date(x.mtime).toLocaleString("vi-VN")}</th><td>${Math.max(1,Math.round(x.size/1024))} KB</td><td><button type="button" class="btn" data-bkread="${esc(x.name)}">Khôi phục</button></td></tr>`).join("")}</tbody></table></div>`:'<div class="notice">Chưa có bản sao lưu tự động nào.</div>'}<div class="dlg-actions"><span style="flex:1"></span><button class="btn primary" type="submit">Đóng</button></div>`;$("#dlg").style.width="min(640px,94vw)";$("#dlg").showModal()}
+$("#bk-list").onclick=()=>BK&&bkDialog();
+$("#dlg-form").addEventListener("click",async e=>{const b=e.target.closest("[data-bkread]");if(!b)return;try{if(await restoreFrom(JSON.parse(await BK.read(b.dataset.bkread))))$("#dlg").close()}catch(er){notify("Không đọc được bản sao lưu: "+vi(er.message))}});
+if(BK){BK.onFlush(async()=>{try{await autoBackup("close")}catch(_){}BK.ready(!!S.dirty)});setInterval(()=>{if(S.changed)autoBackup("timer")},12e4)}
 /* ===== Sắp xếp, chọn cột, lỗi từng ô, phím tắt, cảnh báo thoát ===== */
 $("#cust-head").addEventListener("click",e=>{const b=e.target.closest(".sortbtn");if(!b)return;const k=b.dataset.sort;S.sort=S.sort.k===k?{k,d:-S.sort.d}:{k,d:(k==="name"||k==="region")?1:-1};head();cust()});
-const applyCols=async c=>{S.prefs={...S.prefs,id:"prefs",cols:c};await put("m",[S.prefs]);head();cust();syncColSel()};
+const applyCols=async c=>{S.prefs={...S.prefs,id:"prefs",cols:c};head();cust();syncColSel();await put("m",[S.prefs])};
 const PRE={all:()=>({q:true,m:Array(12).fill(true),y25:true}),q:()=>({q:true,m:Array(12).fill(false),y25:true}),m:()=>({q:false,m:Array(12).fill(true),y25:true}),y26:()=>({q:true,m:Array(12).fill(true),y25:false})};
 function syncColSel(){const C=cols(),all=C.m.every(Boolean),none=C.m.every(x=>!x);$("#col-view").value=C.q&&all&&C.y25?"all":C.q&&none&&C.y25?"q":!C.q&&all&&C.y25?"m":C.q&&all&&!C.y25?"y26":"custom"}
 function colDialog(){const C=cols(),f=$("#dlg-form");
@@ -610,19 +726,19 @@ document.addEventListener("input",e=>{if(e.target.id&&$("#err_"+e.target.id))set
 window.addEventListener("beforeunload",e=>{if(S.dirty){e.preventDefault();e.returnValue=""}});
 document.addEventListener("click",e=>{if(e.target.id==="guide-hide"){S.prefs={...S.prefs,id:"prefs",hideGuide:true};put("m",[S.prefs]).then(ovw)}});
 function shortcuts(){const f=$("#dlg-form");f.onsubmit=null;
- f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">Phím tắt</h3><div class="table-wrap"><table class="stbl"><thead><tr><th scope="col">Phím</th><th scope="col">Chức năng</th></tr></thead><tbody>${[["Alt + 1 … 5","Chuyển trang: Tổng quan, Khách hàng, Lịch, Nhập dữ liệu, Cài đặt"],["Ctrl + K","Tìm khách hàng"],["Ctrl + N","Thêm mới (khách hàng hoặc công việc, tuỳ trang)"],["Ctrl + S","Lưu thay đổi ở trang sửa khách hàng"],["Ctrl + Z","Hoàn tác thao tác gần nhất (khi còn nút Hoàn tác)"],["Enter","Mở khách hàng đang chọn trong bảng"],["Esc","Đóng cửa sổ, thoát chế độ mở rộng bảng"],["?","Mở bảng phím tắt này"]].map(r=>`<tr><th scope="row"><kbd>${r[0]}</kbd></th><td style="text-align:left">${r[1]}</td></tr>`).join("")}</tbody></table></div><div class="dlg-actions"><span style="flex:1"></span><button class="btn primary" type="submit">Đóng</button></div>`;$("#dlg").style.width="min(660px,94vw)";$("#dlg").showModal()}
+ f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">Phím tắt</h3><div class="table-wrap"><table class="stbl"><thead><tr><th scope="col">Phím</th><th scope="col">Chức năng</th></tr></thead><tbody>${[["Alt + 1 … 5","Chuyển trang: Tổng quan, Khách hàng, Lịch, Nhập dữ liệu, Cài đặt"],["Ctrl + K","Tìm khách hàng"],["Ctrl + N","Thêm mới (khách hàng, SaleBoots hoặc công việc, tuỳ trang)"],["Ctrl + S","Lưu thay đổi ở trang sửa khách hàng / SaleBoots"],["Ctrl + Z","Hoàn tác thao tác gần nhất (khi còn nút Hoàn tác)"],["Enter","Mở khách hàng đang chọn trong bảng"],["Esc","Đóng cửa sổ, thoát chế độ mở rộng bảng"],["?","Mở bảng phím tắt này"]].map(r=>`<tr><th scope="row"><kbd>${r[0]}</kbd></th><td style="text-align:left">${r[1]}</td></tr>`).join("")}</tbody></table></div><div class="dlg-actions"><span style="flex:1"></span><button class="btn primary" type="submit">Đóng</button></div>`;$("#dlg").style.width="min(660px,94vw)";$("#dlg").showModal()}
 $("#open-keys").onclick=shortcuts;
 document.addEventListener("keydown",e=>{const t=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable,mod=e.ctrlKey||e.metaKey,k=e.key.toLowerCase(),open=$("#dlg").open;
  if(e.altKey&&!mod&&/^[1-5]$/.test(e.key)){e.preventDefault();go(["overview","customers","calendar","import","settings"][+e.key-1])}
  else if(mod&&k==="k"){e.preventDefault();go("customers");$("#customer-search").focus()}
- else if(mod&&k==="n"&&!open){e.preventDefault();S.view==="calendar"?editWork(null):ceOpen(null)}
- else if(mod&&k==="s"&&S.view==="customer-edit"){e.preventDefault();$("#ce-form").requestSubmit()}
+ else if(mod&&k==="n"&&!open){e.preventDefault();S.view==="calendar"?editWork(null):S.view==="saleboots"?sbOpen(null):ceOpen(null)}
+ else if(mod&&k==="s"&&(S.view==="customer-edit"||S.view==="saleboot-edit")){e.preventDefault();(S.view==="customer-edit"?$("#ce-form"):$("#sb-form")).requestSubmit()}
  else if(mod&&k==="z"&&!typing&&S.undo){e.preventDefault();doUndo()}
  else if(e.key==="?"&&!typing&&!open){e.preventDefault();shortcuts()}});
 /* ===== Khởi động ===== */
 let th="light";try{th=localStorage.getItem("bgsm-theme")||"light"}catch(_){}theme(th,false);steps(1);head();
 const hide=()=>{const s=$("#splash");s.style.opacity="0";setTimeout(()=>s.remove(),260)};
-open().then(load).then(()=>{head();syncColSel();go("overview");setTimeout(hide,500)}).catch(e=>{hide();go("overview");notify("Không mở được kho dữ liệu: "+vi(e.message)+". Hãy dùng Edge/Chrome ở chế độ thường.")});
+open().then(load).then(()=>{head();sbHead();syncColSel();go("overview");setTimeout(hide,500);if(BK)autoBackup("start")}).catch(e=>{hide();go("overview");notify("Không mở được kho dữ liệu: "+vi(e.message)+". Hãy dùng Edge/Chrome ở chế độ thường.")});
 })();
 </script>
 </body>

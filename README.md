@@ -59,3 +59,7 @@ Không đưa workbook khách hàng thật lên repository công khai. Dữ liệ
 3. Triển khai data layer và CRUD.
 4. Xây luồng import có preview, báo lỗi, transaction/rollback.
 5. Kiểm thử trên Windows 10/11 và đóng gói app.
+
+
+## Phát hành khi kho mã nguồn để Private
+Xem `PHAT-HANH-RIENG-TU.md` (tách kho công khai chỉ chứa file cài).

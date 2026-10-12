@@ -1,5 +1,13 @@
 # Lịch sử phiên bản
 
+## 0.9.0
+- **SaleBoots** (chương trình thúc đẩy doanh số), mục con của Khách hàng: chỉ hiện ở thanh bên khi đang ở Khách hàng, được viền (không tô vàng) khi mở. Mỗi chương trình gắn với một khách hàng; trang khách hàng liệt kê các chương trình đã gắn và thêm nhanh chương trình mới.
+- Tự tính thực đạt từ số liệu tháng của khách hàng (tháng chưa đủ ngày chia theo tỉ lệ ngày), so với cùng kỳ 2025, tỉ lệ đạt mục tiêu, tiến độ so với thời gian, hiệu quả ngân sách; cảnh báo trùng thời gian, chi vượt ngân sách, thiếu số liệu. Trạng thái tự động theo ngày (sắp diễn ra, đang chạy, đạt hoặc chưa đạt mục tiêu), hoặc tạm dừng / hủy.
+- Tổng quan: SaleBoots sắp kết thúc trong 7 ngày xuất hiện ở "Việc cần theo dõi". Sao lưu và khôi phục có cả SaleBoots (cơ sở dữ liệu nâng lên phiên bản 2, tự nâng cấp, dữ liệu cũ được giữ).
+- **Sao lưu tự động** (bản cài Windows): lưu vào Tài liệu\BG Sales Management\Sao lưu khi mở ứng dụng, vài phút sau khi có thay đổi và khi đóng ứng dụng; giữ 30 bản; khôi phục từ danh sách trong Cài đặt; không ghi thừa khi dữ liệu không đổi.
+- Cập nhật khi kho mã nguồn Private: phát hành sang kho công khai riêng (xem `PHAT-HANH-RIENG-TU.md`).
+- Sửa: đổi cột hiển thị ở bảng khách hàng nay phản hồi ngay.
+
 ## 0.8.0
 - Bảng khách hàng: bấm tiêu đề cột để sắp xếp (tăng/giảm, có `aria-sort`); chọn cột hiển thị (tất cả, chỉ quý, chỉ tháng, ẩn năm 2025, hoặc chọn từng tháng), được ghi nhớ; nút "Tới tháng này".
 - Hoàn tác (nút trên thông báo hoặc Ctrl+Z) cho: lưu/lưu trữ khách hàng, thêm/sửa/xóa công việc, nhập Excel.

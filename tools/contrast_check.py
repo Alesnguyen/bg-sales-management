@@ -23,12 +23,17 @@ bad=0
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={"width":1440,"height":900});pg.goto((root/"index.html").as_uri());pg.wait_for_selector("#splash",state="detached")
     pg.click('.nav button[data-page=import]');pg.set_input_files("#excel-file",sys.argv[1]);pg.click("#imp-go");pg.wait_for_selector("#imp-body .notice:has-text('Đã nhập xong')")
+    pg.click('.nav button[data-page=customers]');pg.click("#nav-sb");pg.click("#add-sb");pg.fill("#sb_cus","Kia Bắc Ninh (CÔNG TY TNHH DƯƠNG TUẤN)");pg.fill("#sb_name","Tăng tốc");pg.fill("#sb_target","1000000000");pg.click("#sb-form button[type=submit]");pg.wait_for_selector("#sb-rows tr")
     pg.click('.nav button[data-page=customers]');pg.click("#customer-rows tr >> nth=0");pg.wait_for_selector("#ce-form");pg.click("#ce-cancel")
     pg.click('.nav button[data-page=calendar]');pg.click("#add-work");pg.fill("#f_title","Thăm khách");pg.click("#dlg-form button.primary");pg.wait_for_timeout(300)
     for th in ("light","dark"):
         pg.evaluate(f"document.documentElement.dataset.theme='{th}'")
-        for page in ("overview","customers","calendar","import","settings"):
-            pg.click(f'.nav button[data-page={page}]');pg.wait_for_timeout(450)
+        for page in ("overview","customers","saleboots","saleboot-edit","customer-edit","calendar","import","settings"):
+            if page=="saleboots": pg.click('.nav button[data-page=customers]');pg.click("#nav-sb")
+            elif page=="saleboot-edit": pg.click("#sb-rows tr")
+            elif page=="customer-edit": pg.click('.nav button[data-page=customers]');pg.click("#customer-rows tr >> nth=0")
+            else: pg.click(f'.nav button[data-page={page}]')
+            pg.wait_for_timeout(450)
             r=pg.evaluate(JS)
             for x in r: print(f"[{th}/{page}] {x[0]} (cần {x[1]}) · {x[2]} · {x[3]}");bad+=1
     b.close()

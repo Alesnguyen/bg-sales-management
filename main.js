@@ -1,13 +1,22 @@
 const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require("electron");
 const path = require("path");
+const fs = require("fs");
+const backup = require("./backup");
+
 app.commandLine.appendSwitch("lang", "vi");
 const autoUpdater = app.isPackaged ? require("electron-updater").autoUpdater : null;
+// Thư mục sao lưu tự động: Tài liệu\BG Sales Management\Sao lưu (nếu Tài liệu được OneDrive đồng bộ thì bản sao lưu cũng được đồng bộ)
+const bdir = () => path.join(app.getPath("documents"), "BG Sales Management", "Sao lưu");
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
   let win;
+  let closing = false;
+  let forced = false;
+  let timer = null;
   const send = (s) => { if (win && !win.isDestroyed()) win.webContents.send("upd:state", s); };
+
   if (autoUpdater) {
     autoUpdater.autoDownload = true;
     autoUpdater
@@ -23,6 +32,24 @@ if (!app.requestSingleInstanceLock()) {
     try { await autoUpdater.checkForUpdates(); } catch (e) { send({ s: "error", m: e.message }); }
   });
   ipcMain.handle("upd:install", () => { if (autoUpdater) autoUpdater.quitAndInstall(); });
+
+  ipcMain.handle("bk:save", (_e, text) => ({ name: backup.save(bdir(), String(text)), dir: bdir() }));
+  ipcMain.handle("bk:list", () => ({ dir: bdir(), items: backup.list(bdir()) }));
+  ipcMain.handle("bk:read", (_e, name) => backup.read(bdir(), String(name)));
+  ipcMain.handle("bk:open", () => { fs.mkdirSync(bdir(), { recursive: true }); return shell.openPath(bdir()); });
+  // Giao diện báo đã sao lưu xong khi đóng ứng dụng; nếu còn thay đổi chưa lưu thì hỏi lại.
+  ipcMain.on("bk:ready", (_e, dirty) => {
+    clearTimeout(timer);
+    let leave = true;
+    if (dirty && win && !win.isDestroyed()) {
+      leave = dialog.showMessageBoxSync(win, {
+        type: "question", buttons: ["Ở lại", "Thoát, bỏ thay đổi"], defaultId: 0, cancelId: 0,
+        title: "Thay đổi chưa lưu", message: "Bạn có thay đổi chưa lưu.", detail: "Thoát bây giờ sẽ mất các thay đổi chưa lưu."
+      }) === 1;
+    }
+    if (leave) { forced = true; if (win && !win.isDestroyed()) win.destroy(); } else { closing = false; }
+  });
+
   app.on("second-instance", () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
   app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
@@ -32,10 +59,16 @@ if (!app.requestSingleInstanceLock()) {
       icon: path.join(__dirname, "build", "icon.png"),
       webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, preload: path.join(__dirname, "preload.js") }
     });
-    win.webContents.on("will-prevent-unload", (e) => {
-      const c = dialog.showMessageBoxSync(win, { type: "question", buttons: ["Ở lại", "Thoát, bỏ thay đổi"], defaultId: 0, cancelId: 0, title: "Thay đổi chưa lưu", message: "Bạn có thay đổi chưa lưu.", detail: "Thoát bây giờ sẽ mất các thay đổi chưa lưu." });
-      if (c === 1) e.preventDefault();
+    // Đóng cửa sổ: yêu cầu giao diện sao lưu trước, tối đa chờ 5 giây.
+    win.on("close", (e) => {
+      if (forced) return;
+      e.preventDefault();
+      if (closing) return;
+      closing = true;
+      win.webContents.send("bk:flush");
+      timer = setTimeout(() => { forced = true; if (!win.isDestroyed()) win.destroy(); }, 5000);
     });
+    win.webContents.on("will-prevent-unload", (e) => e.preventDefault());
     win.loadFile(path.join(__dirname, "index.html"));
     win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: "deny" }; });
     if (autoUpdater) setTimeout(() => autoUpdater.checkForUpdates().catch(() => {}), 4000);

@@ -92,3 +92,15 @@ kbd{font:inherit;font-size:var(--font-size-xs);padding:1px 6px;border:1px solid 
 .stbl{font-size:var(--font-size-sm)}.stbl th,.stbl td{padding:8px 7px;white-space:nowrap}
 .stbl thead th{letter-spacing:0;text-transform:none;font-size:var(--font-size-xs)}
 .stbl{min-width:0!important;width:100%}
+
+/* ===== v0.9: SaleBoots (mục con của Khách hàng) ===== */
+.nav button.sub{margin:2px 0 4px 14px;width:calc(100% - 14px);min-height:44px;font-size:var(--font-size-sm)}
+.nav button.sub.sel{background:var(--surface-subtle);box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--text);font-weight:var(--font-weight-semibold)}
+#sb-kpi{margin:12px 0}
+#sb-rows td:nth-child(-n+2){min-width:200px;max-width:300px}
+#sb-rows .mini-track{width:110px}
+.sbres .tag{vertical-align:middle}
+#sb-form .card{margin-bottom:16px}
+#sb-form input:not([type=checkbox]),#sb-form textarea,#sb-form select{width:100%}
+#sb-form textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-control);padding:8px 10px}
+#sb-rows td:nth-child(-n+2){min-width:170px;max-width:240px}
