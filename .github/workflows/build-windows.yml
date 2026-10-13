@@ -22,19 +22,10 @@ jobs:
         env:
           RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - run: npm install
-      - name: Chọn chế độ phát hành
-        id: rel
-        shell: bash
-        run: |
-          V=$(node -p "require('./package.json').version")
-          if [ "${{ github.event_name }}" = "push" ] && ! gh release view "v$V" --repo "$REL_REPO" >/dev/null 2>&1; then echo "mode=always" >> "$GITHUB_OUTPUT"; else echo "mode=never" >> "$GITHUB_OUTPUT"; fi
-        env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-      - run: npx electron-builder --win nsis --publish ${{ steps.rel.outputs.mode }}
-        env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-      - name: Bảo đảm bản phát hành có latest.yml (cho tự cập nhật)
-        if: steps.rel.outputs.mode == 'always'
+      # Chỉ build, không để công cụ build tự đăng (trước đây đăng thiếu file). Việc đăng làm ở bước sau để bảo đảm đủ file.
+      - run: npx electron-builder --win nsis --publish never
+      - name: Đăng bản phát hành sang kho công khai (đủ file cài, latest.yml, blockmap)
+        if: github.event_name == 'push'
         shell: bash
         run: |
           V=$(node -p "require('./package.json').version")
@@ -50,11 +41,26 @@ jobs:
           fi
           # Tên tệp do công cụ build tạo ra có dấu cách; sao chép sang tên có dấu gạch ngang rồi mới tải lên.
           mkdir -p dist/up
+          cp "$EXE" "dist/up/$SAFE"
           for f in dist/latest.yml dist/*.blockmap; do
             [ -e "$f" ] && cp "$f" "dist/up/$(basename "$f" | tr ' ' '-')"
           done
           ls -la dist/up
-          gh release upload "v$V" dist/up/* --repo "$REL_REPO" --clobber
+          # Ghi chú phát hành = mục tương ứng trong CHANGELOG.md (ứng dụng hiển thị ghi chú này khi báo có bản mới).
+          awk -v h="## $V" '$0==h{f=1;next} /^## /{f=0} f' CHANGELOG.md > dist/notes.md
+          [ -s dist/notes.md ] || echo "Phiên bản $V" > dist/notes.md
+          if gh release view "v$V" --repo "$REL_REPO" >/dev/null 2>&1; then
+            ASSETS=$(gh release view "v$V" --repo "$REL_REPO" --json assets --jq '.assets[].name')
+            if echo "$ASSETS" | grep -qxF "$SAFE" && echo "$ASSETS" | grep -qxF "latest.yml"; then
+              echo "Bản v$V đã đầy đủ, bỏ qua."
+              exit 0
+            fi
+            echo "Bản v$V đã có nhưng thiếu file, đang bổ sung."
+            gh release upload "v$V" dist/up/* --repo "$REL_REPO" --clobber
+          else
+            gh release create "v$V" dist/up/* --repo "$REL_REPO" --title "$V" --notes-file dist/notes.md --latest \
+              || gh release upload "v$V" dist/up/* --repo "$REL_REPO" --clobber
+          fi
         env:
           GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       - uses: actions/upload-artifact@v4
