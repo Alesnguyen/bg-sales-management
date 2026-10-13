@@ -23,6 +23,11 @@ Lưu ý: ai cũng tải được file cài (không có dữ liệu của bạn t
 5. Tải gói v0.9.0 lên như thường lệ. Bản `v0.9.0` sẽ xuất hiện ở **Releases của kho bg-sales-management-releases**.
 6. Sau khi xác nhận build chạy tốt, chuyển `bg-sales-management` sang **Private** (Settings → Danger Zone → Change visibility).
 
+## Quy trình tự động làm gì (từ v0.9.2)
+1. Build file cài (không để công cụ build tự đăng).
+2. Đăng lên kho `-releases`: file cài, `latest.yml`, blockmap và ghi chú (mục tương ứng trong `CHANGELOG.md`). Nếu bản đó đã có nhưng thiếu file (ví dụ v0.9.1), tự bổ sung thay vì bỏ qua.
+3. Ứng dụng đã cài tự phát hiện bản mới và báo ở biểu tượng chuông và ở Cài đặt.
+
 ## Mỗi lần phát hành
 Tăng `version` trong `package.json`, ghi `CHANGELOG.md`, commit vào `main`. Nhận file cài ở Releases của kho `-releases`.
 

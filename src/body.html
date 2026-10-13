@@ -18,7 +18,10 @@
 <main class="main" id="main" tabindex="-1">
 <header class="topbar">
 <div><nav class="crumbs" id="crumbs" aria-label="Đường dẫn điều hướng"></nav><div class="eyebrow" id="page-eyebrow">KHÔNG GIAN LÀM VIỆC</div><h1 id="page-title">Tổng quan</h1><div class="page-description" id="page-description"></div></div>
-<div class="top-actions"><div class="theme-control"><span id="theme-label">Giao diện sáng</span><button class="theme-button" id="theme-toggle" aria-label="Chuyển sang giao diện tối" title="Đổi giao diện"><span class="mode-icon selected" id="sun-icon">☀</span><span class="mode-icon" id="moon-icon">☾</span></button></div></div>
+<div class="top-actions"><div class="notif-wrap"><button type="button" class="bell" id="bell" aria-haspopup="dialog" aria-expanded="false" aria-controls="npanel" aria-label="Thông báo" title="Thông báo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="bdg" id="bdg" hidden aria-hidden="true"></span></button>
+<div class="npanel" id="npanel" role="dialog" aria-labelledby="ntitle" hidden><div class="nhead"><h2 id="ntitle">Thông báo</h2><button type="button" class="btn" id="nreadall">Đánh dấu đã đọc</button></div><div class="nbody" id="nbody"></div><div class="nfoot"><button type="button" class="btn" data-page="settings" id="nset">Cài đặt thông báo</button></div></div>
+<div class="sr" id="nlive" aria-live="polite"></div></div>
+<div class="theme-control"><span id="theme-label">Giao diện sáng</span><button class="theme-button" id="theme-toggle" aria-label="Chuyển sang giao diện tối" title="Đổi giao diện"><span class="mode-icon selected" id="sun-icon">☀</span><span class="mode-icon" id="moon-icon">☾</span></button></div></div>
 </header>
 
 <section class="view active" data-view="overview" aria-labelledby="page-title">
@@ -81,6 +84,7 @@
 <article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v{{VER}}</span></div>
 <div class="settings-row"><div><div class="settings-title">Tên hiển thị</div><div class="settings-desc">Dùng cho lời chào ở trang Tổng quan.</div></div><input id="pf-name" type="text" maxlength="40" placeholder="Tên của bạn" aria-label="Tên hiển thị" style="max-width:200px"></div>
 <div class="settings-row"><div><div class="settings-title">Phím tắt</div><div class="settings-desc">Xem các phím tắt, hoặc nhấn phím ? ở bất kỳ đâu.</div></div><button class="btn" id="open-keys">Xem phím tắt</button></div>
+<div class="settings-row"><div><div class="settings-title">Thông báo</div><div class="settings-desc">Chọn loại thông báo hiện ở biểu tượng chuông.</div></div><div class="toolbar" style="margin:0"><label class="chk"><input type="checkbox" id="nc-work"> Công việc</label><label class="chk"><input type="checkbox" id="nc-sb"> SaleBoots</label><label class="chk"><input type="checkbox" id="nc-upd"> Cập nhật</label><label class="chk"><input type="checkbox" id="nc-bk"> Sao lưu</label></div></div>
 <div class="settings-row"><div><div class="settings-title">Cập nhật ứng dụng</div><div class="settings-desc" id="upd-msg">—</div></div><div class="toolbar" style="margin:0"><button class="btn" id="upd-check">Kiểm tra cập nhật</button><button class="btn primary" id="upd-install" hidden>Khởi động lại để cập nhật</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Dữ liệu</div><div class="settings-desc" id="set-data">—</div></div></div>
 <div class="settings-row"><div><div class="settings-title">Lần nhập Excel gần nhất</div><div class="settings-desc" id="set-import">Chưa nhập</div></div></div>

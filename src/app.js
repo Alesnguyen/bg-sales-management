@@ -40,7 +40,7 @@ const regions=()=>[...new Set(S.cus.filter(c=>!c.archived).map(c=>c.region||"Kh�
 /* ===== Hiển thị ===== */
 function render(){const p=($(".view.active")||{dataset:{}}).dataset.view;
  $("#side-count").textContent=S.cus.length+" khách hàng · "+S.work.length+" công việc";
- if(p==="overview")ovw();if(p==="customers")cust();if(p==="calendar")cal();if(p==="saleboots")sbList();if(p==="settings")sett()}
+ if(p==="overview")ovw();if(p==="customers")cust();if(p==="calendar")cal();if(p==="saleboots")sbList();if(p==="settings")sett();nbRefresh()}
 const QUOTES=["Mỗi cuộc gọi hôm nay là một cơ hội mới. Bắt đầu thôi!","Doanh số là kết quả của những việc nhỏ làm đều mỗi ngày.","Khách hàng nhớ người giữ lời hứa, và bạn đang làm rất tốt.","Tiến độ chậm vẫn là tiến độ. Cứ vững bước!","Một lần ghé thăm hôm nay có thể là đơn hàng của tháng sau.","Bạn không cần hoàn hảo, chỉ cần kiên trì.","Hôm nay hãy làm thật tốt một việc quan trọng nhất.","Mục tiêu lớn được tạo nên từ từng ngày chăm chỉ.","Cảm ơn bạn đã nỗ lực mỗi ngày. Thành quả sẽ đến.","Giữ nhịp đều đặn, kết quả sẽ tự tìm đến bạn."];
 let qi=Math.floor(Date.now()/864e5)%QUOTES.length;
 const greet=()=>{const h=new Date().getHours(),n=S.prefs?.name;return"Chào "+(h<11?"buổi sáng":h<14?"buổi trưa":h<18?"buổi chiều":"buổi tối")+(n?", "+n:"")+"!"};
@@ -98,7 +98,7 @@ function cal(){const mon=S.week,days=[...Array(7)].map((_,i)=>{const d=new Date(
  $("#week-label").textContent="Tuần "+(a.getMonth()===b.getMonth()?String(a.getDate()).padStart(2,"0"):String(a.getDate()).padStart(2,"0")+"/"+String(a.getMonth()+1).padStart(2,"0"))+"–"+String(b.getDate()).padStart(2,"0")+"/"+String(b.getMonth()+1).padStart(2,"0")+"/"+b.getFullYear();
  const g=$("#week-grid");g.style.gridTemplateColumns=`repeat(${n},minmax(0,1fr))`;
  g.innerHTML=days.slice(0,n).map((d,i)=>{const s=iso(d),w=S.work.filter(x=>x.date===s).sort((x,y)=>(x.time||"").localeCompare(y.time||""));return`<div class="day-card"${s===iso(new Date())?' style="border-color:var(--accent)"':""}><div class="day-head"><span class="day-name">${N[i]}</span><span class="day-date">${String(d.getDate()).padStart(2,"0")}</span></div>${w.map(x=>`<div class="task${x.st==="Hoàn thành"?" done":""}${x.st==="Hủy"?" cancel":""}" tabindex="0" role="button" data-work="${esc(x.id)}" style="cursor:pointer${late(x)?";border-left-color:var(--danger)":""}"><div class="task-title">${esc(x.title)}</div><div class="task-meta">${esc(x.time||"Cả ngày")} · ${esc(x.cus||x.type)}${x.st!=="Dự kiến"?" · "+x.st:""}${late(x)?" · Trễ hạn":""}</div></div>`).join("")}<button class="btn" data-add-day="${s}" style="width:100%;min-height:30px" aria-label="Thêm công việc ngày ${dmy(s)}">＋</button></div>`}).join("")}
-function sett(){$("#pf-name").value=S.prefs?.name||"";bkStatus();{const lb=S.prefs?.lastBackup;$("#set-backup").textContent=lb?" Lần gần nhất: "+new Date(lb).toLocaleString("vi-VN")+".":" Chưa sao lưu lần nào."}const m=S.meta.lastImport;$("#set-data").textContent=S.cus.length+" khách hàng · "+S.work.length+" công việc · lưu cục bộ (IndexedDB)";$("#set-import").textContent=m?`${m.file} · ${new Date(m.at).toLocaleString("vi-VN")} · ${m.n} dòng (mới ${m.nw}, cập nhật ${m.up})`:"Chưa nhập"}
+function sett(){$("#pf-name").value=S.prefs?.name||"";bkStatus();{const C=ncat();["work","sb","upd","bk"].forEach(k=>$("#nc-"+k).checked=C[k])}{const lb=S.prefs?.lastBackup;$("#set-backup").textContent=lb?" Lần gần nhất: "+new Date(lb).toLocaleString("vi-VN")+".":" Chưa sao lưu lần nào."}const m=S.meta.lastImport;$("#set-data").textContent=S.cus.length+" khách hàng · "+S.work.length+" công việc · lưu cục bộ (IndexedDB)";$("#set-import").textContent=m?`${m.file} · ${new Date(m.at).toLocaleString("vi-VN")} · ${m.n} dòng (mới ${m.nw}, cập nhật ${m.up})`:"Chưa nhập"}
 /* ===== Hộp thoại biểu mẫu dùng chung ===== */
 function form(title,fields,v,save,extra,remove){const f=$("#dlg-form");
  f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">${esc(title)}</h3>`+fields.map(([k,l,t,o,req])=>{const x=v[k]??"",id="f_"+k;return`<label class="flabel" for="${id}">${l}</label>`+(t==="sel"?`<select id="${id}">${o.map(z=>`<option${z===x?" selected":""}>${z}</option>`).join("")}</select>`:t==="area"?`<textarea id="${id}" rows="2">${esc(x)}</textarea>`:`<input id="${id}" type="${t}"${o?` list="${o}"`:""}${req?" required":""}${t==="number"?' step="any"':""} value="${esc(x)}">`)}).join("")+(extra||"")+`<div class="dlg-actions">${remove?'<button type="button" class="btn" id="dlg-del" style="color:var(--danger)">Xóa</button>':""}<span style="flex:1"></span><button type="button" class="btn" id="dlg-x">Hủy</button><button class="btn primary" type="submit">Lưu</button></div>`;
@@ -310,11 +310,61 @@ $("#wipe").onclick=async()=>{if(confirm("Xóa TOÀN BỘ khách hàng, công vi�
 /* ===== Cập nhật ứng dụng (bản cài Windows) ===== */
 const updErr=m=>{m=String(m||"");return/latest\.yml|404|Not Found/i.test(m)?"Chưa có thông tin bản cập nhật trên nơi phát hành. Hãy thử lại sau hoặc tải bản mới từ trang phát hành.":/401|403|auth|token/i.test(m)?"Không truy cập được nơi đăng bản cập nhật (kho lưu trữ riêng tư cần quyền truy cập).":/ENOTFOUND|ECONN|ETIMEDOUT|INTERNET|net::|network/i.test(m)?"Không kết nối được Internet để kiểm tra cập nhật.":"Không kiểm tra được cập nhật lúc này. Vui lòng thử lại sau."};
 const U=window.bgsm,um=t=>{$("#upd-msg").textContent=t};
-if(U){um("Phiên bản "+VER+". Ứng dụng tự kiểm tra khi mở.");U.onUpdate(s=>{if(s.s==="checking")um("Đang kiểm tra bản cập nhật…");else if(s.s==="none")um("Bạn đang dùng phiên bản mới nhất ("+VER+").");else if(s.s==="available")um("Có bản "+s.v+", đang tải…");else if(s.s==="progress")um("Đang tải bản cập nhật… "+s.p+"%");else if(s.s==="ready"){um("Bản "+s.v+" đã tải xong. Dữ liệu của bạn được giữ nguyên.");$("#upd-install").hidden=false}else if(s.s==="error")um(updErr(s.m))});
- $("#upd-check").onclick=()=>U.check().then(r=>{if(r&&r.s==="dev")um("Chỉ kiểm tra được trong bản đã cài đặt.")});$("#upd-install").onclick=()=>U.install()}
+const verMsg=s=>s.notes?". Có gì mới: "+s.notes.slice(0,180)+(s.notes.length>180?"…":""):"";
+function updState(s){if(["available","progress","ready"].includes(s.s))S.upd=s;
+ if(s.s==="checking")um("Đang kiểm tra bản cập nhật…");
+ else if(s.s==="none")um("Bạn đang dùng phiên bản mới nhất ("+VER+").");
+ else if(s.s==="available")um("Có bản mới "+s.v+" (bạn đang dùng "+VER+"). Đang tải về…"+verMsg(s));
+ else if(s.s==="progress")um("Đang tải bản "+(S.upd?.v||"mới")+"… "+s.p+"%");
+ else if(s.s==="ready"){um("Bản "+s.v+" đã tải xong"+verMsg(s)+". Dữ liệu của bạn được giữ nguyên.");$("#upd-install").hidden=false}
+ else if(s.s==="error")um(updErr(s.m));
+ $("#upd-check").disabled=s.s==="checking"||s.s==="progress";nbRefresh()}
+if(U){um("Phiên bản "+VER+". Ứng dụng tự kiểm tra khi mở và vài giờ một lần.");U.onUpdate(updState);if(U.last)U.last().then(s=>{if(s)updState(s)}).catch(()=>{});
+ $("#upd-check").onclick=()=>{um("Đang kiểm tra bản cập nhật…");U.check().then(r=>{if(r&&r.s==="dev")um("Chỉ kiểm tra được trong bản đã cài đặt.")})};$("#upd-install").onclick=()=>U.install()}
 else{um("Phiên bản "+VER+". Tự cập nhật chỉ có trong bản cài Windows.");$("#upd-check").disabled=true}
 $("#pf-name").onchange=async e=>{S.prefs={...S.prefs,id:"prefs",name:e.target.value.trim()};await put("m",[S.prefs]);notify("Đã lưu tên hiển thị")};
 $("#ov-region").onchange=ovw;$("#quote-next").onclick=()=>{qi=(qi+1)%QUOTES.length;ovw()};
+/* ===== Trung tâm thông báo (biểu tượng chuông) ===== */
+const ncat=()=>({work:true,sb:true,upd:true,bk:true,...(S.prefs?.ncat||{})}),dA=t=>Math.floor((Date.now()-t)/864e5);
+let psT;const savePrefsSoon=()=>{clearTimeout(psT);psT=setTimeout(()=>put("m",[S.prefs]).catch(()=>{}),400)};
+function nbItems(){const C=ncat(),t=iso(new Date()),out=[];
+ if(C.upd&&S.upd&&["available","progress","ready"].includes(S.upd.s)){const u=S.upd,rd=u.s==="ready",nt=u.notes?` Có gì mới: ${u.notes.slice(0,160)}${u.notes.length>160?"…":""}`:"";
+  out.push({k:"upd:"+u.v,ico:"⬆",pri:0,title:rd?`Bản ${u.v} đã sẵn sàng cài đặt`:`Có bản cập nhật ${u.v}`,text:(rd?"":u.s==="progress"?`Đang tải… ${u.p||0}%. `:"Đang tải về. ")+`Bạn đang dùng bản ${VER}.`+nt,acts:rd?[{l:"Khởi động lại để cập nhật",a:"install"}]:[{l:"Xem trong Cài đặt",go:"settings"}]})}
+ if(C.work){const lt=S.work.filter(late),td=S.work.filter(w=>w.date===t&&w.st==="Dự kiến");
+  if(lt.length)out.push({k:`wl:${t}:${lt.length}`,ico:"!",pri:1,title:`${lt.length} công việc trễ hạn`,text:lt.slice(0,2).map(w=>w.title).join("; ")+(lt.length>2?`… và ${lt.length-2} việc khác`:""),acts:[{l:"Mở lịch",go:"calendar"}]});
+  if(td.length)out.push({k:`wt:${t}:${td.length}`,ico:"▦",pri:2,title:`Hôm nay có ${td.length} công việc`,text:td.slice(0,3).map(w=>(w.time?w.time+" ":"")+w.title).join("; "),acts:[{l:"Mở lịch",go:"calendar"}]})}
+ if(C.sb&&S.sb.length){const cm=new Map(S.cus.map(c=>[c.id,c])),run=S.sb.filter(p=>!p.archived).map(p=>{const c=cm.get(p.cid);return{p,s:sbStat(p,c),m:sbCalc(p,c)}}).filter(x=>x.s[2]==="Đang chạy"),lim=iso(new Date(Date.now()+3*864e5)),soon=run.filter(x=>x.p.end<=lim),slow=run.filter(x=>sbPace(x.p,x.m).startsWith("Chậm"));
+  if(soon.length)out.push({k:`sbe:${t}:${soon.map(x=>x.p.id).join(",")}`,ico:"⚡",pri:2,title:`${soon.length} chương trình SaleBoots sắp kết thúc`,text:soon.slice(0,2).map(x=>`${x.p.name} (hết ${dmy(x.p.end)})`).join("; "),acts:[{l:"Mở SaleBoots",go:"saleboots"}]});
+  if(slow.length)out.push({k:`sbs:${t}:${slow.length}`,ico:"⚡",pri:2,title:`${slow.length} chương trình SaleBoots chậm tiến độ`,text:slow.slice(0,2).map(x=>x.p.name).join("; "),acts:[{l:"Mở SaleBoots",go:"saleboots"}]})}
+ if(C.bk){const lb=Math.max(S.prefs?.lastBackup||0,S.prefs?.lastAuto||0);
+  if(BK&&S.bkErr)out.push({k:"bke:"+S.bkErr,ico:"!",pri:1,title:"Sao lưu tự động gặp lỗi",text:S.bkErr,acts:[{l:"Mở Cài đặt",go:"settings"}]});
+  else if(S.cus.length&&(!lb||dA(lb)>=14))out.push({k:"bko:"+Math.floor(Date.now()/(7*864e5)),ico:"⛁",pri:3,title:lb?`Đã ${dA(lb)} ngày chưa sao lưu`:"Bạn chưa sao lưu dữ liệu",text:"Sao lưu giúp tránh mất dữ liệu khi hỏng máy hoặc cài lại Windows.",acts:[{l:"Sao lưu ngay",go:"settings"}]})}
+ return out}
+function nbList(){const rd=S.prefs.nread||{},cl=S.prefs.nclr||{};return nbItems().filter(i=>!cl[i.k]).sort((a,b)=>(!!rd[a.k])-(!!rd[b.k])||a.pri-b.pri)}
+function nbRefresh(){if(!$("#bell"))return;const all=nbItems(),keys=new Set(all.map(i=>i.k));
+ for(const m of["nread","nclr"]){const o=S.prefs[m];if(o){let ch=false;for(const k in o)if(!keys.has(k)){delete o[k];ch=true}if(ch)savePrefsSoon()}}
+ const L=nbList(),rd=S.prefs.nread||{},un=L.filter(i=>!rd[i.k]).length,b=$("#bdg");b.hidden=!un;b.textContent=un>9?"9+":String(un);$("#bell").setAttribute("aria-label",un?`Thông báo, ${un} chưa đọc`:"Thông báo");$("#bell").title=un?`${un} thông báo chưa đọc`:"Thông báo";
+ if(S.nlast!=null&&un>S.nlast){const bl=$("#bell");bl.classList.remove("ring");void bl.offsetWidth;bl.classList.add("ring");$("#nlive").textContent=`Bạn có ${un} thông báo chưa đọc`}
+ S.nlast=un;if(!$("#npanel").hidden)nbDraw()}
+function nbDraw(){const L=nbList(),rd=S.prefs.nread||{},nw=L.filter(i=>!rd[i.k]),old=L.filter(i=>rd[i.k]);S.nl=L;
+ const it=i=>`<li class="ni${rd[i.k]?"":" unread"}" data-k="${esc(i.k)}"><span class="nico" aria-hidden="true">${i.ico}</span><div class="nmain"><strong>${esc(i.title)}</strong>${rd[i.k]?"":'<span class="sr"> (chưa đọc)</span>'}<p>${esc(i.text)}</p>${i.acts?.length?`<div class="nacts">${i.acts.map((a,j)=>`<button type="button" class="btn" data-na="${j}">${esc(a.l)}</button>`).join("")}</div>`:""}</div><button type="button" class="nx" data-nx aria-label="Ẩn thông báo: ${esc(i.title)}" title="Ẩn">×</button></li>`;
+ $("#nbody").innerHTML=L.length?(nw.length?`<div class="nsec">Mới</div><ul>${nw.map(it).join("")}</ul>`:"")+(old.length?`<div class="nsec">Đã xem</div><ul>${old.map(it).join("")}</ul>`:""):'<div class="nempty"><div aria-hidden="true">✓</div><strong>Bạn đã xem hết</strong><p>Chưa có thông báo nào cần chú ý.</p></div>';
+ $("#nreadall").disabled=!nw.length}
+function nbMarkAll(){const o=(S.prefs.nread??={});let ch=false;nbList().forEach(i=>{if(!o[i.k]){o[i.k]=1;ch=true}});if(ch){savePrefsSoon();nbRefresh()}}
+function nbOpen(){$("#npanel").hidden=false;$("#bell").setAttribute("aria-expanded","true");nbDraw();($("#nbody .btn,#nbody .nx")||$("#nset")).focus()}
+function nbClose(ret){if($("#npanel").hidden)return;$("#npanel").hidden=true;$("#bell").setAttribute("aria-expanded","false");nbMarkAll();if(ret)$("#bell").focus()}
+$("#bell").addEventListener("click",()=>$("#npanel").hidden?nbOpen():nbClose(true));
+$("#nreadall").addEventListener("click",nbMarkAll);
+$("#npanel").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.id==="nreadall")return;
+ if(b.id==="nset"){nbClose(false);return}
+ const li=b.closest(".ni"),it=li&&(S.nl||[]).find(x=>x.k===li.dataset.k);if(!it)return;
+ if(b.hasAttribute("data-nx")){(S.prefs.nclr??={})[it.k]=1;savePrefsSoon();nbRefresh();return}
+ if(b.dataset.na!=null){const a=it.acts[+b.dataset.na];(S.prefs.nread??={})[it.k]=1;savePrefsSoon();if(a.a==="install"&&U){U.install();return}if(a.go){nbClose(false);go(a.go)}nbRefresh()}});
+document.addEventListener("mousedown",e=>{if(!$("#npanel").hidden&&!e.target.closest(".notif-wrap"))nbClose(false)});
+document.querySelector(".notif-wrap").addEventListener("focusout",e=>{if(e.relatedTarget&&!e.currentTarget.contains(e.relatedTarget))nbClose(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#npanel").hidden){e.preventDefault();nbClose(true)}});
+["work","sb","upd","bk"].forEach(k=>$("#nc-"+k).addEventListener("change",e=>{S.prefs={...S.prefs,id:"prefs",ncat:{...ncat(),[k]:e.target.checked}};put("m",[S.prefs]);nbRefresh()}));
+setInterval(nbRefresh,3e5);
 /* ===== Sao lưu tự động (bản cài Windows) ===== */
 const BK=window.bgsm?.backup;
 const hashStr=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(16)+":"+s.length};

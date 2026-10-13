@@ -25,7 +25,7 @@ with sync_playwright() as p:
     pg.click('.nav button[data-page=import]');pg.set_input_files("#excel-file",sys.argv[1]);pg.click("#imp-go");pg.wait_for_selector("#imp-body .notice:has-text('Đã nhập xong')")
     pg.click('.nav button[data-page=customers]');pg.click("#nav-sb");pg.click("#add-sb");pg.fill("#sb_cus","Kia Bắc Ninh (CÔNG TY TNHH DƯƠNG TUẤN)");pg.fill("#sb_name","Tăng tốc");pg.fill("#sb_target","1000000000");pg.click("#sb-form button[type=submit]");pg.wait_for_selector("#sb-rows tr")
     pg.click('.nav button[data-page=customers]');pg.click("#customer-rows tr >> nth=0");pg.wait_for_selector("#ce-form");pg.click("#ce-cancel")
-    pg.click('.nav button[data-page=calendar]');pg.click("#add-work");pg.fill("#f_title","Thăm khách");pg.click("#dlg-form button.primary");pg.wait_for_timeout(300)
+    pg.click('.nav button[data-page=calendar]');pg.click("#add-work");pg.fill("#f_title","Thăm khách");pg.click("#dlg-form button.primary");pg.wait_for_timeout(300);pg.click("#add-work");pg.fill("#f_title","Việc quá hạn");pg.fill("#f_date","2026-01-05");pg.click("#dlg-form button.primary");pg.wait_for_timeout(300)
     for th in ("light","dark"):
         pg.evaluate(f"document.documentElement.dataset.theme='{th}'")
         for page in ("overview","customers","saleboots","saleboot-edit","customer-edit","calendar","import","settings"):
@@ -36,5 +36,8 @@ with sync_playwright() as p:
             pg.wait_for_timeout(450)
             r=pg.evaluate(JS)
             for x in r: print(f"[{th}/{page}] {x[0]} (cần {x[1]}) · {x[2]} · {x[3]}");bad+=1
+        pg.click("#bell");pg.wait_for_timeout(300)
+        for x in pg.evaluate(JS): print(f"[{th}/chuông] {x[0]} (cần {x[1]}) · {x[2]} · {x[3]}");bad+=1
+        pg.keyboard.press("Escape")
     b.close()
 print("TƯƠNG PHẢN:", "ĐẠT" if not bad else f"{bad} mục dưới ngưỡng")

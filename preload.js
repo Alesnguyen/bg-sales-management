@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("bgsm", {
   check: () => ipcRenderer.invoke("upd:check"),
   install: () => ipcRenderer.invoke("upd:install"),
+  last: () => ipcRenderer.invoke("upd:last"),
   onUpdate: (cb) => ipcRenderer.on("upd:state", (_e, s) => cb(s)),
   backup: {
     save: (text) => ipcRenderer.invoke("bk:save", text),

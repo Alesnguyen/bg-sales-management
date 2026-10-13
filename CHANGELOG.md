@@ -1,5 +1,10 @@
 # Lịch sử phiên bản
 
+## 0.9.2
+- **Sửa cập nhật tự động:** bản phát hành trước thiếu file cài và `latest.yml` nên ứng dụng báo "chưa có thông tin bản cập nhật". Quy trình build nay tự đăng đủ file cài, `latest.yml` và blockmap lên kho phát hành, kèm ghi chú lấy từ CHANGELOG, và tự bổ sung nếu một bản đã đăng bị thiếu file.
+- Ứng dụng kiểm tra bản mới khi mở và 6 giờ một lần; bấm "Kiểm tra cập nhật" hiện ngay phiên bản mới và nội dung "Có gì mới"; tự tải về và hiện nút "Khởi động lại để cập nhật".
+- **Chuông thông báo** cạnh nút sáng/tối: huy hiệu số chưa đọc; bảng thông báo có nhóm Mới / Đã xem, nút hành động, ẩn từng thông báo, "Đánh dấu đã đọc", đóng bằng Esc, đọc được bằng trình đọc màn hình. Loại thông báo: bản cập nhật, công việc trễ hạn và công việc hôm nay, SaleBoots sắp kết thúc hoặc chậm tiến độ, nhắc sao lưu và lỗi sao lưu. Bật/tắt từng loại ở Cài đặt.
+
 ## 0.9.1
 - Sửa lỗi ô số tiền: khi gõ hoặc xóa, ứng dụng không còn tự chèn dấu chấm và đổi nội dung ô (có thể xung đột với bộ gõ tiếng Việt, làm chữ số "5" tự xuất hiện). Nay ô giữ nguyên khi đang gõ; dòng gợi ý bên dưới hiện ngay số đầy đủ có dấu chấm (= 500.000.000 ≈ 500 triệu); rời ô thì ô được định dạng. Chặn chữ và ký tự lạ; dán số có dấu chấm vẫn đúng.
 - Sửa lỗi tính SaleBoots đang chạy: trước đây "Cùng kỳ 2025" lấy cả thời gian chương trình trong khi "Thực đạt" mới có đến hôm nay, nên Doanh số tăng thêm và Tăng trưởng bị âm sai. Nay chương trình đang chạy chỉ so sánh phần đã diễn ra với đúng khoảng thời gian đó của 2025.

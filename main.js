@@ -15,22 +15,32 @@ if (!app.requestSingleInstanceLock()) {
   let closing = false;
   let forced = false;
   let timer = null;
-  const send = (s) => { if (win && !win.isDestroyed()) win.webContents.send("upd:state", s); };
+  let lastUpd = null;
+  const plain = (n) => {
+    if (!n) return "";
+    if (Array.isArray(n)) n = n.map((x) => x.note || "").join("\n");
+    return String(n).replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim().slice(0, 400);
+  };
+  const send = (s) => {
+    if (["available", "progress", "ready"].includes(s.s)) lastUpd = s;
+    if (win && !win.isDestroyed()) win.webContents.send("upd:state", s);
+  };
 
   if (autoUpdater) {
     autoUpdater.autoDownload = true;
     autoUpdater
       .on("checking-for-update", () => send({ s: "checking" }))
-      .on("update-available", (i) => send({ s: "available", v: i.version }))
+      .on("update-available", (i) => send({ s: "available", v: i.version, notes: plain(i.releaseNotes) }))
       .on("update-not-available", () => send({ s: "none" }))
       .on("download-progress", (p) => send({ s: "progress", p: Math.round(p.percent) }))
-      .on("update-downloaded", (i) => send({ s: "ready", v: i.version }))
+      .on("update-downloaded", (i) => send({ s: "ready", v: i.version, notes: plain(i.releaseNotes) }))
       .on("error", (e) => send({ s: "error", m: e.message }));
   }
   ipcMain.handle("upd:check", async () => {
     if (!autoUpdater) return { s: "dev" };
     try { await autoUpdater.checkForUpdates(); } catch (e) { send({ s: "error", m: e.message }); }
   });
+  ipcMain.handle("upd:last", () => lastUpd);
   ipcMain.handle("upd:install", () => { if (autoUpdater) autoUpdater.quitAndInstall(); });
 
   ipcMain.handle("bk:save", (_e, text) => ({ name: backup.save(bdir(), String(text)), dir: bdir() }));
@@ -71,7 +81,10 @@ if (!app.requestSingleInstanceLock()) {
     win.webContents.on("will-prevent-unload", (e) => e.preventDefault());
     win.loadFile(path.join(__dirname, "index.html"));
     win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: "deny" }; });
-    if (autoUpdater) setTimeout(() => autoUpdater.checkForUpdates().catch(() => {}), 4000);
+    if (autoUpdater) {
+      setTimeout(() => autoUpdater.checkForUpdates().catch(() => {}), 4000);
+      setInterval(() => autoUpdater.checkForUpdates().catch(() => {}), 6 * 60 * 60 * 1000);
+    }
   });
   app.on("window-all-closed", () => app.quit());
 }

@@ -30,3 +30,7 @@ Quy ước dữ liệu: cột quý J/L/N/P ở dòng khách hàng là tỉ lệ 
 - **SaleBoots:** mục con của Khách hàng (thanh bên chỉ hiện khi ở Khách hàng hoặc các trang con). Dữ liệu liên kết bằng mã khách hàng (không sao chép tên), nên đổi tên khách hàng không làm mất liên kết; khách hàng chỉ lưu trữ chứ không xóa.
 - **Thực đạt** = số nhập tay nếu có, nếu không thì tổng doanh số tháng của khách hàng trong kỳ (tháng chưa đủ ngày chia theo ngày). **Cùng kỳ 2025** chỉ tính khi chương trình nằm trọn trong 2026. **Hiệu quả ngân sách** = (thực đạt trừ cùng kỳ 2025) chia cho số đã chi.
 - **Sao lưu tự động:** chỉ ghi khi dữ liệu thay đổi (so sánh dấu vân tay nội dung), ghi tệp tạm rồi đổi tên để không để lại tệp dở dang, tối đa chờ 5 giây khi đóng ứng dụng.
+
+## Bổ sung v0.9.2
+- **Chuông thông báo:** thông báo được tính trực tiếp từ dữ liệu hiện có (không lưu danh sách riêng); chỉ lưu trạng thái đã đọc / đã ẩn theo từng thông báo. Thông báo đổi nội dung (ví dụ số việc trễ hạn thay đổi, sang ngày mới) sẽ hiện lại như chưa đọc. Mở bảng thì mục chưa đọc được tô nổi; đóng bảng thì tất cả được đánh dấu đã đọc.
+- **Cập nhật:** ứng dụng tự kiểm tra khi mở và 6 giờ một lần; trạng thái có bản mới hiện cả ở chuông và ở Cài đặt, kể cả khi bản mới được phát hiện trước lúc cửa sổ mở xong.
