@@ -1,5 +1,13 @@
 # Lịch sử phiên bản
 
+## 0.9.5
+- Tổng quan: thẻ “Bản đồ khách hàng theo khu vực” bố cục lại cho dễ dùng: bản đồ 63 tỉnh, thành lớn bên trái; bên phải là vành khuyên tỷ lệ doanh số và danh sách khu vực có tab (Tất cả, Đang hoạt động, Cần theo dõi). Rê chuột sáng tỉnh, bấm tỉnh để lọc Tổng quan, có nút bỏ lọc.
+- Tổng quan: bỏ 4 thẻ số liệu trùng lặp trong thẻ bản đồ.
+- Tổng quan: “Mục tiêu doanh số năm” chỉnh tay, gồm cả KPI từng quý (nhập đủ 4 quý thì KPI năm tự bằng tổng; có nút Chia đều). Tiến độ, biểu đồ và bảng quý tính theo KPI này. Nút “Chỉnh KPI quý” ngay trên bảng quý.
+- Tổng quan: “Top 5 khách hàng 2026” hiển thị lại: số thứ tự, tên dài tối đa 2 dòng, số tiền không ngắt dòng, tự co giãn theo độ rộng khung.
+- Khách hàng: nhận diện khu vực từ tên cho cả 63 tỉnh, thành khi nhập Excel.
+- Sửa lỗi logo không hiển thị: logo được nhúng thẳng vào ứng dụng.
+
 ## 0.9.2
 - **Sửa cập nhật tự động:** bản phát hành trước thiếu file cài và `latest.yml` nên ứng dụng báo "chưa có thông tin bản cập nhật". Quy trình build nay tự đăng đủ file cài, `latest.yml` và blockmap lên kho phát hành, kèm ghi chú lấy từ CHANGELOG, và tự bổ sung nếu một bản đã đăng bị thiếu file.
 - Ứng dụng kiểm tra bản mới khi mở và 6 giờ một lần; bấm "Kiểm tra cập nhật" hiện ngay phiên bản mới và nội dung "Có gì mới"; tự tải về và hiện nút "Khởi động lại để cập nhật".
