@@ -1,5 +1,9 @@
 # Lịch sử phiên bản
 
+## 0.9.6
+- Sửa lỗi ở Lịch làm việc: sau khi xóa một công việc, ô “Nội dung” khi thêm hoặc sửa công việc không gõ được (chữ gõ lạc ra góc trái màn hình). Nguyên nhân là hộp thoại xác nhận gốc của hệ điều hành; nay mọi xác nhận (xóa công việc, xóa chương trình, rời trang khi chưa lưu, khôi phục sao lưu, xóa toàn bộ dữ liệu) dùng hộp thoại ngay trong ứng dụng.
+- Tổng quan: biểu tượng của thẻ “Bản đồ khách hàng theo khu vực” là icon ghim vị trí rõ ràng.
+
 ## 0.9.5
 - Tổng quan: thẻ “Bản đồ khách hàng theo khu vực” bố cục lại cho dễ dùng: bản đồ 63 tỉnh, thành lớn bên trái; bên phải là vành khuyên tỷ lệ doanh số và danh sách khu vực có tab (Tất cả, Đang hoạt động, Cần theo dõi). Rê chuột sáng tỉnh, bấm tỉnh để lọc Tổng quan, có nút bỏ lọc.
 - Tổng quan: bỏ 4 thẻ số liệu trùng lặp trong thẻ bản đồ.

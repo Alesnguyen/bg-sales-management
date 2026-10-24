@@ -21,7 +21,7 @@ let tt;const notify=(m,undo)=>{const t=$("#toast");t.textContent=m;S.undo=undo||
 const doUndo=async()=>{const u=S.undo;if(!u)return;S.undo=null;$("#toast").classList.remove("show");try{await u();await load();render();notify("Đã hoàn tác")}catch(e){notify("Không hoàn tác được: "+vi(e.message))}};
 const setFocus=on=>{document.body.classList.toggle("focus",on);const b=$("#focus-toggle");b.setAttribute("aria-pressed",String(on));b.textContent=on?"⤡ Thu nhỏ bảng":"⤢ Mở rộng bảng"};
 const META={saleboots:["QUẢN LÝ CHƯƠNG TRÌNH","SaleBoots","Tìm kiếm, lọc, thêm và sửa chương trình SaleBoots."],"saleboot-edit":["QUẢN LÝ CHƯƠNG TRÌNH","Sửa SaleBoots","Cập nhật chương trình thúc đẩy doanh số của khách hàng."],"customer-edit":["QUẢN LÝ DỮ LIỆU","Sửa khách hàng","Cập nhật thông tin và số liệu doanh số của khách hàng."],overview:["KHÔNG GIAN LÀM VIỆC","Tổng quan","Bức tranh nhanh về dữ liệu kinh doanh của bạn."],customers:["QUẢN LÝ DỮ LIỆU","Danh sách khách hàng","Tìm kiếm, lọc, thêm và sửa khách hàng."],calendar:["KẾ HOẠCH CÔNG VIỆC","Lịch làm việc","Kế hoạch công tác và tác vụ theo tuần (thứ 2 đến thứ 7)."],import:["QUẢN LÝ DỮ LIỆU","Nhập dữ liệu","Nhập Excel có xem trước và xác nhận."],settings:["TÙY CHỈNH","Cài đặt","Giao diện, sao lưu và thông tin ứng dụng."]};
-function go(p){if(!META[p])return;const cur=S.view;if((cur==="customer-edit"||cur==="saleboot-edit")&&p!==cur&&S.dirty&&!confirm("Bạn có thay đổi chưa lưu. Rời khỏi trang này và bỏ các thay đổi?"))return;S.view=p;S.dirty=false;setFocus(false);document.body.dataset.page=p;
+function go(p,force){if(!META[p])return;const cur=S.view;if(!force&&(cur==="customer-edit"||cur==="saleboot-edit")&&p!==cur&&S.dirty){askConfirm("Bạn có thay đổi chưa lưu. Rời khỏi trang này và bỏ các thay đổi?",{ok:"Rời trang",no:"Ở lại",danger:true}).then(y=>{if(y)go(p,true)});return}S.view=p;S.dirty=false;setFocus(false);document.body.dataset.page=p;
  const nav={"customer-edit":"customers",saleboots:"customers","saleboot-edit":"customers"}[p]||p,sub=p==="saleboots"||p==="saleboot-edit";
  $$("[data-view]").forEach(v=>v.classList.toggle("active",v.dataset.view===p));
  $$(".nav button:not(.sub)").forEach(b=>{const a=b.dataset.page===nav;b.classList.toggle("active",a);a?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
@@ -147,6 +147,15 @@ const tb=t.closest("[data-mtab]");if(tb){S.mapTab=tb.dataset.mtab;render();retur
 const p=t.closest("#mapcard [data-p]");if(p&&!p.closest("thead"))mapPick(p.dataset.p)});
 document.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const p=e.target.closest&&e.target.closest("#mapcard path.pv[tabindex]");if(p){e.preventDefault();mapPick(p.dataset.p)}});
 
+/* Hộp thoại xác nhận trong ứng dụng. Thay window.confirm: hộp thoại gốc của hệ điều hành làm ô nhập liệu của Electron trên Windows
+   mất khả năng gõ (chữ gõ lạc ra góc trái màn hình) cho đến khi cửa sổ được bấm lại. Không dùng confirm/alert/prompt gốc ở bất cứ đâu. */
+function askConfirm(msg,o={}){return new Promise(res=>{const old=$("#cfm");if(old)old.remove();
+const d=document.createElement("dialog");d.id="cfm";d.className="cfm";d.setAttribute("role","alertdialog");d.setAttribute("aria-labelledby","cfm-t");d.setAttribute("aria-describedby","cfm-m");
+d.innerHTML=`<h3 id="cfm-t">${esc(o.title||"Xác nhận")}</h3><p id="cfm-m">${esc(msg)}</p><div class="dlg-actions"><span style="flex:1"></span><button type="button" class="btn" id="cfm-no">${esc(o.no||"Hủy")}</button><button type="button" class="btn ${o.danger?"danger":"primary"}" id="cfm-yes">${esc(o.ok||"Đồng ý")}</button></div>`;
+document.body.appendChild(d);let done=false;const fin=v=>{if(done)return;done=true;try{d.close()}catch(e){}d.remove();res(v)};
+d.querySelector("#cfm-yes").onclick=()=>fin(true);d.querySelector("#cfm-no").onclick=()=>fin(false);
+d.addEventListener("cancel",e=>{e.preventDefault();fin(false)});d.addEventListener("click",e=>{if(e.target===d)fin(false)});
+d.showModal();d.querySelector(o.danger?"#cfm-no":"#cfm-yes").focus()})}
 function ovw(){const rg=$("#ov-region"),rl=regions(),cur=rg.value;rg.innerHTML='<option value="">Tất cả khu vực</option>'+rl.map(r=>`<option>${esc(r)}</option>`).join("");rg.value=rl.includes(cur)?cur:"";
  $("#greet").textContent=greet();$("#quote").textContent=QUOTES[qi];
  const dAgo=t=>Math.floor((Date.now()-t)/864e5);
@@ -192,7 +201,7 @@ function sett(){$("#pf-name").value=S.prefs?.name||"";bkStatus();{const C=ncat()
 /* ===== Hộp thoại biểu mẫu dùng chung ===== */
 function form(title,fields,v,save,extra,remove){const f=$("#dlg-form");
  f.innerHTML=`<h3 id="dlg-title" style="margin:0 0 8px">${esc(title)}</h3>`+fields.map(([k,l,t,o,req])=>{const x=v[k]??"",id="f_"+k;return`<label class="flabel" for="${id}">${l}</label>`+(t==="sel"?`<select id="${id}">${o.map(z=>`<option${z===x?" selected":""}>${z}</option>`).join("")}</select>`:t==="area"?`<textarea id="${id}" rows="2">${esc(x)}</textarea>`:`<input id="${id}" type="${t}"${o?` list="${o}"`:""}${req?" required":""}${t==="number"?' step="any"':""} value="${esc(x)}">`)}).join("")+(extra||"")+`<div class="dlg-actions">${remove?'<button type="button" class="btn" id="dlg-del" style="color:var(--danger)">Xóa</button>':""}<span style="flex:1"></span><button type="button" class="btn" id="dlg-x">Hủy</button><button class="btn primary" type="submit">Lưu</button></div>`;
- $("#dlg-x").onclick=()=>$("#dlg").close();if(remove)$("#dlg-del").onclick=async()=>{if(confirm("Xóa mục này? Không thể hoàn tác.")){try{await remove();$("#dlg").close()}catch(e){notify("Lỗi: "+vi(e.message))}}};
+ $("#dlg-x").onclick=()=>$("#dlg").close();if(remove)$("#dlg-del").onclick=async()=>{if(await askConfirm("Xóa mục này? Không thể hoàn tác.",{ok:"Xóa",danger:true})){try{await remove();$("#dlg").close()}catch(e){notify("Lỗi: "+vi(e.message))}}};
  f.onsubmit=async e=>{e.preventDefault();const o={};fields.forEach(([k,,t])=>{const el=$("#f_"+k);o[k]=t==="number"?(el.value===""?null:Number(el.value)):el.value.trim()});try{if(await save(o)!==false)$("#dlg").close()}catch(er){notify("Lỗi: "+vi(er.message))}};
  $("#dlg").style.width=(extra||"").includes("mgrid")?"min(780px,94vw)":"";$("#dlg").showModal();const first=f.querySelector("input,select");if(first)first.focus()}
 const sels=["Dự kiến","Hoàn thành","Hủy"],types=["Thăm khách hàng","Họp","Gọi điện","Báo giá","Đào tạo","Khác"];
@@ -300,7 +309,7 @@ $("#sb-form").addEventListener("change",sbPreview);$("#sb-form").addEventListene
 $("#sb-form").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const p=S.sbEdit;
  if(b.id==="sb-cancel")go("saleboots");
  if(b.id==="sb-arch"){const old={...p};p.archived=!p.archived;await put("s",[p]);S.dirty=false;await load();go("saleboots");notify(p.archived?"Đã lưu trữ chương trình":"Đã khôi phục chương trình",()=>put("s",[old]))}
- if(b.id==="sb-del"&&confirm("Xóa chương trình này? Bạn có thể hoàn tác ngay sau khi xóa.")){await del("s",p.id);S.dirty=false;await load();go("saleboots");notify("Đã xóa chương trình",()=>put("s",[p]))}});
+ if(b.id==="sb-del"&&await askConfirm("Xóa chương trình này? Bạn có thể hoàn tác ngay sau khi xóa.",{ok:"Xóa",danger:true})){await del("s",p.id);S.dirty=false;await load();go("saleboots");notify("Đã xóa chương trình",()=>put("s",[p]))}});
 /* ===== Thống kê công tác theo tháng ===== */
 function stats(ym){S.stat=ym;const y=ym.getFullYear(),mo=ym.getMonth(),pre=y+"-"+String(mo+1).padStart(2,"0"),W=S.work.filter(w=>(w.date||"").startsWith(pre)),
  cn=a=>({t:a.length,ok:a.filter(w=>w.st==="Hoàn thành").length,pl:a.filter(w=>w.st==="Dự kiến"&&!late(w)).length,lt:a.filter(late).length,cx:a.filter(w=>w.st==="Hủy").length}),
@@ -374,7 +383,7 @@ async function pick(f){const b=$("#imp-body");steps(1);b.innerHTML="";$("#file-n
 function dl(name,blob){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4e3)}
 const stamp=()=>iso(new Date());
 async function restoreFrom(j){try{if(j.app!=="bgsm"||!Array.isArray(j.customers)||!Array.isArray(j.work))throw Error("Không phải tệp sao lưu của ứng dụng này.");const sb=Array.isArray(j.saleboots)?j.saleboots:[];
- if(!confirm("Khôi phục "+j.customers.length+" khách hàng, "+j.work.length+" công việc"+(sb.length?" và "+sb.length+" chương trình SaleBoots":"")+"? Dữ liệu trùng sẽ bị ghi đè."))return false;
+ if(!await askConfirm("Khôi phục "+j.customers.length+" khách hàng, "+j.work.length+" công việc"+(sb.length?" và "+sb.length+" chương trình SaleBoots":"")+"? Dữ liệu trùng sẽ bị ghi đè.",{ok:"Khôi phục",title:"Khôi phục dữ liệu"}))return false;
  await run(["c","w","m","s"],"readwrite",(c,w,m,s)=>{j.customers.forEach(x=>c.put(x));j.work.forEach(x=>w.put(x));sb.forEach(x=>s.put(x));if(j.meta?.id)m.put(j.meta);if(j.prefs?.id)m.put(j.prefs)});await load();render();notify("Đã khôi phục dữ liệu");return true}catch(e){notify("Khôi phục thất bại: "+vi(e.message));return false}}
 async function restore(f){try{await restoreFrom(JSON.parse(await f.text()))}catch(e){notify("Khôi phục thất bại: "+vi(e.message))}}
 function csv(){const q=s=>'"'+String(s??"").replace(/"/g,'""')+'"',h=["Khách hàng","Khu vực","Mã","Thực tế 2025","Mục tiêu 2026","Thực tế 2026","Tiến độ","Ghi chú","Q1 2026","Q2 2026","Q3 2026","Q4 2026"].concat(Array.from({length:12},(_,i)=>["T"+(i+1)+" 2025","T"+(i+1)+" 2026"]).flat());
@@ -396,7 +405,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.class
 $("#excel-file").onchange=e=>pick(e.target.files[0]);
 $("#bk-export").onclick=()=>{dl("bgsm-sao-luu-"+stamp()+".json",new Blob([backupJSON()],{type:"application/json"}));S.prefs={...S.prefs,id:"prefs",lastBackup:Date.now()};put("m",[S.prefs]);notify("Đã tạo tệp sao lưu")};
 $("#bk-restore").onclick=()=>$("#bk-file").click();$("#bk-file").onchange=e=>{if(e.target.files[0])restore(e.target.files[0]);e.target.value=""};
-$("#wipe").onclick=async()=>{if(confirm("Xóa TOÀN BỘ khách hàng, công việc và thông tin nhập? Không thể hoàn tác.")&&confirm("Xác nhận lần cuối: xóa toàn bộ dữ liệu?")){await clr();await load();render();notify("Đã xóa toàn bộ dữ liệu")}};
+$("#wipe").onclick=async()=>{if(await askConfirm("Xóa TOÀN BỘ khách hàng, công việc và thông tin nhập? Không thể hoàn tác.",{ok:"Tiếp tục",danger:true,title:"Xóa toàn bộ dữ liệu"})&&await askConfirm("Xác nhận lần cuối: xóa toàn bộ dữ liệu?",{ok:"Xóa toàn bộ",danger:true,title:"Xác nhận lần cuối"})){await clr();await load();render();notify("Đã xóa toàn bộ dữ liệu")}};
 /* ===== Cập nhật ứng dụng (bản cài Windows) ===== */
 const updErr=m=>{m=String(m||"");return/latest\.yml|404|Not Found/i.test(m)?"Chưa có thông tin bản cập nhật trên nơi phát hành. Hãy thử lại sau hoặc tải bản mới từ trang phát hành.":/401|403|auth|token/i.test(m)?"Không truy cập được nơi đăng bản cập nhật (kho lưu trữ riêng tư cần quyền truy cập).":/ENOTFOUND|ECONN|ETIMEDOUT|INTERNET|net::|network/i.test(m)?"Không kết nối được Internet để kiểm tra cập nhật.":"Không kiểm tra được cập nhật lúc này. Vui lòng thử lại sau."};
 const U=window.bgsm,um=t=>{$("#upd-msg").textContent=t};
