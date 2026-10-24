@@ -201,3 +201,70 @@ button.kpi-edit:hover{background:var(--accent);color:var(--on-accent)}
 dialog.cfm{width:min(440px,94vw)}
 dialog.cfm h3{margin:0 0 8px}
 dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
+
+/* ===== v0.9.7: Animation cho trang Tổng quan =====
+   Chỉ chạy khi người dùng không bật “giảm chuyển động”. Hiệu ứng vào gắn với [data-play="1"] (do app.js đặt); chỉ dùng transform, opacity,
+   clip-path nên mượt. Dùng fill-mode "backwards" để không đè lên hiệu ứng rê chuột sau khi chạy xong. */
+@media (prefers-reduced-motion:no-preference){
+:root{--ov-ease:cubic-bezier(.2,.8,.2,1)}
+@keyframes ov-rise{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes ov-fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes ov-slide{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@keyframes ov-fade{from{opacity:0}to{opacity:1}}
+@keyframes ov-pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+@keyframes ov-bar{from{clip-path:inset(0 100% 0 0 round 999px)}to{clip-path:inset(0 0 0 0 round 999px)}}
+@keyframes ov-shine{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+@keyframes ov-pv{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:none}}
+@keyframes ov-flash{0%{stroke:var(--text);stroke-width:3}100%{stroke:var(--mstroke);stroke-width:.9}}
+@keyframes ov-seg{from{stroke-dasharray:0 var(--circ)}to{stroke-dasharray:var(--len) var(--rest)}}
+@keyframes ov-reveal{from{width:0}}
+@keyframes ov-dot{from{opacity:0;transform:scale(0)}to{opacity:1;transform:none}}
+@keyframes ov-grow{from{transform:scaleY(0)}to{transform:none}}
+@keyframes ov-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+
+/* Thẻ chưa vào tầm nhìn thì giữ nguyên trạng thái ban đầu (tạm dừng) */
+[data-view="overview"][data-play="1"] .card:not(.in),
+[data-view="overview"][data-play="1"] .card:not(.in) *,
+[data-view="overview"][data-play="1"] .card:not(.in) *::after{animation-play-state:paused}
+
+/* Thẻ chỉ số: nảy lên lần lượt */
+[data-play="1"] #kpis .card{animation:ov-rise .7s var(--ov-ease) backwards;animation-delay:calc(var(--i,0)*1ms)}
+
+/* Thanh tiến độ: chạy dài ra, rồi có vệt sáng quét qua */
+[data-play="1"] .bar-fill,[data-play="1"] .mini-fill{position:relative;overflow:hidden;animation:ov-bar 1s var(--ov-ease) backwards;animation-delay:calc(var(--i,0)*1ms + 220ms)}
+[data-play="1"] .bar-fill::after,[data-play="1"] .mini-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 28%,rgba(255,255,255,.65) 50%,transparent 72%);animation:ov-shine 1.1s ease-out both;animation-delay:calc(var(--i,0)*1ms + 1050ms)}
+[data-play="1"] .t5-rank{animation:ov-pop .5s cubic-bezier(.2,1.4,.4,1) backwards;animation-delay:calc(var(--i,0)*1ms + 100ms)}
+
+/* Bản đồ: các tỉnh hiện dần từ Bắc vào Nam, tỉnh có khách hàng nháy viền theo thứ tự doanh số */
+[data-play="1"] #mapsvg .pv{transform-box:fill-box;transform-origin:center;animation:ov-pv .75s cubic-bezier(.2,.9,.3,1.15) backwards;animation-delay:calc(var(--d,0)*1ms)}
+[data-play="1"] #mapsvg .pv:not(.l0){animation:ov-pv .75s cubic-bezier(.2,.9,.3,1.15) backwards,ov-flash 1.1s ease-out backwards;animation-delay:calc(var(--d,0)*1ms),calc(1000ms + var(--k,0)*55ms)}
+[data-play="1"] .vmap .isl{animation:ov-pop .5s backwards;animation-delay:1100ms}
+[data-play="1"] .vmap .isl-label{animation:ov-fade .6s backwards;animation-delay:1300ms}
+
+/* Vành khuyên: các cung vẽ nối tiếp theo chiều kim đồng hồ; chú giải trượt vào */
+[data-play="1"] .donut .seg{animation:ov-seg .9s cubic-bezier(.3,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*1ms + 150ms)}
+[data-play="1"] .dlegend li{animation:ov-slide .5s var(--ov-ease) backwards;animation-delay:calc(var(--i,0)*1ms + 450ms)}
+
+/* Bảng, danh sách, nhận định */
+[data-play="1"] #qtable tbody tr,[data-play="1"] .mtbl tbody tr{animation:ov-slide .45s var(--ov-ease) backwards;animation-delay:calc(var(--i,0)*1ms + 350ms)}
+[data-play="1"] #insights>div,[data-play="1"] #follow .activity-item{animation:ov-fade-up .55s var(--ov-ease) backwards;animation-delay:calc(var(--i,0)*1ms + 250ms)}
+
+/* Biểu đồ đường: đường và vùng tô lộ dần từ trái sang phải, các chấm bật lên khi đường chạm tới */
+[data-play="1"] #trclip rect{animation:ov-reveal 1.5s cubic-bezier(.45,.05,.25,1) backwards;animation-delay:250ms}
+[data-play="1"] .tdot{animation:ov-dot .4s cubic-bezier(.2,1.5,.4,1) backwards;animation-delay:calc(var(--i,0)*1ms + 250ms)}
+[data-play="1"] .tarea{animation:ov-fade 1s ease-out backwards;animation-delay:900ms}
+
+/* Biểu đồ cột quý: cột mọc từ trục, đường mục tiêu vẽ ra sau */
+[data-play="1"] .qbar{transform-box:fill-box;transform-origin:50% 100%;animation:ov-grow .9s var(--ov-ease) backwards;animation-delay:calc(var(--i,0)*1ms + 250ms)}
+[data-play="1"] .qline{stroke-dasharray:1;animation:ov-draw .7s ease-out backwards;animation-delay:calc(var(--i,0)*1ms + 600ms)}
+
+/* Tương tác khi rê chuột (luôn bật) */
+#kpis .card{transition:transform .2s var(--ov-ease),box-shadow .2s var(--ov-ease)}
+#kpis .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-toast)}
+.bar-fill,.mini-fill{transition:filter .2s}
+.bar-row:hover .bar-fill,.t5:hover .bar-fill,.mtbl tbody tr:hover .mini-fill{filter:brightness(1.1) saturate(1.2)}
+.donut .seg{transition:stroke-width .2s var(--ov-ease),filter .2s}
+.donut .seg:hover{stroke-width:25;filter:brightness(1.12)}
+.qbar{transition:filter .2s}.qbar:hover{filter:brightness(1.12)}
+.tdot{transform-box:fill-box;transform-origin:center;transition:transform .15s var(--ov-ease)}.tdot:hover{transform:scale(1.7)}
+}

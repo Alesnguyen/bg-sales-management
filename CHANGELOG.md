@@ -1,5 +1,9 @@
 # Lịch sử phiên bản
 
+## 0.9.7
+- Tổng quan: thêm animation cho các biểu đồ. Thẻ chỉ số nảy lên và số đếm tăng dần; bản đồ hiện dần từ Bắc vào Nam rồi các tỉnh có khách hàng nháy viền; vành khuyên vẽ nối tiếp; thanh tiến độ chạy dài kèm vệt sáng; biểu đồ đường lộ dần kèm vùng tô; biểu đồ cột quý mọc lên; bảng và danh sách trượt vào.
+- Hiệu ứng chỉ bắt đầu khi thẻ cuộn vào tầm nhìn, chỉ chạy khi vào trang, đổi khu vực lọc hoặc số liệu thay đổi (không chạy lại khi đổi tab, rê chuột). Thêm hiệu ứng khi rê chuột vào thẻ, thanh, cung vành khuyên, cột và điểm. Tự tắt khi Windows bật “giảm chuyển động”.
+
 ## 0.9.6
 - Sửa lỗi ở Lịch làm việc: sau khi xóa một công việc, ô “Nội dung” khi thêm hoặc sửa công việc không gõ được (chữ gõ lạc ra góc trái màn hình). Nguyên nhân là hộp thoại xác nhận gốc của hệ điều hành; nay mọi xác nhận (xóa công việc, xóa chương trình, rời trang khi chưa lưu, khôi phục sao lưu, xóa toàn bộ dữ liệu) dùng hộp thoại ngay trong ứng dụng.
 - Tổng quan: biểu tượng của thẻ “Bản đồ khách hàng theo khu vực” là icon ghim vị trí rõ ràng.
