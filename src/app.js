@@ -104,17 +104,15 @@ $("#kpi-qnote").textContent=qs.length?"Tổng 4 quý: "+fm(sq)+(T>0&&qs.length==
 /* ----- Bản đồ khách hàng theo khu vực ----- */
 const MAPTABS=[["all","Tất cả"],["act","Đang hoạt động"],["watch","Cần theo dõi"]];
 const mapAgg=list=>{const g=new Map();list.forEach(c=>{const p=provOf(c.region),k=p||(c.region||"Khác"),e=g.get(k)||{n:k,prov:p,kh:0,rev:0};e.kh++;e.rev+=c.a26||0;g.set(k,e)});return[...g.values()].sort((a,b)=>b.rev-a.rev||b.kh-a.kh||a.n.localeCompare(b.n,"vi"))};
-/* độ trễ xuất hiện của tỉnh theo vĩ độ (từ Bắc xuống Nam) để bản đồ hiện dần như một làn sóng */
-const pvD=d=>{const m=/^M\s*[\d.]+[ ,]\s*([\d.]+)/.exec(d);return m?Math.round(Math.max(0,Math.min(1,(+m[1]-45)/910))*650):0};
 const mapLvl=n=>n>10?4:n>=8?3:n>=4?2:n>=1?1:0;
 function mapRender(all,selRegion){const box=$("#mapbox");if(!box)return;const V=VNMAP,
-A=mapAgg(all),tot=A.reduce((s,x)=>s+x.rev,0),byP=new Map(A.filter(x=>x.prov).map(x=>[x.prov,x])),selP=selRegion?provOf(selRegion):null,rk=new Map(A.filter(x=>x.prov).map((x,i)=>[x.prov,i]));
+A=mapAgg(all),tot=A.reduce((s,x)=>s+x.rev,0),byP=new Map(A.filter(x=>x.prov).map(x=>[x.prov,x])),selP=selRegion?provOf(selRegion):null;
 S.mapData=byP;S.mapTot=tot;
 /* Nút bỏ lọc khi đang lọc theo khu vực (bấm tỉnh trên bản đồ sẽ lọc cả trang Tổng quan) */
 $("#map-filter").innerHTML=selRegion?`<button type="button" class="chip" id="map-clear" title="Bỏ lọc khu vực">Đang lọc: ${esc(selRegion)} <span aria-hidden="true">✕</span></button>`:"";
 
 /* Bản đồ */
-const paths=V.prov.map(p=>{const e=byP.get(p.n),n=e?e.kh:0;return`<path class="pv l${mapLvl(n)}${p.n===selP?" sel":""}" data-p="${esc(p.n)}" style="--d:${pvD(p.d)};--k:${rk.get(p.n)??0}" d="${p.d}"${n?` tabindex="0" role="button" aria-label="${esc(p.n)}: ${n} khách hàng, ${fmtS(e.rev)}. Nhấn để lọc tổng quan"`:""}></path>`}).join("");
+const paths=V.prov.map(p=>{const e=byP.get(p.n),n=e?e.kh:0;return`<path class="pv l${mapLvl(n)}${p.n===selP?" sel":""}" data-p="${esc(p.n)}" d="${p.d}"${n?` tabindex="0" role="button" aria-label="${esc(p.n)}: ${n} khách hàng, ${fmtS(e.rev)}. Nhấn để lọc tổng quan"`:""}></path>`}).join("");
 const isl=(p,t)=>[[0,0],[12,-7],[-11,8],[7,12],[18,14],[-16,-11],[24,-2],[-22,17]].map(o=>`<circle class="isl" cx="${p[0]+o[0]}" cy="${p[1]+o[1]}" r="3.2"><title>${t}</title></circle>`).join(""),
 ilab=(p,t,dx)=>`<text class="isl-label" x="${p[0]+dx}" y="${p[1]+44}" text-anchor="middle">${t}</text>`;
 box.innerHTML=`<svg class="vmap" viewBox="270 30 600 940" role="group" aria-label="Bản đồ Việt Nam tô màu theo số khách hàng của từng tỉnh, thành"><g id="mapsvg">${paths}</g>${isl(V.hs,"Quần đảo Hoàng Sa")}${ilab(V.hs,"QĐ. Hoàng Sa",0)}${isl(V.ts,"Quần đảo Trường Sa")}${ilab(V.ts,"QĐ. Trường Sa",-8)}</svg><div class="mtip" id="maptip" hidden></div>`;
@@ -162,7 +160,7 @@ d.showModal();d.querySelector(o.danger?"#cfm-no":"#cfm-yes").focus()})}
 function ovw(){ovw0();ovStage()}
 /* ===== v0.9.7: Animation cho trang Tổng quan =====
    Hiệu ứng chạy khi: vào trang Tổng quan, đổi khu vực lọc, hoặc số liệu thay đổi (nhập Excel, sửa KPI...). Không chạy lại khi chỉ đổi tab, rê chuột.
-   Mỗi thẻ chỉ bắt đầu chạy khi cuộn vào tầm nhìn. Tắt hoàn toàn khi hệ điều hành bật “giảm chuyển động” và khi chạy kiểm thử tự động (navigator.webdriver). */
+   Mỗi phần tử (thẻ chỉ số, dòng bảng, thanh, biểu đồ) chỉ bắt đầu chạy khi cuộn tới nó. Tắt hoàn toàn khi hệ điều hành bật “giảm chuyển động” và khi chạy kiểm thử tự động (navigator.webdriver). */
 let ovPlay=true,ovSig="",ovIO=null;
 const AUTOMATED=navigator.webdriver===true,REDUCED=()=>!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
 function countUp(el,dur=1100){const m=/^(\D*?)(\d[\d.]*(?:,\d+)?)(.*)$/.exec(el.textContent||"");if(!m||el.dataset.cnt==="done")return;el.dataset.cnt="done";
@@ -173,12 +171,16 @@ function ovStage(){const root=document.querySelector('.view[data-view="overview"
 const sig=($("#kpis").textContent||"")+"|"+($("#ov-region").value||""),changed=sig!==ovSig,play=!AUTOMATED&&!REDUCED()&&(ovPlay||changed);ovSig=sig;ovPlay=false;
 if(ovIO){ovIO.disconnect();ovIO=null}
 if(!play){root.dataset.play="0";return}
-const idx=(sel,step,base=0)=>root.querySelectorAll(sel).forEach((el,i)=>el.style.setProperty("--i",base+i*step));
-idx("#kpis .card",85);idx("#region-bars .bar-row",70);idx("#top5 .t5",75);idx("#map-list tbody tr",45);idx("#qtable tbody tr",60);idx(".dlegend li",75);idx("#insights>div",90);idx("#follow .activity-item",80);
+/* Mỗi “đơn vị” dưới đây tự chạy hiệu ứng riêng đúng lúc được cuộn tới (từng dòng bảng, từng thanh, từng biểu đồ), không chạy cả trang cùng lúc */
+const units=[...root.querySelectorAll("#kpis .card,#mapbox,#map-donut,#map-list tbody tr,#region-bars .bar-row,#follow .activity-item,#trend,#insights>div,#top5 .t5,#qchart,#qtable tbody tr")];
+units.forEach(u=>u.setAttribute("data-rv",""));
+root.querySelectorAll(".dlegend li").forEach((el,i)=>el.style.setProperty("--i",i*75));
 root.querySelectorAll("#kpis .kpi-value,#map-donut svg text:first-of-type,.t5-val,#region-bars .bar-row strong").forEach(e=>{e.dataset.cnt="1"});
-const begin=()=>{root.dataset.play="1";if(!window.IntersectionObserver){root.querySelectorAll(".card").forEach(c=>{c.classList.add("in");c.querySelectorAll("[data-cnt='1']").forEach(x=>countUp(x))});return}
-ovIO=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const c=e.target;c.classList.add("in");c.querySelectorAll("[data-cnt='1']").forEach(x=>countUp(x));ovIO.unobserve(c)}),{threshold:.05});
-root.querySelectorAll(".card").forEach(c=>ovIO.observe(c))};
+const show=u=>{u.classList.add("in");u.querySelectorAll("[data-cnt='1']").forEach(x=>countUp(x))};
+const begin=()=>{root.dataset.play="1";if(!window.IntersectionObserver){units.forEach(show);return}
+ovIO=new IntersectionObserver(es=>{const vis=es.filter(e=>e.isIntersecting).map(e=>e.target).sort((x,y)=>{const A=x.getBoundingClientRect(),B=y.getBoundingClientRect();return A.top-B.top||A.left-B.left});
+vis.forEach((u,k)=>{u.style.setProperty("--i",Math.min(k*80,800));show(u);ovIO.unobserve(u)})},{threshold:.2,rootMargin:"0px 0px -8% 0px"});
+units.forEach(u=>ovIO.observe(u))};
 root.dataset.play="wait";if($("#splash"))setTimeout(begin,640);else begin()}
 function ovw0(){const rg=$("#ov-region"),rl=regions(),cur=rg.value;rg.innerHTML='<option value="">Tất cả khu vực</option>'+rl.map(r=>`<option>${esc(r)}</option>`).join("");rg.value=rl.includes(cur)?cur:"";
  $("#greet").textContent=greet();$("#quote").textContent=QUOTES[qi];

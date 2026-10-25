@@ -1,5 +1,9 @@
 # Lịch sử phiên bản
 
+## 0.9.8
+- Tổng quan: bỏ hiệu ứng sóng và nháy viền ở bản đồ (bản đồ chỉ mờ dần nhẹ). Viền tỉnh khi rê chuột, chọn, focus mảnh và nhẹ hơn.
+- Tổng quan: hiệu ứng chạy theo từng phần tử đúng lúc cuộn tới (thẻ chỉ số, bản đồ, vành khuyên, từng dòng bảng, từng thanh, biểu đồ), không còn chạy cùng lúc khi vào trang. Phần đã hiện không chạy lại khi cuộn ngược.
+
 ## 0.9.7
 - Tổng quan: thêm animation cho các biểu đồ. Thẻ chỉ số nảy lên và số đếm tăng dần; bản đồ hiện dần từ Bắc vào Nam rồi các tỉnh có khách hàng nháy viền; vành khuyên vẽ nối tiếp; thanh tiến độ chạy dài kèm vệt sáng; biểu đồ đường lộ dần kèm vùng tô; biểu đồ cột quý mọc lên; bảng và danh sách trượt vào.
 - Hiệu ứng chỉ bắt đầu khi thẻ cuộn vào tầm nhìn, chỉ chạy khi vào trang, đổi khu vực lọc hoặc số liệu thay đổi (không chạy lại khi đổi tab, rê chuột). Thêm hiệu ứng khi rê chuột vào thẻ, thanh, cung vành khuyên, cột và điểm. Tự tắt khi Windows bật “giảm chuyển động”.
