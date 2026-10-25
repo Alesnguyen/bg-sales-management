@@ -21,7 +21,7 @@ let tt;const notify=(m,undo)=>{const t=$("#toast");t.textContent=m;S.undo=undo||
 const doUndo=async()=>{const u=S.undo;if(!u)return;S.undo=null;$("#toast").classList.remove("show");try{await u();await load();render();notify("Đã hoàn tác")}catch(e){notify("Không hoàn tác được: "+vi(e.message))}};
 const setFocus=on=>{document.body.classList.toggle("focus",on);const b=$("#focus-toggle");b.setAttribute("aria-pressed",String(on));b.textContent=on?"⤡ Thu nhỏ bảng":"⤢ Mở rộng bảng"};
 const META={saleboots:["QUẢN LÝ CHƯƠNG TRÌNH","SaleBoots","Tìm kiếm, lọc, thêm và sửa chương trình SaleBoots."],"saleboot-edit":["QUẢN LÝ CHƯƠNG TRÌNH","Sửa SaleBoots","Cập nhật chương trình thúc đẩy doanh số của khách hàng."],"customer-edit":["QUẢN LÝ DỮ LIỆU","Sửa khách hàng","Cập nhật thông tin và số liệu doanh số của khách hàng."],overview:["KHÔNG GIAN LÀM VIỆC","Tổng quan","Bức tranh nhanh về dữ liệu kinh doanh của bạn."],customers:["QUẢN LÝ DỮ LIỆU","Danh sách khách hàng","Tìm kiếm, lọc, thêm và sửa khách hàng."],calendar:["KẾ HOẠCH CÔNG VIỆC","Lịch làm việc","Kế hoạch công tác và tác vụ theo tuần (thứ 2 đến thứ 7)."],import:["QUẢN LÝ DỮ LIỆU","Nhập dữ liệu","Nhập Excel có xem trước và xác nhận."],settings:["TÙY CHỈNH","Cài đặt","Giao diện, sao lưu và thông tin ứng dụng."]};
-function go(p,force){if(!META[p])return;const cur=S.view;if(!force&&(cur==="customer-edit"||cur==="saleboot-edit")&&p!==cur&&S.dirty){askConfirm("Bạn có thay đổi chưa lưu. Rời khỏi trang này và bỏ các thay đổi?",{ok:"Rời trang",no:"Ở lại",danger:true}).then(y=>{if(y)go(p,true)});return}S.view=p;if(p==="overview")ovPlay=true;S.dirty=false;setFocus(false);document.body.dataset.page=p;
+function go(p,force){if(!META[p])return;const cur=S.view;if(!force&&(cur==="customer-edit"||cur==="saleboot-edit")&&p!==cur&&S.dirty){askConfirm("Bạn có thay đổi chưa lưu. Rời khỏi trang này và bỏ các thay đổi?",{ok:"Rời trang",no:"Ở lại",danger:true}).then(y=>{if(y)go(p,true)});return}S.view=p;if(p==="overview"&&cur!=="overview")ovPlay=true;S.dirty=false;setFocus(false);document.body.dataset.page=p;
  const nav={"customer-edit":"customers",saleboots:"customers","saleboot-edit":"customers"}[p]||p,sub=p==="saleboots"||p==="saleboot-edit";
  $$("[data-view]").forEach(v=>v.classList.toggle("active",v.dataset.view===p));
  $$(".nav button:not(.sub)").forEach(b=>{const a=b.dataset.page===nav;b.classList.toggle("active",a);a?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
@@ -159,16 +159,16 @@ d.addEventListener("cancel",e=>{e.preventDefault();fin(false)});d.addEventListen
 d.showModal();d.querySelector(o.danger?"#cfm-no":"#cfm-yes").focus()})}
 function ovw(){ovw0();ovStage()}
 /* ===== v0.9.7: Animation cho trang Tổng quan =====
-   Hiệu ứng chạy khi: vào trang Tổng quan, đổi khu vực lọc, hoặc số liệu thay đổi (nhập Excel, sửa KPI...). Không chạy lại khi chỉ đổi tab, rê chuột.
+   Hiệu ứng chỉ chạy khi VÀO trang Tổng quan (lúc mở ứng dụng, hoặc quay lại từ trang khác). Bấm tỉnh trên bản đồ, đổi khu vực lọc, sửa KPI, đổi tab... chỉ cập nhật số liệu, không chạy lại hiệu ứng.
    Mỗi phần tử (thẻ chỉ số, dòng bảng, thanh, biểu đồ) chỉ bắt đầu chạy khi cuộn tới nó. Tắt hoàn toàn khi hệ điều hành bật “giảm chuyển động” và khi chạy kiểm thử tự động (navigator.webdriver). */
-let ovPlay=true,ovSig="",ovIO=null;
+let ovPlay=true,ovIO=null;
 const AUTOMATED=navigator.webdriver===true,REDUCED=()=>!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
 function countUp(el,dur=1100){const m=/^(\D*?)(\d[\d.]*(?:,\d+)?)(.*)$/.exec(el.textContent||"");if(!m||el.dataset.cnt==="done")return;el.dataset.cnt="done";
 const dec=(m[2].split(",")[1]||"").length,end=parseFloat(m[2].replace(/\./g,"").replace(",","."));if(!isFinite(end)||end<=0)return;
 const f=v=>v.toLocaleString("vi-VN",{minimumFractionDigits:dec,maximumFractionDigits:dec}),fin=el.textContent,t0=performance.now()+120;el.textContent=m[1]+f(0)+m[3];
 const step=t=>{const p=Math.min(1,Math.max(0,(t-t0)/dur));el.textContent=p>=1?fin:m[1]+f(end*(1-Math.pow(1-p,3)))+m[3];if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
 function ovStage(){const root=document.querySelector('.view[data-view="overview"]');if(!root)return;
-const sig=($("#kpis").textContent||"")+"|"+($("#ov-region").value||""),changed=sig!==ovSig,play=!AUTOMATED&&!REDUCED()&&(ovPlay||changed);ovSig=sig;ovPlay=false;
+const play=!AUTOMATED&&!REDUCED()&&ovPlay;ovPlay=false;
 if(ovIO){ovIO.disconnect();ovIO=null}
 if(!play){root.dataset.play="0";return}
 /* Mỗi “đơn vị” dưới đây tự chạy hiệu ứng riêng đúng lúc được cuộn tới (từng dòng bảng, từng thanh, từng biểu đồ), không chạy cả trang cùng lúc */

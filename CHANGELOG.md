@@ -1,5 +1,8 @@
 # Lịch sử phiên bản
 
+## 0.9.9
+- Tổng quan: hiệu ứng chỉ chạy khi vào trang (mở ứng dụng hoặc quay lại từ trang khác). Bấm vào tỉnh trên bản đồ, đổi khu vực lọc, sửa KPI hay đổi tab không còn chạy lại hiệu ứng.
+
 ## 0.9.8
 - Tổng quan: bỏ hiệu ứng sóng và nháy viền ở bản đồ (bản đồ chỉ mờ dần nhẹ). Viền tỉnh khi rê chuột, chọn, focus mảnh và nhẹ hơn.
 - Tổng quan: hiệu ứng chạy theo từng phần tử đúng lúc cuộn tới (thẻ chỉ số, bản đồ, vành khuyên, từng dòng bảng, từng thanh, biểu đồ), không còn chạy cùng lúc khi vào trang. Phần đã hiện không chạy lại khi cuộn ngược.
