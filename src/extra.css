@@ -263,3 +263,17 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .qbar{transition:filter .2s}.qbar:hover{filter:brightness(1.12)}
 .tdot{transform-box:fill-box;transform-origin:center;transition:transform .15s var(--ov-ease)}.tdot:hover{transform:scale(1.7)}
 }
+
+/* ===== v0.10.0: SaleBoots, kỳ chương trình theo tháng và tờ đề xuất ===== */
+.sbp{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:4px}
+.sbp select{width:auto!important;min-width:96px}
+.sbp-q{display:flex;gap:6px;flex-wrap:wrap}
+.sbp-m{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin:10px 0 4px}
+.sbm{min-height:40px;border:1px solid var(--border);border-radius:var(--radius-control);background:var(--surface);color:var(--text);font-weight:var(--font-weight-semibold);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.sbm:hover{border-color:var(--accent);transform:translateY(-1px)}
+.sbm[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+@media(max-width:700px){.sbp-m{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.sbprop th,.sbprop td{white-space:nowrap}
+.sbprop th.nr,.sbprop td.nr{text-align:right;font-variant-numeric:tabular-nums}
+.prop-title{font-weight:var(--font-weight-extrabold);font-size:var(--font-size-md);margin:2px 0}
+.sbprop-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}

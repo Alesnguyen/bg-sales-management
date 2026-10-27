@@ -1,5 +1,10 @@
 # Lịch sử phiên bản
 
+## 0.10.0
+- SaleBoots: chọn kỳ chương trình theo tháng (nút T1–T12 và Quý 1–4, tự đồng bộ ngày bắt đầu, kết thúc), có ô tên kỳ ghi trên tờ đề xuất (tự tạo “Quý 4”, “T10, T11, T12”, sửa tay được).
+- SaleBoots: đề xuất hai mức thưởng (Mức 1, Mức 2: mục tiêu doanh số cả kỳ và tiền thưởng), tự tính trung bình mỗi tháng.
+- SaleBoots: xem trước tờ đề xuất và nút “Xuất đề xuất Excel” theo mẫu có token. Các cột tháng là doanh số thực tế của 6 tháng liền trước tháng đầu tiên của chương trình (Quý 4 thì hiện T4 đến T9), cột Tổng là tổng 6 tháng đó.
+
 ## 0.9.9
 - Tổng quan: hiệu ứng chỉ chạy khi vào trang (mở ứng dụng hoặc quay lại từ trang khác). Bấm vào tỉnh trên bản đồ, đổi khu vực lọc, sửa KPI hay đổi tab không còn chạy lại hiệu ứng.
 
