@@ -1,5 +1,8 @@
 # Lịch sử phiên bản
 
+## 0.10.1
+- Tờ đề xuất Excel (SaleBoots): chữ ký Tổng Giám Đốc, Kế toán, Phụ trách phòng BG, Phụ trách kinh doanh chia 4 khối đều nhau, căn giữa, cách đều trên cùng một dòng. Độ rộng cột bảng được cân lại cho khớp.
+
 ## 0.10.0
 - SaleBoots: chọn kỳ chương trình theo tháng (nút T1–T12 và Quý 1–4, tự đồng bộ ngày bắt đầu, kết thúc), có ô tên kỳ ghi trên tờ đề xuất (tự tạo “Quý 4”, “T10, T11, T12”, sửa tay được).
 - SaleBoots: đề xuất hai mức thưởng (Mức 1, Mức 2: mục tiêu doanh số cả kỳ và tiền thưởng), tự tính trung bình mỗi tháng.
