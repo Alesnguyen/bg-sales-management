@@ -1,5 +1,11 @@
 # Lịch sử phiên bản
 
+## 0.11.0
+- Khách hàng: thêm cột “KPI 2026” cho từng tháng, nhập tay. Bấm vào ô để nhập (gõ 120000000, 120tr hoặc 1,5 tỷ), Enter lưu và xuống dòng, Tab sang tháng kế, Esc hủy, để trống để xóa. Có thể nhập cả trong trang sửa khách hàng (kèm tổng KPI 12 tháng và cảnh báo nếu lệch ô Mục tiêu 2026). Có thể sắp xếp theo cột KPI.
+- Khách hàng: thêm hàng “Tổng cộng” cố định ở cuối bảng, cộng doanh số 2025, 2026 và KPI 2026 của từng tháng (và các cột khác) cho các khách hàng đang hiển thị theo bộ lọc.
+- Khách hàng: hai mục mới trong “Chọn cột hiển thị” để ẩn hiện cột KPI 2026 và hàng Tổng cộng.
+- Nhập lại file Excel không làm mất KPI đã nhập tay.
+
 ## 0.10.1
 - Tờ đề xuất Excel (SaleBoots): chữ ký Tổng Giám Đốc, Kế toán, Phụ trách phòng BG, Phụ trách kinh doanh chia 4 khối đều nhau, căn giữa, cách đều trên cùng một dòng. Độ rộng cột bảng được cân lại cho khớp.
 

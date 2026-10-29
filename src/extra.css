@@ -277,3 +277,21 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .sbprop th.nr,.sbprop td.nr{text-align:right;font-variant-numeric:tabular-nums}
 .prop-title{font-weight:var(--font-weight-extrabold);font-size:var(--font-size-md);margin:2px 0}
 .sbprop-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+
+/* ===== v0.11.0: KPI 2026 từng tháng (nhập tay) và hàng Tổng cộng ===== */
+.wide td.kpc,.wide thead th.kpc{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.wide thead th.kpc{background:color-mix(in srgb,var(--accent) 16%,var(--surface-subtle))}
+.wide tbody tr:hover td.kpc{background:color-mix(in srgb,var(--accent) 16%,var(--surface-subtle))}
+.wide td.kpcell{cursor:text;position:relative;transition:background .3s}
+.wide td.kpcell::after{content:"";position:absolute;left:10px;right:10px;bottom:8px;border-bottom:1px dotted var(--text-secondary);opacity:.45}
+.wide td.kpcell:hover::after,.wide td.kpcell:focus-visible::after{opacity:1;border-bottom-color:var(--accent)}
+.wide td.kpcell:focus-visible{outline:var(--focus-width) solid var(--focus);outline-offset:-2px}
+.wide td.kpcell.editing{padding:4px 6px}.wide td.kpcell.editing::after{display:none}
+.wide td.kpcell.saved{background:color-mix(in srgb,var(--success) 28%,var(--surface))!important}
+.kpin{width:100%;min-width:0;height:36px;box-sizing:border-box;border:2px solid var(--accent);border-radius:var(--radius-control);background:var(--surface);color:var(--text);text-align:right;padding:0 8px;font:inherit;font-variant-numeric:tabular-nums}
+.kpin[aria-invalid="true"]{border-color:var(--danger)}
+.wide tfoot td{position:sticky;bottom:0;z-index:3;background:var(--surface-subtle);font-weight:var(--font-weight-bold);border-top:2px solid var(--border);border-bottom:0;height:52px;vertical-align:middle}
+.wide tfoot td.fz{z-index:5}
+.wide tfoot td.kpc{background:color-mix(in srgb,var(--accent) 16%,var(--surface-subtle))}
+.wide tfoot .cname{font-weight:var(--font-weight-extrabold)}
+.wide{max-height:max(400px,calc(100vh - 360px))}   /* chừa chỗ để hàng Tổng cộng nằm trọn trong màn hình khi mở trang */
