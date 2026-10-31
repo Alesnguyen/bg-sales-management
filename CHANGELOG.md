@@ -1,5 +1,11 @@
 # Lịch sử phiên bản
 
+## 0.11.1
+- Khách hàng: KPI 2026 từng tháng là MỘT con số cho cả tháng do bạn tự nhập, không phải KPI từng khách hàng. Nhập ngay ở ô KPI 2026 của hàng Tổng cộng (bấm vào ô; gõ 700000000, 700tr hoặc 1,2 tỷ; Enter hoặc Tab sang tháng kế; Esc hủy) hoặc ở nút “KPI từng tháng…” (nhập cả 12 tháng, có tổng và so với KPI cả năm ở Tổng quan).
+- Khách hàng: mỗi khách hàng hiện % doanh số 2026 của tháng so với KPI tháng đã đặt (khách đóng góp bao nhiêu % vào KPI), có thanh tiến độ như cột Tiến độ. Hàng Tổng cộng hiện KPI tháng và % đạt của cả tháng. Cột KPI sắp xếp được theo %.
+- Bỏ ô KPI từng khách trong trang sửa khách hàng.
+- Giữ nguyên: hàng Tổng cộng cộng doanh số 2025, 2026 từng tháng; ẩn hiện cột KPI và hàng Tổng cộng trong “Chọn cột hiển thị”.
+
 ## 0.11.0
 - Khách hàng: thêm cột “KPI 2026” cho từng tháng, nhập tay. Bấm vào ô để nhập (gõ 120000000, 120tr hoặc 1,5 tỷ), Enter lưu và xuống dòng, Tab sang tháng kế, Esc hủy, để trống để xóa. Có thể nhập cả trong trang sửa khách hàng (kèm tổng KPI 12 tháng và cảnh báo nếu lệch ô Mục tiêu 2026). Có thể sắp xếp theo cột KPI.
 - Khách hàng: thêm hàng “Tổng cộng” cố định ở cuối bảng, cộng doanh số 2025, 2026 và KPI 2026 của từng tháng (và các cột khác) cho các khách hàng đang hiển thị theo bộ lọc.

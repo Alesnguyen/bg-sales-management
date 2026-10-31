@@ -295,3 +295,13 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .wide tfoot td.kpc{background:color-mix(in srgb,var(--accent) 16%,var(--surface-subtle))}
 .wide tfoot .cname{font-weight:var(--font-weight-extrabold)}
 .wide{max-height:max(400px,calc(100vh - 360px))}   /* chừa chỗ để hàng Tổng cộng nằm trọn trong màn hình khi mở trang */
+
+/* ===== v0.11.1: ô KPI tháng (nhập tay) ở hàng Tổng cộng, ô % đạt KPI của từng khách ===== */
+.wide tfoot td.kpcell{text-align:right;height:66px}
+.wide tfoot td.kpcell .kpv{font-weight:var(--font-weight-extrabold);font-size:var(--font-size-md);line-height:1.15;font-variant-numeric:tabular-nums}
+.wide tfoot td.kpcell .mini-track{margin:5px 0 3px 0;width:100%}
+.wide tfoot td.kpcell .tiny{display:block}
+.wide tfoot td.kpcell .kphint{color:var(--text-secondary);font-weight:var(--font-weight-semibold);font-size:var(--font-size-sm)}
+.wide tbody td.kpc.progress-cell{min-width:96px}
+.kpm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 14px;margin-top:10px}
+@media(max-width:560px){.kpm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
