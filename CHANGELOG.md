@@ -1,5 +1,9 @@
 # Lịch sử phiên bản
 
+## 0.11.2
+- Tổng quan: khi chọn tỉnh trên bản đồ hoặc lọc theo khu vực, thẻ “Mục tiêu doanh số năm 2026” lấy đúng tổng cột “Mục tiêu 2026” của các khách hàng ở khu vực đó (trang Khách hàng), không còn chia KPI cả năm theo tỷ trọng. Thẻ “Tiến độ mục tiêu” tính theo số này. Khi xem Tất cả khu vực vẫn dùng KPI cả năm do bạn đặt.
+- Tổng quan: thanh “Tiến độ theo khu vực” so thực tế với tổng mục tiêu 2026 của khách hàng trong từng khu vực. Bảng theo quý không có mục tiêu quý khi đang lọc một khu vực.
+
 ## 0.11.1
 - Khách hàng: KPI 2026 từng tháng là MỘT con số cho cả tháng do bạn tự nhập, không phải KPI từng khách hàng. Nhập ngay ở ô KPI 2026 của hàng Tổng cộng (bấm vào ô; gõ 700000000, 700tr hoặc 1,2 tỷ; Enter hoặc Tab sang tháng kế; Esc hủy) hoặc ở nút “KPI từng tháng…” (nhập cả 12 tháng, có tổng và so với KPI cả năm ở Tổng quan).
 - Khách hàng: mỗi khách hàng hiện % doanh số 2026 của tháng so với KPI tháng đã đặt (khách đóng góp bao nhiêu % vào KPI), có thanh tiến độ như cột Tiến độ. Hàng Tổng cộng hiện KPI tháng và % đạt của cả tháng. Cột KPI sắp xếp được theo %.
