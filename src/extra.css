@@ -336,3 +336,7 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .t5.cur .t5-rank{background:var(--accent);color:var(--on-accent)}
 .t5.cur .t5-name{font-weight:var(--font-weight-bold)}
 @media(max-width:1150px){#ov-customer{max-width:100%}}
+
+/* v0.13.0: gộp khách hàng trong SaleBoots */
+.sbm-add{display:flex;gap:8px;align-items:center}
+.sbm-add input{flex:1;min-width:0}
