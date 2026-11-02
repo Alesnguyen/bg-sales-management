@@ -1,5 +1,10 @@
 # Lịch sử phiên bản
 
+## 0.12.0
+- Sửa khách hàng: thêm mục “Các sản phẩm đang chạy” dạng thẻ (tags) giống Notion. Gõ tên sản phẩm rồi Enter (hoặc dấu phẩy) để thêm; sản phẩm đã nhập ở bất kỳ khách hàng nào sẽ hiện sẵn để bấm chọn, kèm số khách đang dùng; gõ dở sẽ gợi ý, không có thì “Tạo mới”. Bỏ thẻ bằng nút ✕ hoặc phím Backspace. Tên trùng (khác hoa thường, khác dấu) được gộp về một thẻ.
+- Khách hàng: ô tìm kiếm tìm được cả theo sản phẩm. Nhập lại file Excel không làm mất thẻ sản phẩm đã nhập tay.
+- Tổng quan: thêm bộ lọc khách hàng cạnh bộ lọc khu vực. Khi chọn một khách hàng, các thẻ chỉ số, biểu đồ doanh số theo tháng, theo quý, bảng chi tiết quý, Top 5 (hiện thứ hạng của khách) và danh sách việc cần theo dõi đều tính riêng cho khách đó. Có thẻ thông tin khách hàng kèm các sản phẩm đang chạy, nút “Sửa khách hàng” và “Bỏ lọc khách hàng”. Bản đồ và thanh theo khu vực giữ nguyên toàn bộ để làm bối cảnh, tỉnh của khách được tô sáng.
+
 ## 0.11.2
 - Tổng quan: khi chọn tỉnh trên bản đồ hoặc lọc theo khu vực, thẻ “Mục tiêu doanh số năm 2026” lấy đúng tổng cột “Mục tiêu 2026” của các khách hàng ở khu vực đó (trang Khách hàng), không còn chia KPI cả năm theo tỷ trọng. Thẻ “Tiến độ mục tiêu” tính theo số này. Khi xem Tất cả khu vực vẫn dùng KPI cả năm do bạn đặt.
 - Tổng quan: thanh “Tiến độ theo khu vực” so thực tế với tổng mục tiêu 2026 của khách hàng trong từng khu vực. Bảng theo quý không có mục tiêu quý khi đang lọc một khu vực.

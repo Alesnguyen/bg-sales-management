@@ -305,3 +305,34 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .wide tbody td.kpc.progress-cell{min-width:96px}
 .kpm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 14px;margin-top:10px}
 @media(max-width:560px){.kpm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* v0.12.0: thẻ “Các sản phẩm đang chạy” và lọc khách hàng ở Tổng quan */
+.tgwrap{position:relative}
+.tagbox{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:var(--control-height-md);padding:5px 8px;border:1px solid var(--border);border-radius:var(--radius-control);background:var(--surface);cursor:text}
+.tagbox:focus-within{outline:var(--focus-width) solid var(--focus);outline-offset:var(--focus-offset)}
+.tagbox input{flex:1 1 150px;min-width:130px;width:auto!important;border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;min-height:28px!important;padding:2px 4px!important}
+.tgchips{display:contents}
+.tgrow{display:flex;flex-wrap:wrap;gap:6px}
+.tgchip{display:inline-flex;align-items:center;gap:2px;max-width:100%;background:var(--accent);color:var(--on-accent);border-radius:var(--radius-pill);padding:3px 4px 3px 11px;font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);line-height:1.4;overflow-wrap:anywhere}
+.tgchip.ro{padding:3px 11px}
+.tgx{display:inline-grid;place-items:center;width:20px;height:20px;min-height:20px!important;padding:0!important;border:0;border-radius:50%;background:transparent;color:inherit;font-size:10px;line-height:1;cursor:pointer}
+.tgx:hover{background:rgba(0,0,0,.18)}
+.tgx:focus-visible,.tgopt:focus-visible{outline:var(--focus-width) solid var(--focus);outline-offset:var(--focus-offset)}
+.tgopt{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-pill);padding:4px 11px;font:inherit;font-size:var(--font-size-sm);cursor:pointer;min-height:30px}
+.tgopt:hover{border-color:var(--accent);background:var(--surface-subtle)}
+.tgn{font-size:var(--font-size-xs);color:var(--text-secondary);font-weight:var(--font-weight-regular,400)}
+.tglist{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;margin:0;padding:4px;list-style:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-splash);max-height:240px;overflow:auto}
+.tglist li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;border-radius:var(--radius-md);cursor:pointer;font-size:var(--font-size-sm)}
+.tglist li[aria-selected="true"]{background:var(--surface-subtle);box-shadow:inset 3px 0 0 var(--accent)}
+.tglist li.mk{font-weight:var(--font-weight-semibold)}
+.tglist li.tgnone{cursor:default;color:var(--text-secondary)}
+.hero .toolbar{justify-content:flex-end}
+#ov-customer{max-width:280px;text-overflow:ellipsis}
+.ovc{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;margin-bottom:16px;padding:14px 18px;border-left:4px solid var(--accent)}
+.ovc-main{flex:1 1 260px;min-width:0}.ovc-tags{flex:2 1 300px;min-width:0}
+.ovc-name{font-weight:var(--font-weight-extrabold);font-size:var(--font-size-md);overflow-wrap:anywhere;margin:2px 0 4px}
+.ovc-tags .tgrow{margin-top:6px}
+.ovc-act{display:flex;gap:8px;flex-wrap:wrap}
+.t5.cur .t5-rank{background:var(--accent);color:var(--on-accent)}
+.t5.cur .t5-name{font-weight:var(--font-weight-bold)}
+@media(max-width:1150px){#ov-customer{max-width:100%}}
