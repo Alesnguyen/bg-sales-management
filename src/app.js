@@ -298,10 +298,10 @@ function moneyKey(el){const v=el.value;if(/[^\d.,\-\s]/.test(v)||/.-/.test(v)){c
 const hint=el=>{const s=el.parentElement.querySelector(".hint");if(s){const v=pm(el.value);s.textContent=v==null?"":"= "+fm(v)+(Math.abs(v)>=1e6?"  ≈ "+fmtB(v):"")}};
 /* Ô số tiền: ứng dụng KHÔNG sửa nội dung ô khi đang gõ hay vừa vào ô (tránh xung đột với bộ gõ tiếng Việt và giữ nguyên thao tác bôi đen để gõ đè).
    Dòng gợi ý bên dưới hiện ngay số đầy đủ có dấu chấm; khi rời ô, ô được định dạng 300.000.000. */
-document.addEventListener("focusout",e=>{const t=e.target;if(t.classList?.contains("money")){const v=pm(t.value);t.value=v==null?"":fm(v);hint(t)}});
-document.addEventListener("beforeinput",e=>{const t=e.target;if(!t.classList?.contains("money")||e.isComposing)return;if(e.inputType==="insertText"){const d=e.data||"";if(!/^[\d.,]+$/.test(d)&&!(d==="-"&&t.selectionStart===0&&!t.value.slice(t.selectionEnd).includes("-")))e.preventDefault()}});
-document.addEventListener("paste",e=>{const t=e.target;if(!t.classList?.contains("money"))return;e.preventDefault();const x=(e.clipboardData.getData("text")||"").trim(),c=(/^-/.test(x)?"-":"")+x.replace(/\D/g,"");t.setRangeText(c,t.selectionStart,t.selectionEnd,"end");t.dispatchEvent(new Event("input",{bubbles:true}))});
-const sums=()=>{if(!$("#sum25"))return;const s=y=>Array.from({length:12},(_,i)=>pm($(`#ce_m${i}_${y}`).value)||0).reduce((a,b)=>a+b,0),s0=s(0),s1=s(1),a25=pm($("#ce_a25").value),a26=pm($("#ce_a26").value),w=[];$("#sum25").textContent=fm(s0);$("#sum26").textContent=fm(s1);
+document.addEventListener("focusout",e=>{const t=e.target;if(t.classList?.contains("money")){if(t.closest("#ce-form")){moneyCommit(t);sums();return}const v=pm(t.value);t.value=v==null?"":fm(v);hint(t)}});
+document.addEventListener("beforeinput",e=>{const t=e.target;if(!t.classList?.contains("money")||e.isComposing)return;if(t.closest("#ce-form")){if(e.inputType==="insertText"&&/[^\d.,+\-*\/xX×÷()=\s]/.test(e.data||""))e.preventDefault();return}if(e.inputType==="insertText"){const d=e.data||"";if(!/^[\d.,]+$/.test(d)&&!(d==="-"&&t.selectionStart===0&&!t.value.slice(t.selectionEnd).includes("-")))e.preventDefault()}});
+document.addEventListener("paste",e=>{const t=e.target;if(!t.classList?.contains("money"))return;e.preventDefault();const x=(e.clipboardData.getData("text")||"").trim(),c=t.closest("#ce-form")&&isFormula(x)?x.replace(FX_CH,""):(/^-/.test(x)?"-":"")+x.replace(/\D/g,"");t.setRangeText(c,t.selectionStart,t.selectionEnd,"end");t.dispatchEvent(new Event("input",{bubbles:true}))});
+const sums=()=>{if(!$("#sum25"))return;const s=y=>Array.from({length:12},(_,i)=>pmf($(`#ce_m${i}_${y}`).value)||0).reduce((a,b)=>a+b,0),s0=s(0),s1=s(1),a25=pmf($("#ce_a25").value),a26=pmf($("#ce_a26").value),w=[];$("#sum25").textContent=fm(s0);$("#sum26").textContent=fm(s1);
  if(s1&&a26!=null&&s1!==a26)w.push("Tổng 12 tháng 2026 ("+fm(s1)+") khác ô Thực tế 2026 ("+fm(a26)+").");if(s0&&a25!=null&&s0!==a25)w.push("Tổng 12 tháng 2025 ("+fm(s0)+") khác ô Thực tế 2025 ("+fm(a25)+").");
  const sw=$("#sumwarn");sw.hidden=!w.length;sw.textContent=w.length?"⚠ "+w.join(" ")+" Bấm “Tính lại” nếu muốn đồng bộ.":""};
 const ceOpen=c=>{S.edit=c||null;go("customer-edit")};
@@ -311,21 +311,54 @@ function ceRender(){const c=S.edit,nw=!c,f=$("#ce-form");S.dirty=false;
  <div class="card"><h3 class="ch">Các sản phẩm đang chạy</h3><p class="small muted" style="margin:0 0 10px">Gõ tên sản phẩm rồi nhấn Enter để thêm (phím ↑ ↓ để chọn gợi ý). Sản phẩm đã nhập ở khách hàng khác sẽ hiện sẵn bên dưới, chỉ cần bấm để chọn; nếu thiếu hoặc khác thì gõ thêm.</p><div class="tgwrap"><div class="tagbox" id="tg-box"><span class="tgchips" id="tg-chips"></span><input id="tg-in" type="text" autocomplete="off" maxlength="40" role="combobox" aria-expanded="false" aria-controls="tg-list" aria-autocomplete="list" placeholder="Thêm sản phẩm…" aria-label="Thêm sản phẩm đang chạy"></div><ul class="tglist" id="tg-list" role="listbox" aria-label="Gợi ý sản phẩm" hidden></ul></div><div id="tg-sugg"></div></div>
  <div class="card"><h3 class="ch">Doanh số tổng (VND)</h3><div class="fgrid3"><div>${fl("ce_a25","Thực tế 2025")}${mi("ce_a25",c?.a25,"Thực tế 2025",1)}</div><div>${fl("ce_t26","Mục tiêu 2026")}${mi("ce_t26",c?.t26,"Mục tiêu 2026",1)}</div><div>${fl("ce_a26","Thực tế 2026")}${mi("ce_a26",c?.a26,"Thực tế 2026",1)}</div></div></div>
  <div class="card"><h3 class="ch">Doanh số theo quý — thực tế 2026 (VND)</h3><div class="fgrid4">${[0,1,2,3].map(k=>`<div>${fl("ce_q"+k,"Quý "+(k+1))}${mi("ce_q"+k,c?.q?.[k]?.[0],"Quý "+(k+1)+" năm 2026")}</div>`).join("")}</div></div>
- <div class="card"><div class="card-title-row"><h3 class="ch" style="margin:0">Doanh số theo tháng — thực tế (VND)</h3><button type="button" class="btn" id="ce-recalc">Tính lại quý và tổng từ các tháng</button></div><div class="table-wrap" style="margin-top:12px"><table class="egrid"><thead><tr><th>Tháng</th><th>2025</th><th>2026</th></tr></thead><tbody>${Array.from({length:12},(_,i)=>`<tr><th scope="row">Tháng ${i+1}</th><td>${mi(`ce_m${i}_0`,c?.m?.[i]?.[0],`Tháng ${i+1} năm 2025`)}</td><td>${mi(`ce_m${i}_1`,c?.m?.[i]?.[1],`Tháng ${i+1} năm 2026`)}</td></tr>`).join("")}</tbody><tfoot><tr><th>Tổng</th><td id="sum25"></td><td id="sum26"></td></tr></tfoot></table></div><div id="sumwarn" class="notice" role="status" hidden style="margin-top:10px"></div></div>
+ <div class="card"><div class="card-title-row"><h3 class="ch" style="margin:0">Doanh số theo tháng — thực tế (VND)</h3><button type="button" class="btn" id="ce-recalc">Tính lại quý và tổng từ các tháng</button></div><p class="muted small" style="margin:8px 0 0">Mỗi ô có thể nhập công thức khi một tháng có nhiều đơn hàng, ví dụ <strong>100.000.000+50.000.000</strong> (dùng + − * / và dấu ngoặc). Rời ô hoặc nhấn Enter, ô sẽ hiện tổng. Bấm lại vào ô để xem và sửa công thức.</p><div class="table-wrap" style="margin-top:12px"><table class="egrid"><thead><tr><th>Tháng</th><th>2025</th><th>2026</th></tr></thead><tbody>${Array.from({length:12},(_,i)=>`<tr><th scope="row">Tháng ${i+1}</th><td>${mi(`ce_m${i}_0`,c?.m?.[i]?.[0],`Tháng ${i+1} năm 2025`)}</td><td>${mi(`ce_m${i}_1`,c?.m?.[i]?.[1],`Tháng ${i+1} năm 2026`)}</td></tr>`).join("")}</tbody><tfoot><tr><th>Tổng</th><td id="sum25"></td><td id="sum26"></td></tr></tfoot></table></div><div id="sumwarn" class="notice" role="status" hidden style="margin-top:10px"></div></div>
  ${nw?"":sbCard(c)}<div class="actionbar"><button type="button" class="btn" id="ce-cancel">← Quay lại danh sách</button><span style="flex:1"></span>${nw?"":`<button type="button" class="btn" id="ce-arch">${c.archived?"Khôi phục khách hàng":"Lưu trữ khách hàng"}</button>`}<button type="submit" class="btn primary">${nw?"Thêm khách hàng":"Lưu thay đổi"}</button></div>`;
- S.ceTags=[...(c?.tags||[])];tgDraw();f.querySelectorAll(".money").forEach(hint);sums();$("#ce_name").focus()}
+ S.ceTags=[...(c?.tags||[])];tgDraw();fxRestore(c);f.querySelectorAll(".money").forEach(hint);sums();$("#ce_name").focus()}
 async function ceSave(e){e.preventDefault();const c=S.edit,old=c?{...c}:null,nw=!c,g=i=>$("#"+i).value,name=g("ce_name").trim(),id=nw?key(name):c?.id;
  if(!name){setErr("ce_name","Hãy nhập tên khách hàng.");return}
  if(S.cus.some(x=>x.id!==id&&key(x.name)===key(name))||nw&&S.cus.some(x=>x.id===id)){setErr("ce_name","Tên khách hàng này đã tồn tại.");return}
- tgFlush();const n=i=>pm(g(i)),q=[0,1,2,3].map(k=>[n("ce_q"+k),null]),m=Array.from({length:12},(_,i)=>[n(`ce_m${i}_0`),n(`ce_m${i}_1`)]);
- try{await put("c",[{...(c||{archived:false,src:"manual"}),tags:[...(S.ceTags||[])],name,code:g("ce_code").trim(),region:g("ce_region").trim()||guess(name),a25:n("ce_a25"),t26:n("ce_t26"),a26:n("ce_a26"),note:g("ce_note").trim(),q,m,id,updated:Date.now()}]);S.dirty=false;await load();go("customers");notify(nw?"Đã thêm khách hàng":"Đã lưu thay đổi",async()=>{old?await put("c",[old]):await del("c",id)})}catch(er){notify("Lỗi: "+vi(er.message))}}
-$("#ce-form").addEventListener("input",e=>{if(e.target.id!=="tg-in")S.dirty=true;if(e.target.classList.contains("money")){moneyKey(e.target);hint(e.target);sums()}});
+ tgFlush();{const bad=[...$("#ce-form").querySelectorAll(".money")].find(el=>!moneyCommit(el));if(bad){setErr(bad.id,"Công thức chưa hợp lệ. Chỉ dùng số và các dấu + - * / ( ).");return}}const n=i=>pm(g(i)),q=[0,1,2,3].map(k=>[n("ce_q"+k),null]),m=Array.from({length:12},(_,i)=>[n(`ce_m${i}_0`),n(`ce_m${i}_1`)]);
+ try{await put("c",[{...(c||{archived:false,src:"manual"}),tags:[...(S.ceTags||[])],name,code:g("ce_code").trim(),region:g("ce_region").trim()||guess(name),a25:n("ce_a25"),t26:n("ce_t26"),a26:n("ce_a26"),note:g("ce_note").trim(),q,m,fx:Object.fromEntries([...$("#ce-form").querySelectorAll(".money[data-formula]")].filter(fxOk).map(t=>[t.id,t.dataset.formula])),id,updated:Date.now()}]);S.dirty=false;await load();go("customers");notify(nw?"Đã thêm khách hàng":"Đã lưu thay đổi",async()=>{old?await put("c",[old]):await del("c",id)})}catch(er){notify("Lỗi: "+vi(er.message))}}
+$("#ce-form").addEventListener("input",e=>{if(e.target.id!=="tg-in")S.dirty=true;if(e.target.classList.contains("money")){moneyKeyF(e.target);hintF(e.target);sums()}});
 $("#ce-form").addEventListener("submit",ceSave);
 $("#ce-form").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;
  if(b.id==="ce-cancel")go("customers");if(b.dataset.sbopen)sbOpen(S.sb.find(x=>x.id===b.dataset.sbopen));if(b.id==="ce-addsb")sbOpen(null,S.edit.id);
  if(b.id==="ce-arch"){const old={...S.edit};S.edit.archived=!S.edit.archived;await put("c",[S.edit]);S.dirty=false;await load();go("customers");notify(S.edit.archived?"Đã lưu trữ khách hàng":"Đã khôi phục khách hàng",()=>put("c",[old]))}
- if(b.id==="ce-recalc"){const v=i=>pm($("#"+i).value)||0,s=y=>Array.from({length:12},(_,i)=>v(`ce_m${i}_${y}`)).reduce((a,b)=>a+b,0);if(!s(0)&&!s(1)){notify("Chưa có số liệu tháng để tính.");return}
+ if(b.id==="ce-recalc"){const v=i=>pmf($("#"+i).value)||0,s=y=>Array.from({length:12},(_,i)=>v(`ce_m${i}_${y}`)).reduce((a,b)=>a+b,0);if(!s(0)&&!s(1)){notify("Chưa có số liệu tháng để tính.");return}
   const set=(i,x)=>{$("#"+i).value=fm(x);hint($("#"+i))};set("ce_a25",s(0));set("ce_a26",s(1));[0,1,2,3].forEach(k=>set("ce_q"+k,[0,1,2].reduce((a,j)=>a+v(`ce_m${3*k+j}_1`),0)));S.dirty=true;notify("Đã tính lại từ số liệu 12 tháng. Bấm Lưu để ghi.")}});
+/* ===== v0.14.0: nhập doanh số bằng công thức (trang Sửa khách hàng) =====
+   Gõ 100.000.000+50.000.000 (hoặc có dấu - * / x ( ) và “=” ở đầu) rồi rời ô hoặc nhấn Enter: ô hiện tổng.
+   Công thức gốc được nhớ trong khách hàng (c.fx) để mở lại sửa tiếp, ví dụ thêm một đơn: bấm vào ô, công thức hiện ra, gõ thêm +20.000.000.
+   Tính bằng bộ phân tích riêng, KHÔNG dùng eval. Dấu chấm kiểu 100.000 là phân cách hàng nghìn, dấu phẩy là thập phân (1,5). */
+const FX_CH=/[^\d.,+\-*\/xX×÷()=\s]/g;
+const isFormula=s=>{s=String(s||"");return/^\s*=/.test(s)||/[+*\/×÷()]/.test(s)||/[\d)]\s*[-xX×]/.test(s)};
+function calcExpr(src){const s=String(src||"").replace(/^\s*=/,"").replace(/÷/g,"/").replace(/([\d)])\s*[xX×]\s*(?=[\d(])/g,"$1*");
+ const tk=[],re=/\s*(?:(\d{1,3}(?:\.\d{3})+(?:,\d+)?)|(\d+(?:[.,]\d+)?)|([-+*\/()]))/y;let i=0;
+ while(i<s.length){re.lastIndex=i;const m=re.exec(s);if(!m){if(/^\s*$/.test(s.slice(i)))break;return null}
+  if(m[1]!=null)tk.push(+m[1].replace(/\./g,"").replace(",","."));else if(m[2]!=null)tk.push(+m[2].replace(",","."));else tk.push(m[3]);i=re.lastIndex}
+ let p=0;const peek=()=>tk[p],next=()=>tk[p++],
+ ex=()=>{let v=tm();while(peek()==="+"||peek()==="-"){const o=next(),r=tm();v=o==="+"?v+r:v-r}return v},
+ tm=()=>{let v=un();while(peek()==="*"||peek()==="/"){const o=next(),r=un();if(o==="/"&&r===0)throw 0;v=o==="*"?v*r:v/r}return v},
+ un=()=>{if(peek()==="-"){next();return-un()}if(peek()==="+"){next();return un()}return pr()},
+ pr=()=>{const t=next();if(typeof t==="number")return t;if(t==="("){const v=ex();if(next()!==")")throw 0;return v}throw 0};
+ try{const v=ex();if(p!==tk.length||!isFinite(v))return null;return Math.round(v)||0}catch{return null}}
+/* giá trị số của một ô: công thức thì tính, còn lại đọc như trước */
+const pmf=s=>{const v=String(s||"");return isFormula(v)?calcExpr(v):pm(v)};
+const fxOk=t=>{if(!t.dataset.formula)return false;const r=calcExpr(t.dataset.formula);return r!=null&&r===pm(t.value)};
+const fxHint=t=>{let h=t.parentElement.querySelector(".hint");if(!h){h=document.createElement("span");h.className="hint fxh";t.parentElement.append(h)}return h};
+function moneyKeyF(el){const v=el.value;if(isFormula(v)){const c=v.replace(FX_CH,"");if(c!==v)el.value=c}else moneyKey(el)}
+function hintF(t){if(isFormula(t.value)){const r=calcExpr(t.value),h=fxHint(t);h.textContent=r==null?"Đang nhập công thức…":"= "+fm(r)+(Math.abs(r)>=1e6?"  ≈ "+fmtB(r):"")}else{t.parentElement.querySelector(".hint.fxh")?.remove();hint(t)}}
+/* chốt giá trị khi rời ô / Enter / lưu. Trả false nếu công thức sai. */
+function moneyCommit(t){const raw=String(t.value||"");
+ if(isFormula(raw)){const r=calcExpr(raw),h=fxHint(t);
+  if(r==null){t.setAttribute("aria-invalid","true");h.textContent="Công thức chưa hợp lệ. Chỉ dùng số và các dấu + - * / ( ).";return false}
+  t.dataset.formula=raw.replace(/^\s*=/,"").replace(/\s+/g," ").trim();t.value=fm(r);t.classList.add("has-fx");t.title="Công thức: "+t.dataset.formula;t.removeAttribute("aria-invalid");
+  const e=$("#err_"+t.id);if(e)e.hidden=true;if(h.classList.contains("fxh"))h.remove();hint(t);return true}
+ const v=pm(raw);if(t.dataset.formula&&calcExpr(t.dataset.formula)!==v){delete t.dataset.formula;t.classList.remove("has-fx");t.removeAttribute("title")}
+ t.value=v==null?"":fm(v);t.removeAttribute("aria-invalid");t.parentElement.querySelector(".hint.fxh")?.remove();hint(t);return true}
+function fxRestore(c){Object.entries(c?.fx||{}).forEach(([id,f])=>{const t=$("#"+id);if(!t)return;t.dataset.formula=f;if(fxOk(t)){t.classList.add("has-fx");t.title="Công thức: "+f}else delete t.dataset.formula})}
+document.addEventListener("focusin",e=>{const t=e.target;if(t.classList?.contains("money")&&t.closest("#ce-form")&&t.dataset.formula&&!isFormula(t.value)){if(fxOk(t)){t.value=t.dataset.formula;t.select()}else{delete t.dataset.formula;t.classList.remove("has-fx");t.removeAttribute("title")}}});
+$("#ce-form").addEventListener("keydown",e=>{const t=e.target;if(e.key==="Enter"&&t.classList?.contains("money")&&isFormula(t.value)){e.preventDefault();if(moneyCommit(t)){sums();t.select()}}});
 /* ===== v0.12.0: “Các sản phẩm đang chạy”: thẻ (tags) kiểu Notion =====
    Lưu trong từng khách hàng: c.tags = mảng tên sản phẩm. Kho thẻ dùng chung = tất cả thẻ đang có ở mọi khách hàng (không phân biệt hoa thường, dấu).
    Gõ một thẻ ở khách này thì thẻ đó hiện lại ở khách khác để chọn; thẻ mới thì gõ thêm. */

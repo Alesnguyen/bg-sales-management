@@ -1,5 +1,8 @@
 # Lịch sử phiên bản
 
+## 0.14.0
+- Sửa khách hàng: các ô doanh số (tổng năm, theo quý, theo tháng) nhập được bằng công thức, dùng + - * / và dấu ngoặc, ví dụ 100.000.000+50.000.000. Khi rời ô hoặc nhấn Enter, ô hiện tổng; trong lúc gõ có dòng xem trước kết quả. Công thức được nhớ cùng khách hàng: bấm lại vào ô sẽ thấy công thức để thêm đơn mới (ô có vạch vàng bên trái). Công thức sai thì báo lỗi và không cho lưu. Các form khác không đổi.
+
 ## 0.13.0
 - SaleBoots: một chương trình có thể áp dụng chung cho nhiều khách hàng. Ở form chương trình, mục “Gộp thêm khách hàng” cho chọn thêm khách; doanh số 2025 và từng tháng của các khách được cộng dồn thành một dòng trên tờ đề xuất. Tên ghi trên tờ tự lấy phần chung của các khách (VD: “Kia Bắc Ninh” từ “Kia Bắc Ninh (CÔNG TY…)” và “Kia Bắc Ninh - CS Từ Sơn (CÔNG TY…)”), có thể sửa lại. Chương trình gộp hiện ở trang sửa của từng khách trong nhóm.
 - SaleBoots: thêm ô “Phụ trách kinh doanh”. Tên nhập một lần, lưu trong ứng dụng, hiện dưới tiêu đề tờ đề xuất Excel (chữ in hoa) thay cho tên cố định trước đây.

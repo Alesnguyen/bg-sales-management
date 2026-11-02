@@ -340,3 +340,7 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 /* v0.13.0: gộp khách hàng trong SaleBoots */
 .sbm-add{display:flex;gap:8px;align-items:center}
 .sbm-add input{flex:1;min-width:0}
+
+/* v0.14.0: ô doanh số nhập bằng công thức */
+.money.has-fx{box-shadow:inset 3px 0 0 var(--accent)}
+.egrid td .mi .hint.fxh{padding:0 2px 2px}
