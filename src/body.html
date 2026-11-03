@@ -25,7 +25,7 @@
 </header>
 
 <section class="view active" data-view="overview" aria-labelledby="page-title">
-<div class="card hero"><div><h2 id="greet"></h2><div class="muted" id="quote"></div></div><div class="toolbar" style="margin:0"><button class="btn" id="quote-next" aria-label="Câu khác">↻</button><select id="ov-region" aria-label="Lọc tổng quan theo khu vực"></select><select id="ov-customer" aria-label="Lọc tổng quan theo khách hàng"></select></div></div>
+<div class="card hero"><div><h2 id="greet"></h2><div class="muted" id="quote"></div></div><div class="toolbar" style="margin:0"><button class="btn" id="quote-next" aria-label="Câu khác">↻</button><select id="ov-region" aria-label="Lọc tổng quan theo khu vực"></select><div class="msel" id="ov-cus-wrap"><button type="button" class="msel-btn" id="ov-customer" aria-haspopup="true" aria-expanded="false" aria-controls="ov-cus-panel" aria-label="Lọc tổng quan theo khách hàng"><span class="msel-txt">Tất cả khách hàng</span></button><div class="msel-panel" id="ov-cus-panel" role="group" aria-label="Chọn các khách hàng cần xem" hidden><div class="msel-top"><input type="search" id="ovc-q" placeholder="Tìm khách hàng…" aria-label="Tìm khách hàng" autocomplete="off"><div class="msel-acts"><button type="button" class="msel-act" id="ovc-all">Chọn tất cả đang hiện</button><button type="button" class="msel-act" id="ovc-none">Bỏ chọn tất cả</button></div></div><div class="msel-list" id="ovc-list"></div><div class="msel-foot" id="ovc-count" aria-live="polite"></div></div></div></div></div>
 <div id="ov-cust"></div>
 <div id="guide"></div>
 <div class="grid grid-4" id="kpis"></div>

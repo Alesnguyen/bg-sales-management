@@ -344,3 +344,24 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 /* v0.14.0: ô doanh số nhập bằng công thức */
 .money.has-fx{box-shadow:inset 3px 0 0 var(--accent)}
 .egrid td .mi .hint.fxh{padding:0 2px 2px}
+
+/* v0.15.0: ô chọn nhiều khách hàng ở Tổng quan */
+.hero{position:relative;z-index:20}
+.msel{position:relative}
+.msel-btn{display:inline-flex;align-items:center;gap:10px;width:280px;max-width:100%;min-height:var(--control-height-md);padding:0 12px;border:1px solid var(--border);border-radius:var(--radius-control);background:var(--surface);color:var(--text);font:inherit;cursor:pointer;text-align:left}
+.msel-btn::after{content:"▾";margin-left:auto;flex:none;font-size:var(--font-size-sm)}
+.msel-btn.on{border-color:var(--accent)}
+.msel-btn:focus-visible,.msel-act:focus-visible{outline:var(--focus-width) solid var(--focus);outline-offset:var(--focus-offset)}
+.msel-txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msel-panel{position:absolute;right:0;top:calc(100% + 6px);z-index:40;width:min(440px,calc(100vw - 32px));padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-splash)}
+.msel-top input{width:100%}
+.msel-acts{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 2px 4px}
+.msel-act{padding:2px 0;border:0;background:none;color:var(--text);font:inherit;font-size:var(--font-size-sm);text-decoration:underline;cursor:pointer}
+.msel-list{max-height:320px;overflow:auto;margin-top:4px;border-top:1px solid var(--border);padding-top:4px}
+.msel-item{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:var(--radius-md);cursor:pointer;font-size:var(--font-size-sm)}
+.msel-item:hover{background:var(--surface-subtle)}
+.msel-item input{flex:none;width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
+.msel-name{flex:1;min-width:0;overflow-wrap:anywhere}
+.msel-meta{flex:none;color:var(--text-secondary);font-size:var(--font-size-xs)}
+.msel-foot{margin-top:6px;padding:6px 2px 0;border-top:1px solid var(--border);color:var(--text-secondary);font-size:var(--font-size-xs)}
+@media(max-width:1150px){.msel-panel{right:auto;left:0}.msel-btn{width:100%}}

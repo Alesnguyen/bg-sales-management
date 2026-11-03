@@ -1,5 +1,11 @@
 # Lịch sử phiên bản
 
+## 0.15.1
+- Tổng quan, “Doanh số theo quý”: cột 2026 trước đây lấy số quý nhập sẵn (và khi chọn nhiều khách chỉ lấy số của khách đầu tiên) nên lệch với cột 2025 và với biểu đồ theo tháng. Nay cả 2025 và 2026 đều cộng từ số liệu từng tháng của đúng các khách đang được chọn (một khách, nhiều khách, một khu vực hay tất cả). Khách nào chưa có số tháng trong quý đó thì dùng số quý đã nhập. Bảng “Chi tiết theo quý” đổi theo.
+
+## 0.15.0
+- Tổng quan: bộ lọc khách hàng đổi thành danh sách có ô tích, chọn được nhiều khách cùng lúc, kể cả khác khu vực. Có ô tìm kiếm, “Chọn tất cả đang hiện”, “Bỏ chọn tất cả”. Khi chọn từ 2 khách trở lên, thẻ chỉ số, biểu đồ tháng/quý, bảng quý, Top 5 (khách đã chọn tô vàng kèm thứ hạng), việc cần theo dõi và bản đồ đều lấy số liệu gộp của các khách đã chọn. Phía trên có thẻ liệt kê các khách đang xem (bấm ✕ để bỏ từng khách) và các sản phẩm đang chạy gộp lại. Đang lọc một khu vực thì danh sách chỉ hiện khách thuộc khu vực đó.
+
 ## 0.14.0
 - Sửa khách hàng: các ô doanh số (tổng năm, theo quý, theo tháng) nhập được bằng công thức, dùng + - * / và dấu ngoặc, ví dụ 100.000.000+50.000.000. Khi rời ô hoặc nhấn Enter, ô hiện tổng; trong lúc gõ có dòng xem trước kết quả. Công thức được nhớ cùng khách hàng: bấm lại vào ô sẽ thấy công thức để thêm đơn mới (ô có vạch vàng bên trái). Công thức sai thì báo lỗi và không cho lưu. Các form khác không đổi.
 
