@@ -1,12 +1,16 @@
-const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, Menu, shell, ipcMain, dialog, net } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const backup = require("./backup");
+const uiu = require("./uiupdate");
 
 app.commandLine.appendSwitch("lang", "vi");
 const autoUpdater = app.isPackaged ? require("electron-updater").autoUpdater : null;
 // Thư mục sao lưu tự động: Tài liệu\BG Sales Management\Sao lưu (nếu Tài liệu được OneDrive đồng bộ thì bản sao lưu cũng được đồng bộ)
 const bdir = () => path.join(app.getPath("documents"), "BG Sales Management", "Sao lưu");
+// Cập nhật nhẹ: chỉ tải phần giao diện (vài trăm KB) thay vì cả bộ cài (~90 MB). Xem uiupdate.js và PHAT-HANH-RIENG-TU.md.
+const UI_BASE = "https://raw.githubusercontent.com/Alesnguyen/bg-sales-management-releases/ui/";
+const uidir = () => path.join(app.getPath("userData"), "ui");
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -16,18 +20,27 @@ if (!app.requestSingleInstanceLock()) {
   let forced = false;
   let timer = null;
   let lastUpd = null;
+  let uiNow = null;      // giao diện tải về đang chạy (null = giao diện đi kèm bộ cài)
+  let uiPending = null;  // bản giao diện mới đã tải xong, chờ áp dụng
+  let uiOk = false;      // giao diện đã báo khởi động xong
+  let okTimer = null;
+  let reloadTo = null;   // đang chờ sao lưu xong để nạp giao diện mới
   const plain = (n) => {
     if (!n) return "";
     if (Array.isArray(n)) n = n.map((x) => x.note || "").join("\n");
     return String(n).replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim().slice(0, 400);
   };
   const send = (s) => {
+    // Đã có bản giao diện mới sẵn sàng thì không để kết quả "không có bản mới/đang kiểm tra" của bộ cài che mất.
+    if (uiPending && ["checking", "none", "error"].includes(s.s)) return;
     if (["available", "progress", "ready"].includes(s.s)) lastUpd = s;
     if (win && !win.isDestroyed()) win.webContents.send("upd:state", s);
   };
 
   if (autoUpdater) {
     autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;   // đóng ứng dụng là tự cài ngầm, không phải chờ thêm lần khởi động lại
+    autoUpdater.autoRunAppAfterInstall = true;
     autoUpdater
       .on("checking-for-update", () => send({ s: "checking" }))
       .on("update-available", (i) => send({ s: "available", v: i.version, notes: plain(i.releaseNotes) }))
@@ -36,12 +49,67 @@ if (!app.requestSingleInstanceLock()) {
       .on("update-downloaded", (i) => send({ s: "ready", v: i.version, notes: plain(i.releaseNotes) }))
       .on("error", (e) => send({ s: "error", m: e.message }));
   }
+  // Kiểm tra bản giao diện nhẹ trước. Chỉ khi không có (hoặc cần lõi mới) mới kiểm tra bản cài đầy đủ.
+  const uiCheck = async () => {
+    const running = uiNow ? uiNow.version : app.getVersion();
+    const r = await uiu.check({
+      base: UI_BASE, dir: uidir(), shellVersion: app.getVersion(),
+      keep: uiNow ? [path.basename(uiNow.path)] : [], fetchImpl: (u, o) => net.fetch(u, o)
+    });
+    if (r.s === "ready" && uiu.cmp(r.version, running) > 0) {
+      uiPending = r;
+      send({ s: "ready", v: r.version, notes: plain(r.notes), ui: true });
+    }
+    return r;
+  };
+  const checkAll = async (manual) => {
+    if (!autoUpdater) return;
+    let ui = null;
+    try { ui = await uiCheck(); } catch (_) { /* lỗi mạng khi kiểm tra giao diện: để kiểm tra bản cài báo lỗi nếu có */ }
+    if (uiPending || (ui && ui.s === "ready")) return;
+    try { await autoUpdater.checkForUpdates(); } catch (e) { if (manual) send({ s: "error", m: e.message }); }
+  };
   ipcMain.handle("upd:check", async () => {
     if (!autoUpdater) return { s: "dev" };
-    try { await autoUpdater.checkForUpdates(); } catch (e) { send({ s: "error", m: e.message }); }
+    send({ s: "checking" });
+    await checkAll(true);
   });
   ipcMain.handle("upd:last", () => lastUpd);
-  ipcMain.handle("upd:install", () => { if (autoUpdater) autoUpdater.quitAndInstall(); });
+
+  // Áp dụng giao diện mới: sao lưu như khi đóng ứng dụng (có hỏi nếu còn thay đổi chưa lưu) rồi nạp lại trang. Không cần cài đặt.
+  const doReload = () => {
+    clearTimeout(timer);
+    const to = reloadTo; reloadTo = null; closing = false;
+    if (!to || !win || win.isDestroyed()) return;
+    uiNow = { version: uiPending ? uiPending.version : "", path: to };
+    uiPending = null; lastUpd = null;
+    armOk();
+    win.loadFile(to);
+  };
+  const applyUi = () => {
+    if (!uiPending || !win || win.isDestroyed() || reloadTo) return;
+    reloadTo = uiPending.path; closing = true;
+    win.webContents.send("bk:flush");
+    timer = setTimeout(doReload, 5000);
+  };
+  ipcMain.handle("upd:install", () => {
+    if (uiPending) { applyUi(); return; }
+    if (autoUpdater) autoUpdater.quitAndInstall(true, true);   // cài ngầm (không hiện cửa sổ), tự mở lại ứng dụng sau khi cài
+  });
+
+  // Giao diện tải về phải báo "đã khởi động xong" trong 30 giây; nếu không (hoặc tải lỗi) thì quay về giao diện đi kèm bộ cài.
+  const bundled = () => path.join(__dirname, "index.html");
+  const armOk = () => {
+    clearTimeout(okTimer); uiOk = false;
+    if (uiNow) okTimer = setTimeout(() => { if (!uiOk) fallback(); }, 30000);
+  };
+  const fallback = () => {
+    if (!uiNow) return;
+    try { uiu.markBad(uidir(), uiNow.version); } catch (_) { /* bỏ qua */ }
+    uiNow = null; uiPending = null; clearTimeout(okTimer);
+    if (win && !win.isDestroyed()) win.loadFile(bundled());
+  };
+  ipcMain.on("ui:ok", () => { uiOk = true; clearTimeout(okTimer); });
 
   ipcMain.handle("bk:save", (_e, text) => ({ name: backup.save(bdir(), String(text)), dir: bdir() }));
   ipcMain.handle("bk:list", () => ({ dir: bdir(), items: backup.list(bdir()) }));
@@ -57,7 +125,10 @@ if (!app.requestSingleInstanceLock()) {
         title: "Thay đổi chưa lưu", message: "Bạn có thay đổi chưa lưu.", detail: "Thoát bây giờ sẽ mất các thay đổi chưa lưu."
       }) === 1;
     }
-    if (leave) { forced = true; if (win && !win.isDestroyed()) win.destroy(); } else { closing = false; }
+    if (leave) {
+      if (reloadTo) doReload();
+      else { forced = true; if (win && !win.isDestroyed()) win.destroy(); }
+    } else { closing = false; reloadTo = null; }
   });
 
   app.on("second-instance", () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
@@ -79,11 +150,15 @@ if (!app.requestSingleInstanceLock()) {
       timer = setTimeout(() => { forced = true; if (!win.isDestroyed()) win.destroy(); }, 5000);
     });
     win.webContents.on("will-prevent-unload", (e) => e.preventDefault());
-    win.loadFile(path.join(__dirname, "index.html"));
+    win.webContents.on("did-fail-load", (_e, code, _d, _u, isMain) => { if (isMain && uiNow && code !== -3) fallback(); });
+    win.webContents.on("render-process-gone", () => { if (uiNow && !uiOk) fallback(); });
+    uiNow = app.isPackaged ? uiu.pick(uidir(), app.getVersion()) : null;
+    armOk();
+    win.loadFile(uiNow ? uiNow.path : bundled());
     win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: "deny" }; });
     if (autoUpdater) {
-      setTimeout(() => autoUpdater.checkForUpdates().catch(() => {}), 4000);
-      setInterval(() => autoUpdater.checkForUpdates().catch(() => {}), 6 * 60 * 60 * 1000);
+      setTimeout(() => checkAll(false), 4000);
+      setInterval(() => checkAll(false), 6 * 60 * 60 * 1000);
     }
   });
   app.on("window-all-closed", () => app.quit());

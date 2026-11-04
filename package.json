@@ -1,7 +1,7 @@
 {
   "name": "bg-sales-management",
   "productName": "BG Sales Management",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "Quản lý doanh số, kế hoạch công tác và tác vụ khách hàng BG",
   "main": "main.js",
   "author": "BG",
@@ -9,18 +9,63 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win nsis --publish never"
+    "dist": "electron-builder --win nsis --publish never",
+    "test": "node tools/test_uiupdate.js && node tools/test_ci_ui.js && node tools/test_main_flow.js"
   },
-  "dependencies": { "electron-updater": "^6.3.9" },
-  "devDependencies": { "electron": "^39.8.5", "electron-builder": "^26.15.3" },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^39.8.5",
+    "electron-builder": "^26.15.3"
+  },
   "build": {
     "appId": "vn.bg.salesmanagement",
     "productName": "BG Sales Management",
-    "directories": { "output": "dist", "buildResources": "build" },
-    "electronLanguages": ["vi", "en-US"],
-    "files": ["main.js", "preload.js", "backup.js", "index.html", "assets/**", "package.json"],
-    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "build/icon.png" },
-    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "BG Sales Management" },
-    "publish": [{ "provider": "github", "owner": "Alesnguyen", "repo": "bg-sales-management-releases", "releaseType": "release" }]
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "electronLanguages": [
+      "vi",
+      "en-US"
+    ],
+    "files": [
+      "main.js",
+      "preload.js",
+      "backup.js",
+      "uiupdate.js",
+      "index.html",
+      "assets/**",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "BG Sales Management",
+      "artifactName": "BG-Sales-Management-Setup-${version}.${ext}",
+      "differentialPackage": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Alesnguyen",
+        "repo": "bg-sales-management-releases",
+        "releaseType": "release"
+      }
+    ]
   }
 }

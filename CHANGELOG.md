@@ -1,5 +1,10 @@
 # Lịch sử phiên bản
 
+## 0.16.0
+- Cập nhật nhẹ và nhanh: từ bản này, các bản chỉ đổi giao diện được tải riêng (vài trăm KB, nén còn khoảng 100 KB) thay vì cả bộ cài khoảng 90 MB. Có bản mới thì tự tải ngầm, bấm “Khởi động lại” là dùng ngay (khoảng 1 giây, có sao lưu như khi đóng ứng dụng), không phải cài đặt lại; nếu không bấm thì lần mở sau tự dùng bản mới. Giao diện tải về được kiểm tra kích thước và mã SHA-512; không chạy được thì tự quay về giao diện đi kèm bộ cài.
+- Bộ cài đầy đủ chỉ còn cần khi đổi phần lõi (Electron, main.js...). Khi đó cài ngầm không hiện cửa sổ, tự mở lại ứng dụng; đóng ứng dụng cũng tự cài. Bộ cài tên cố định BG-Sales-Management-Setup-<phiên bản>.exe, bật tải chênh lệch (blockmap).
+- Bản 0.16.0 là lần cuối phải tải bộ cài đầy đủ để bắt đầu dùng cách cập nhật nhẹ.
+
 ## 0.15.1
 - Tổng quan, “Doanh số theo quý”: cột 2026 trước đây lấy số quý nhập sẵn (và khi chọn nhiều khách chỉ lấy số của khách đầu tiên) nên lệch với cột 2025 và với biểu đồ theo tháng. Nay cả 2025 và 2026 đều cộng từ số liệu từng tháng của đúng các khách đang được chọn (một khách, nhiều khách, một khu vực hay tất cả). Khách nào chưa có số tháng trong quý đó thì dùng số quý đã nhập. Bảng “Chi tiết theo quý” đổi theo.
 

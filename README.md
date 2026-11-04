@@ -17,8 +17,8 @@ Mã nguồn đóng gói nằm ở `package.json`, `main.js`, `build/icon.png`, `
 **Phát hành phiên bản mới (cập nhật cho người dùng):**
 1. Sửa mã trong `src/`, chạy `python3 tools/build_app.py` và `python3 tools/smoke_test_app.py <file.xlsx>`.
 2. Tăng `version` trong `package.json` và ghi vào `CHANGELOG.md`.
-3. `git commit`, rồi `git tag vX.Y.Z && git push --tags`. Workflow build `.exe` và đăng lên GitHub Releases.
-4. Máy đã cài sẽ tự kiểm tra khi mở (hoặc bấm "Kiểm tra cập nhật" ở Cài đặt), tải bản mới và hỏi khởi động lại. Dữ liệu (IndexedDB) nằm ngoài thư mục cài đặt nên được giữ nguyên. Khi đổi cấu trúc dữ liệu, thêm bước nâng cấp `onupgradeneeded` trong `src/app.js` thay vì xóa dữ liệu.
+3. `git commit` vào `main`. Workflow tự chạy kiểm thử rồi phân loại: chỉ đổi giao diện thì đăng bản giao diện nhẹ (~100 KB, áp dụng không cần cài đặt), đổi phần lõi thì build và đăng bộ cài. Chi tiết trong `PHAT-HANH-RIENG-TU.md`.
+4. Máy đã cài sẽ tự kiểm tra khi mở (hoặc bấm "Kiểm tra cập nhật" ở Cài đặt), tải bản mới và hỏi khởi động lại (với bản giao diện nhẹ, khởi động lại chỉ mất khoảng 1 giây). Dữ liệu (IndexedDB) nằm ngoài thư mục cài đặt nên được giữ nguyên. Khi đổi cấu trúc dữ liệu, thêm bước nâng cấp `onupgradeneeded` trong `src/app.js` thay vì xóa dữ liệu.
 Nếu không muốn để Releases công khai, đổi `build.publish` trong `package.json` sang `{"provider":"generic","url":"https://noi-luu-tru-cua-ban/"}` và đặt `latest.yml` cùng file `.exe` ở địa chỉ đó. Tự cập nhật trong app chỉ hoạt động khi người dùng truy cập được Releases (repository công khai, hoặc cần cấu hình thêm token); nếu để Private, hãy gửi file cài mới. Nâng thư viện: `npm update` (trong phạm vi major hiện tại) hoặc `npm install electron@latest electron-builder@latest electron-updater@latest` rồi build thử trước khi phát hành.
 
 Lưu ý: bản cài chưa ký số, nên Windows SmartScreen có thể cảnh báo ("Run anyway") cho tới khi bạn mua chứng chỉ ký mã.

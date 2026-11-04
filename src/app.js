@@ -705,7 +705,7 @@ function updState(s){if(["available","progress","ready"].includes(s.s))S.upd=s;
  else if(s.s==="none")um("Bạn đang dùng phiên bản mới nhất ("+VER+").");
  else if(s.s==="available")um("Có bản mới "+s.v+" (bạn đang dùng "+VER+"). Đang tải về…"+verMsg(s));
  else if(s.s==="progress")um("Đang tải bản "+(S.upd?.v||"mới")+"… "+s.p+"%");
- else if(s.s==="ready"){um("Bản "+s.v+" đã tải xong"+verMsg(s)+". Dữ liệu của bạn được giữ nguyên.");$("#upd-install").hidden=false}
+ else if(s.s==="ready"){um(s.ui?"Bản "+s.v+" (chỉ phần giao diện, rất nhẹ) đã tải xong"+verMsg(s)+". Bấm “Khởi động lại” để dùng ngay, không cần cài đặt lại; nếu không, lần mở sau sẽ tự dùng bản mới. Dữ liệu của bạn được giữ nguyên.":"Bản "+s.v+" đã tải xong"+verMsg(s)+". Dữ liệu của bạn được giữ nguyên.");$("#upd-install").hidden=false}
  else if(s.s==="error")um(updErr(s.m));
  $("#upd-check").disabled=s.s==="checking"||s.s==="progress";nbRefresh()}
 if(U){um("Phiên bản "+VER+". Ứng dụng tự kiểm tra khi mở và vài giờ một lần.");U.onUpdate(updState);if(U.last)U.last().then(s=>{if(s)updState(s)}).catch(()=>{});
@@ -820,6 +820,6 @@ document.addEventListener("keydown",e=>{const t=e.target,typing=/^(INPUT|TEXTARE
  else if(e.key==="?"&&!typing&&!open){e.preventDefault();shortcuts()}});
 /* ===== Khởi động ===== */
 let th="light";try{th=localStorage.getItem("bgsm-theme")||"light"}catch(_){}theme(th,false);steps(1);head();
-const hide=()=>{const s=$("#splash");s.style.opacity="0";setTimeout(()=>s.remove(),260)};
+const hide=()=>{try{window.bgsm&&window.bgsm.uiOk&&window.bgsm.uiOk()}catch(_){}const s=$("#splash");s.style.opacity="0";setTimeout(()=>s.remove(),260)};
 open().then(load).then(()=>{head();sbHead();syncColSel();go("overview");setTimeout(hide,500);if(BK)autoBackup("start")}).catch(e=>{hide();go("overview");notify("Không mở được kho dữ liệu: "+vi(e.message)+". Hãy dùng Edge/Chrome ở chế độ thường.")});
 })();

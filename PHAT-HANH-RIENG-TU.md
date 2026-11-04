@@ -23,16 +23,40 @@ Lưu ý: ai cũng tải được file cài (không có dữ liệu của bạn t
 5. Tải gói v0.9.0 lên như thường lệ. Bản `v0.9.0` sẽ xuất hiện ở **Releases của kho bg-sales-management-releases**.
 6. Sau khi xác nhận build chạy tốt, chuyển `bg-sales-management` sang **Private** (Settings → Danger Zone → Change visibility).
 
-## Quy trình tự động làm gì (từ v0.9.2)
-1. Build file cài (không để công cụ build tự đăng).
-2. Đăng lên kho `-releases`: file cài, `latest.yml`, blockmap và ghi chú (mục tương ứng trong `CHANGELOG.md`). Nếu bản đó đã có nhưng thiếu file (ví dụ v0.9.1), tự bổ sung thay vì bỏ qua.
-3. Ứng dụng đã cài tự phát hiện bản mới và báo ở biểu tượng chuông và ở Cài đặt.
+## Quy trình tự động làm gì (từ v0.16.0: cập nhật nhẹ)
+Mỗi lần commit vào `main`, quy trình tự chạy bộ kiểm thử rồi **phân loại** thay đổi:
+
+| Bạn đã sửa | Quy trình làm | Người dùng phải tải |
+|---|---|---|
+| Chỉ giao diện (`src/`, rồi `index.html`), `CHANGELOG.md` | Chỉ đăng **bản giao diện** lên nhánh `ui` của kho `-releases` | Một tệp ~440 KB (nén còn ~100 KB), áp dụng ngay không cần cài đặt |
+| Phần lõi: `main.js`, `preload.js`, `backup.js`, `uiupdate.js`, `build/icon.png`, `assets/`, mục `dependencies` / `devDependencies` / `build` của `package.json` (kể cả nâng Electron) | Build **bộ cài** (~90 MB), đăng lên Releases như trước, rồi đăng luôn bản giao diện | Bộ cài, tự cài ngầm |
+
+Việc phân loại tự động (so mã băm của phần lõi với lần phát hành trước, lưu trong `ui.json`). Bạn không phải chọn.
 
 ## Mỗi lần phát hành
-Tăng `version` trong `package.json`, ghi `CHANGELOG.md`, commit vào `main`. Nhận file cài ở Releases của kho `-releases`.
+1. Sửa mã trong `src/`, chạy `python3 tools/build_app.py` (**bắt buộc**: quy trình từ chối đăng nếu `index.html` chưa dựng lại cho đúng `version`).
+2. Tăng `version` trong `package.json` (mọi lần phát hành, kể cả chỉ đổi giao diện) và ghi mục `## <version>` trong `CHANGELOG.md` (nội dung này hiện làm ghi chú trong ứng dụng).
+3. (Tùy chọn, trên máy bạn) `npm test`.
+4. Commit vào `main`. Xem tab Actions: dòng "Phát hiện thay đổi phần lõi" cho biết lần này đăng bộ cài hay chỉ giao diện.
+
+**Quy tắc cần nhớ:** nếu bạn sửa phần lõi thì **phải tăng `version`**. Nếu không, bộ cài cùng số phiên bản đã có sẵn sẽ không được đăng lại (quy trình in cảnh báo màu vàng) và người dùng sẽ không nhận được thay đổi lõi.
+
+## Cập nhật nhẹ hoạt động thế nào
+- Ứng dụng đã cài (từ v0.16.0) mỗi lần mở và vài giờ một lần đọc `ui.json` từ nhánh `ui` của kho `-releases`.
+- Có bản giao diện mới và tương thích với bộ cài đang dùng: tải ngầm, kiểm tra kích thước và mã SHA-512, ghi vào thư mục dữ liệu người dùng, rồi báo ở chuông và ở Cài đặt. Bấm **Khởi động lại**: sao lưu như khi đóng ứng dụng (hỏi nếu còn thay đổi chưa lưu) rồi nạp giao diện mới trong khoảng 1 giây, không chạy bộ cài. Không bấm thì lần mở sau tự dùng bản mới.
+- Bản giao diện đòi lõi mới hơn bản đang cài: không dùng, ứng dụng chuyển sang cập nhật bộ cài như cũ (tải chênh lệch nếu có thể, cài ngầm, tự mở lại; đóng ứng dụng cũng tự cài).
+- **Tự bảo vệ:** giao diện tải về phải báo "đã khởi động xong" trong 30 giây. Nếu không (lỗi nạp trang, sập tiến trình hiển thị...), ứng dụng quay về giao diện đi kèm bộ cài, ghi nhớ bản lỗi để không dùng lại, và vẫn tự tải bản sửa lỗi sau đó mà không cần cài lại.
+- Dữ liệu (IndexedDB, theo địa chỉ `file://`) không đổi khi đổi giao diện, và không bị xóa trong mọi trường hợp trên.
+
+## Lần chuyển đổi đầu tiên
+Máy đang chạy bản trước v0.16.0 chưa có cơ chế này, nên **v0.16.0 vẫn là một lần cập nhật bộ cài đầy đủ** (như mọi lần trước). Từ v0.16.0 trở đi, các bản chỉ đổi giao diện mới là bản nhẹ.
+
+## Kiểm thử
+`npm test` chạy ba bộ kiểm thử (đều không cần mạng, Electron hay GitHub): `tools/test_uiupdate.js` (tải, xác thực, từ chối tệp hỏng), `tools/test_ci_ui.js` (phân loại lõi/giao diện, tạo bản đăng) và `tools/test_main_flow.js` (chạy `main.js` với Electron giả lập qua các tình huống: áp dụng bản mới, quay về giao diện gốc khi lỗi, cài bộ cài ngầm...). Quy trình tự động cũng chạy chúng trước khi build. Các bộ này **không thay thế** việc thử trên một máy Windows thật sau mỗi lần đổi phần lõi.
 
 ## Điều cần biết
 - **Bản đã cài trước đây** (v0.8.0 trở về trước) đang trỏ vào kho cũ, nên không tự thấy bản mới. Hãy cài tay bản v0.9.0 một lần; từ đó về sau tự cập nhật. Dữ liệu được giữ nguyên.
 - Nếu thiếu `RELEASES_TOKEN`, build dừng ngay với thông báo rõ ràng.
+- Nhánh `ui` của kho `-releases` được tạo và ghi đè tự động (chỉ có `ui.json`, `index-<phiên bản>.html`, README); đừng sửa tay. Mã truy cập `RELEASES_TOKEN` cần quyền ghi (đã có sẵn theo hướng dẫn trên).
 - Thu hồi mã truy cập bất cứ lúc nào ở trang Fine-grained tokens nếu nghi bị lộ.
 - Cách khác (không dùng GitHub): đổi `build.publish` trong `package.json` sang `{"provider":"generic","url":"https://địa-chỉ-lưu-trữ-của-bạn/"}` và tải `latest.yml` cùng file `.exe` lên đó (cần máy chủ cho phép tải công khai qua HTTPS).
