@@ -3,7 +3,7 @@
 //   node tools/ci_ui.js detect            → so sánh "phần lõi" với bản đã phát hành gần nhất; ghi changed=true/false vào $GITHUB_OUTPUT
 //   node tools/ci_ui.js bundle <thư mục>  → tạo ui.json + index-<phiên bản>.html trong <thư mục> để đăng lên nhánh "ui"
 //
-// "Phần lõi" = những thứ nằm trong bộ cài và KHÔNG đổi được bằng cập nhật giao diện: main.js, preload.js, backup.js, uiupdate.js,
+// "Phần lõi" = những thứ nằm trong bộ cài và KHÔNG đổi được bằng cập nhật giao diện: main.js, preload.js, backup.js, amis.js, amis-core.js, uiupdate.js,
 // biểu tượng, thư mục assets, và mục dependencies/devDependencies/build của package.json. Đổi các thứ này thì phải tăng "version"
 // và phát hành bộ cài mới. Chỉ đổi index.html (giao diện) thì chỉ đăng bản giao diện nhẹ.
 "use strict";
@@ -14,7 +14,7 @@ const crypto = require("crypto");
 const ROOT = path.join(__dirname, "..");
 const REL_REPO = process.env.REL_REPO || "Alesnguyen/bg-sales-management-releases";
 const UI_RAW = `https://raw.githubusercontent.com/${REL_REPO}/ui/`;
-const CORE_FILES = ["main.js", "preload.js", "backup.js", "uiupdate.js", "build/icon.png"];
+const CORE_FILES = ["main.js", "preload.js", "backup.js", "amis.js", "amis-core.js", "uiupdate.js", "build/icon.png"];
 
 const walk = (dir, base = dir) => fs.existsSync(dir)
   ? fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => d.isDirectory() ? walk(path.join(dir, d.name), base) : [path.relative(base, path.join(dir, d.name)).split(path.sep).join("/")])

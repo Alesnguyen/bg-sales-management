@@ -1,8 +1,9 @@
-const { app, BrowserWindow, Menu, shell, ipcMain, dialog, net } = require("electron");
+const { app, BrowserWindow, Menu, shell, ipcMain, dialog, net, safeStorage } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const backup = require("./backup");
 const uiu = require("./uiupdate");
+const amisLib = require("./amis");
 
 app.commandLine.appendSwitch("lang", "vi");
 const autoUpdater = app.isPackaged ? require("electron-updater").autoUpdater : null;
@@ -75,6 +76,21 @@ if (!app.requestSingleInstanceLock()) {
     await checkAll(true);
   });
   ipcMain.handle("upd:last", () => lastUpd);
+
+  // ---- AMIS CRM (v0.16.5): khóa bí mật và token chỉ nằm ở tiến trình chính ----
+  let amisClient = null;
+  const amis = () => amisClient || (amisClient = amisLib.create({ safeStorage, dir: app.getPath("userData") }));
+  const amisWrap = (fn) => async (_e, a) => { try { return await fn(a); } catch (e) { return { ok: false, code: "ERROR", message: String(e && e.message || e).slice(0, 300) }; } };
+  const str = (v, n) => (typeof v === "string" ? v.slice(0, n) : "");
+  ipcMain.handle("amis:status", amisWrap(() => amis().statusSafe()));
+  ipcMain.handle("amis:saveSecrets", amisWrap((o) => amis().saveSecrets({ apiKey: str(o && o.apiKey, 500), clientId: str(o && o.clientId, 500), clientSecret: str(o && o.clientSecret, 500) })));
+  ipcMain.handle("amis:clearSecrets", amisWrap(() => amis().clearSecrets()));
+  ipcMain.handle("amis:test", amisWrap(() => amis().test()));
+  ipcMain.handle("amis:probe", amisWrap((o) => amis().probe(str(o && o.endpoint, 30), str(o && o.orderBy, 60))));
+  ipcMain.handle("amis:fetchOrders", amisWrap((o) => {
+    const map = {}; for (const k of require("./amis-core").MAP_KEYS) map[k] = str(o && o.map && o.map[k], 120);
+    return amis().fetchOrders({ map, orderBy: str(o && o.orderBy, 60), stopBefore: Number.isFinite(o && o.stopBefore) ? o.stopBefore : null, pageSize: +(o && o.pageSize) || 100, maxPages: +(o && o.maxPages) || 500 });
+  }));
 
   // Áp dụng giao diện mới: sao lưu như khi đóng ứng dụng (có hỏi nếu còn thay đổi chưa lưu) rồi nạp lại trang. Không cần cài đặt.
   const doReload = () => {

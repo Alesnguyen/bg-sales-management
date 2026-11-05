@@ -10,7 +10,7 @@ const uiu = require("../uiupdate");
 
 const SRC = path.join(__dirname, "..");
 const root = fs.mkdtempSync(path.join(os.tmpdir(), "bgsm-ci-"));
-for (const f of ["main.js", "preload.js", "backup.js", "uiupdate.js", "package.json", "index.html", "CHANGELOG.md", "build/icon.png"]) {
+for (const f of [...ci.CORE_FILES, "package.json", "index.html", "CHANGELOG.md"]) {
   fs.mkdirSync(path.dirname(path.join(root, f)), { recursive: true });
   fs.copyFileSync(path.join(SRC, f), path.join(root, f));
 }
@@ -38,6 +38,10 @@ let n = 0; const ok = (m) => { n++; console.log("OK  " + m); };
   fs.copyFileSync(path.join(SRC, "preload.js"), path.join(root, "preload.js"));
   w("uiupdate.js", r("uiupdate.js") + "\n// sửa"); assert.notStrictEqual(ci.coreHash(root), h0); ok("sửa uiupdate.js làm đổi lõi");
   fs.copyFileSync(path.join(SRC, "uiupdate.js"), path.join(root, "uiupdate.js"));
+  w("amis-core.js", r("amis-core.js") + "\n// sửa"); assert.notStrictEqual(ci.coreHash(root), h0); ok("sửa amis-core.js (dùng cả ở tiến trình chính và trong giao diện) làm đổi lõi");
+  fs.copyFileSync(path.join(SRC, "amis-core.js"), path.join(root, "amis-core.js"));
+  w("amis.js", r("amis.js") + "\n// sửa"); assert.notStrictEqual(ci.coreHash(root), h0); ok("sửa amis.js (kết nối AMIS ở tiến trình chính) làm đổi lõi");
+  fs.copyFileSync(path.join(SRC, "amis.js"), path.join(root, "amis.js"));
   fs.writeFileSync(path.join(root, "assets", "moi.png"), "x"); assert.notStrictEqual(ci.coreHash(root), h0); ok("thêm tệp trong assets làm đổi lõi");
   fs.rmSync(path.join(root, "assets", "moi.png"));
   const b = JSON.parse(JSON.stringify(pk)); b.devDependencies.electron = "^40.0.0"; w("package.json", JSON.stringify(b, null, 2));

@@ -1,7 +1,7 @@
 {
   "name": "bg-sales-management",
   "productName": "BG Sales Management",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Quản lý doanh số, kế hoạch công tác và tác vụ khách hàng BG",
   "main": "main.js",
   "author": "BG",
@@ -10,7 +10,7 @@
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder --win nsis --publish never",
-    "test": "node tools/test_uiupdate.js && node tools/test_ci_ui.js && node tools/test_main_flow.js"
+    "test": "node tools/test_uiupdate.js && node tools/test_ci_ui.js && node tools/test_main_flow.js && node tests/amis-core.test.js && node tests/amis-client.test.js && node tools/test_backup.js"
   },
   "dependencies": {
     "electron-updater": "^6.3.9"
@@ -34,6 +34,8 @@
       "main.js",
       "preload.js",
       "backup.js",
+      "amis.js",
+      "amis-core.js",
       "uiupdate.js",
       "index.html",
       "assets/**",

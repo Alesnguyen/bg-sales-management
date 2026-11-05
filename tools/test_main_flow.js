@@ -55,6 +55,7 @@ async function boot({ packaged = true, version = "0.16.0", lock = true, userData
     BrowserWindow: Win, Menu: { setApplicationMenu() {} }, shell: { openExternal() {}, openPath() {} },
     ipcMain: { handle: (c, f) => { env.handlers[c] = f; }, on: (c, f) => { env.on[c] = f; } },
     dialog: { showMessageBoxSync: () => dialogAnswer },
+    safeStorage: { isEncryptionAvailable: () => false },
     net: { fetch: (u, o) => fetch(u.replace(REAL_BASE, base), o) }
   };
   const orig = Module._load;
@@ -77,6 +78,12 @@ let n = 0; const ok = (m) => { n++; console.log("OK  " + m); };
   assert.deepStrictEqual(e.loaded, [BUNDLED]);
   assert.ok(e.timers.some((t) => t.ms === 4000) && e.intervals.some((t) => t.ms === 6 * 3600 * 1000));
   ok("A. chưa có bản tải về: nạp giao diện đi kèm bộ cài; hẹn kiểm tra sau 4 giây và mỗi 6 giờ");
+
+  // ===== A2. Các lệnh AMIS vẫn có đủ cùng với cơ chế cập nhật mới =====
+  for (const c of ["status", "saveSecrets", "clearSecrets", "test", "probe", "fetchOrders"]) assert.strictEqual(typeof e.handlers["amis:" + c], "function", "thiếu amis:" + c);
+  const st0 = await e.handlers["amis:status"]({}, {}); assert.ok(st0 && typeof st0 === "object");
+  const bad0 = await e.handlers["amis:saveSecrets"]({}, { apiKey: "x" }); assert.ok(bad0 && typeof bad0 === "object" && bad0.ok !== true, "máy không mã hóa được thì không lưu khóa");
+  ok("A2. đủ 6 lệnh AMIS; máy không mã hóa được thì từ chối lưu khóa (không lưu dạng thô)");
 
   // ===== B. Kiểm tra: có bản giao diện mới =====
   publish("0.16.1");

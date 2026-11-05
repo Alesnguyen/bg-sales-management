@@ -23,13 +23,13 @@ Lưu ý: ai cũng tải được file cài (không có dữ liệu của bạn t
 5. Tải gói v0.9.0 lên như thường lệ. Bản `v0.9.0` sẽ xuất hiện ở **Releases của kho bg-sales-management-releases**.
 6. Sau khi xác nhận build chạy tốt, chuyển `bg-sales-management` sang **Private** (Settings → Danger Zone → Change visibility).
 
-## Quy trình tự động làm gì (từ v0.16.0: cập nhật nhẹ)
+## Quy trình tự động làm gì (từ v0.16.5: cập nhật nhẹ)
 Mỗi lần commit vào `main`, quy trình tự chạy bộ kiểm thử rồi **phân loại** thay đổi:
 
 | Bạn đã sửa | Quy trình làm | Người dùng phải tải |
 |---|---|---|
 | Chỉ giao diện (`src/`, rồi `index.html`), `CHANGELOG.md` | Chỉ đăng **bản giao diện** lên nhánh `ui` của kho `-releases` | Một tệp ~440 KB (nén còn ~100 KB), áp dụng ngay không cần cài đặt |
-| Phần lõi: `main.js`, `preload.js`, `backup.js`, `uiupdate.js`, `build/icon.png`, `assets/`, mục `dependencies` / `devDependencies` / `build` của `package.json` (kể cả nâng Electron) | Build **bộ cài** (~90 MB), đăng lên Releases như trước, rồi đăng luôn bản giao diện | Bộ cài, tự cài ngầm |
+| Phần lõi: `main.js`, `preload.js`, `backup.js`, `amis.js`, `amis-core.js`, `uiupdate.js`, `build/icon.png`, `assets/`, mục `dependencies` / `devDependencies` / `build` của `package.json` (kể cả nâng Electron) | Build **bộ cài** (~90 MB), đăng lên Releases như trước, rồi đăng luôn bản giao diện | Bộ cài, tự cài ngầm |
 
 Việc phân loại tự động (so mã băm của phần lõi với lần phát hành trước, lưu trong `ui.json`). Bạn không phải chọn.
 
@@ -42,17 +42,19 @@ Việc phân loại tự động (so mã băm của phần lõi với lần phá
 **Quy tắc cần nhớ:** nếu bạn sửa phần lõi thì **phải tăng `version`**. Nếu không, bộ cài cùng số phiên bản đã có sẵn sẽ không được đăng lại (quy trình in cảnh báo màu vàng) và người dùng sẽ không nhận được thay đổi lõi.
 
 ## Cập nhật nhẹ hoạt động thế nào
-- Ứng dụng đã cài (từ v0.16.0) mỗi lần mở và vài giờ một lần đọc `ui.json` từ nhánh `ui` của kho `-releases`.
+- Ứng dụng đã cài (từ v0.16.5) mỗi lần mở và vài giờ một lần đọc `ui.json` từ nhánh `ui` của kho `-releases`.
 - Có bản giao diện mới và tương thích với bộ cài đang dùng: tải ngầm, kiểm tra kích thước và mã SHA-512, ghi vào thư mục dữ liệu người dùng, rồi báo ở chuông và ở Cài đặt. Bấm **Khởi động lại**: sao lưu như khi đóng ứng dụng (hỏi nếu còn thay đổi chưa lưu) rồi nạp giao diện mới trong khoảng 1 giây, không chạy bộ cài. Không bấm thì lần mở sau tự dùng bản mới.
 - Bản giao diện đòi lõi mới hơn bản đang cài: không dùng, ứng dụng chuyển sang cập nhật bộ cài như cũ (tải chênh lệch nếu có thể, cài ngầm, tự mở lại; đóng ứng dụng cũng tự cài).
 - **Tự bảo vệ:** giao diện tải về phải báo "đã khởi động xong" trong 30 giây. Nếu không (lỗi nạp trang, sập tiến trình hiển thị...), ứng dụng quay về giao diện đi kèm bộ cài, ghi nhớ bản lỗi để không dùng lại, và vẫn tự tải bản sửa lỗi sau đó mà không cần cài lại.
 - Dữ liệu (IndexedDB, theo địa chỉ `file://`) không đổi khi đổi giao diện, và không bị xóa trong mọi trường hợp trên.
+- **Lưu ý khi nâng phiên bản IndexedDB** (như v3 của AMIS): việc quay về giao diện gốc không hạ cấp được cấu trúc dữ liệu. Giao diện đi kèm bộ cài cũ hơn có thể báo không mở được kho dữ liệu (dữ liệu vẫn còn nguyên, bản sửa tải về sau đó dùng lại bình thường). Vì vậy khi nâng phiên bản IndexedDB, hãy phát hành kèm bộ cài (sửa một dòng chú thích trong `main.js` để quy trình build bộ cài) để giao diện đi kèm luôn mới bằng giao diện tải về.
+- `amis-core.js` được dùng cả ở tiến trình chính (`main.js`) lẫn nhúng trong `index.html`, nên được tính là phần lõi: đổi nó thì phát hành bộ cài, tránh giao diện mới chạy với logic AMIS cũ ở tiến trình chính.
 
 ## Lần chuyển đổi đầu tiên
-Máy đang chạy bản trước v0.16.0 chưa có cơ chế này, nên **v0.16.0 vẫn là một lần cập nhật bộ cài đầy đủ** (như mọi lần trước). Từ v0.16.0 trở đi, các bản chỉ đổi giao diện mới là bản nhẹ.
+Máy đang chạy bản trước v0.16.5 chưa có cơ chế này, nên **v0.16.5 vẫn là một lần cập nhật bộ cài đầy đủ** (như mọi lần trước). Từ v0.16.5 trở đi, các bản chỉ đổi giao diện mới là bản nhẹ.
 
 ## Kiểm thử
-`npm test` chạy ba bộ kiểm thử (đều không cần mạng, Electron hay GitHub): `tools/test_uiupdate.js` (tải, xác thực, từ chối tệp hỏng), `tools/test_ci_ui.js` (phân loại lõi/giao diện, tạo bản đăng) và `tools/test_main_flow.js` (chạy `main.js` với Electron giả lập qua các tình huống: áp dụng bản mới, quay về giao diện gốc khi lỗi, cài bộ cài ngầm...). Quy trình tự động cũng chạy chúng trước khi build. Các bộ này **không thay thế** việc thử trên một máy Windows thật sau mỗi lần đổi phần lõi.
+`npm test` chạy các bộ kiểm thử (đều không cần mạng, Electron hay GitHub), gồm ba bộ cập nhật nhẹ và các bộ của AMIS/sao lưu: `tools/test_uiupdate.js` (tải, xác thực, từ chối tệp hỏng), `tools/test_ci_ui.js` (phân loại lõi/giao diện, tạo bản đăng) và `tools/test_main_flow.js` (chạy `main.js` với Electron giả lập qua các tình huống: áp dụng bản mới, quay về giao diện gốc khi lỗi, cài bộ cài ngầm...). Quy trình tự động cũng chạy chúng trước khi build. Các bộ này **không thay thế** việc thử trên một máy Windows thật sau mỗi lần đổi phần lõi.
 
 ## Điều cần biết
 - **Bản đã cài trước đây** (v0.8.0 trở về trước) đang trỏ vào kho cũ, nên không tự thấy bản mới. Hãy cài tay bản v0.9.0 một lần; từ đó về sau tự cập nhật. Dữ liệu được giữ nguyên.

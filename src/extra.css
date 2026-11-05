@@ -365,3 +365,13 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .msel-meta{flex:none;color:var(--text-secondary);font-size:var(--font-size-xs)}
 .msel-foot{margin-top:6px;padding:6px 2px 0;border-top:1px solid var(--border);color:var(--text-secondary);font-size:var(--font-size-xs)}
 @media(max-width:1150px){.msel-panel{right:auto;left:0}.msel-btn{width:100%}}
+
+/* ===== v0.16.0: AMIS CRM ===== */
+.nav button{position:relative}.nav-badge{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:var(--font-weight-bold);display:inline-flex;align-items:center;justify-content:center}
+.nav-badge[hidden]{display:none}
+.amis-meta{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:8px}
+.amcard{margin-bottom:10px}.amcard-main{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.amname{font-weight:var(--font-weight-bold);font-size:1rem;overflow-wrap:anywhere}.amsum{margin:6px 0}
+.amacts{display:flex;gap:8px;flex-wrap:wrap}
+.view[data-view="amis"] .stbl td{overflow-wrap:anywhere}.view[data-view="amis"] .table-wrap{overflow:auto}
+.view[data-view="amis"] .stbl{min-width:640px!important}

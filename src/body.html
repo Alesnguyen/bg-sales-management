@@ -10,6 +10,7 @@
 <button class="sub" data-page="saleboots" id="nav-sb" hidden><span class="nav-ico" aria-hidden="true">⚡</span>SaleBoots</button>
 <button data-page="calendar"><span class="nav-ico">▦</span>Lịch làm việc</button>
 <button data-page="import"><span class="nav-ico">⇧</span>Nhập dữ liệu</button>
+<button data-page="amis"><span class="nav-ico">⇄</span>AMIS CRM<span class="nav-badge" id="am-badge" hidden></span></button>
 <button data-page="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
 </nav>
 <div class="side-spacer"></div>
@@ -79,6 +80,13 @@
 <div id="imp-body" class="section-gap"></div></div>
 </section>
 
+<section class="view" data-view="amis" aria-labelledby="page-title">
+<div class="card"><div class="card-title-row"><div><h2>Đồng bộ doanh số từ AMIS CRM</h2><div class="muted small">Một chiều AMIS → BG. Chỉ đọc tổng giá trị đơn hàng trước thuế; BG không ghi ngược lên AMIS. Tự đồng bộ khi BG đang mở.</div></div><span class="tag" id="am-tag">—</span></div>
+<div class="amis-meta small muted" id="am-meta"></div>
+<div class="toolbar" style="margin-top:12px"><button type="button" class="btn primary" id="am-sync">Đồng bộ ngay</button><div class="seg" role="tablist" id="am-tabs" aria-label="Mục AMIS CRM"></div></div></div>
+<div id="am-body" class="section-gap"></div>
+</section>
+
 <section class="view" data-view="settings" aria-labelledby="page-title">
 <div class="grid grid-2">
 <article class="card"><div class="card-title-row"><h2>Giao diện</h2><span class="tag yellow">Sáng / Tối</span></div>
@@ -88,7 +96,7 @@
 <article class="card"><div class="card-title-row"><h2>Dữ liệu &amp; ứng dụng</h2><span class="tag">v{{VER}}</span></div>
 <div class="settings-row"><div><div class="settings-title">Tên hiển thị</div><div class="settings-desc">Dùng cho lời chào ở trang Tổng quan.</div></div><input id="pf-name" type="text" maxlength="40" placeholder="Tên của bạn" aria-label="Tên hiển thị" style="max-width:200px"></div>
 <div class="settings-row"><div><div class="settings-title">Phím tắt</div><div class="settings-desc">Xem các phím tắt, hoặc nhấn phím ? ở bất kỳ đâu.</div></div><button class="btn" id="open-keys">Xem phím tắt</button></div>
-<div class="settings-row"><div><div class="settings-title">Thông báo</div><div class="settings-desc">Chọn loại thông báo hiện ở biểu tượng chuông.</div></div><div class="toolbar" style="margin:0"><label class="chk"><input type="checkbox" id="nc-work"> Công việc</label><label class="chk"><input type="checkbox" id="nc-sb"> SaleBoots</label><label class="chk"><input type="checkbox" id="nc-upd"> Cập nhật</label><label class="chk"><input type="checkbox" id="nc-bk"> Sao lưu</label></div></div>
+<div class="settings-row"><div><div class="settings-title">Thông báo</div><div class="settings-desc">Chọn loại thông báo hiện ở biểu tượng chuông.</div></div><div class="toolbar" style="margin:0"><label class="chk"><input type="checkbox" id="nc-work"> Công việc</label><label class="chk"><input type="checkbox" id="nc-sb"> SaleBoots</label><label class="chk"><input type="checkbox" id="nc-upd"> Cập nhật</label><label class="chk"><input type="checkbox" id="nc-bk"> Sao lưu</label><label class="chk"><input type="checkbox" id="nc-amis"> AMIS</label></div></div>
 <div class="settings-row"><div><div class="settings-title">Cập nhật ứng dụng</div><div class="settings-desc" id="upd-msg">—</div></div><div class="toolbar" style="margin:0"><button class="btn" id="upd-check">Kiểm tra cập nhật</button><button class="btn primary" id="upd-install" hidden>Khởi động lại để cập nhật</button></div></div>
 <div class="settings-row"><div><div class="settings-title">Dữ liệu</div><div class="settings-desc" id="set-data">—</div></div></div>
 <div class="settings-row"><div><div class="settings-title">Lần nhập Excel gần nhất</div><div class="settings-desc" id="set-import">Chưa nhập</div></div></div>
