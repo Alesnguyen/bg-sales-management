@@ -1,5 +1,13 @@
 # Lịch sử phiên bản
 
+## 0.17.1
+- **Trang Khách hàng: ô tích chọn từng khách và Tổng cộng theo khách được chọn.** Mỗi dòng khách hàng có một ô tích ở đầu cột “Khách hàng”; tích 1 hoặc nhiều khách thì dòng **Tổng cộng** ở cuối bảng chỉ cộng các khách đã tích (Thực tế 2025, Mục tiêu 2026, Thực tế 2026, Tiến độ, doanh số từng quý và từng tháng, KPI tháng). Ví dụ tích Kia Bắc Ninh và Thaco Phạm Văn Đồng thì chỉ hiện tổng của hai khách này. Dòng tổng ghi rõ “Tổng cộng (đã chọn)” và “N khách hàng được chọn”; không tích khách nào thì Tổng cộng giữ nguyên như cũ (theo danh sách đang hiển thị).
+- Ô tích ở tiêu đề cột để chọn / bỏ chọn tất cả khách đang hiển thị (đang theo bộ lọc/tìm kiếm); nút **Bỏ chọn** ngay trong dòng Tổng cộng. Dòng được chọn được tô nổi bật; phần đếm dưới bảng hiện thêm “Đã chọn N”.
+- Lựa chọn được giữ khi tìm kiếm, lọc khu vực, đổi cách sắp xếp, đổi cột hiển thị và khi mở rồi quay lại từ hồ sơ khách hàng. Khách đã tích nhưng đang bị bộ lọc ẩn vẫn được cộng và có ghi chú “N đang bị lọc ẩn”. Lựa chọn chỉ lưu trong phiên làm việc, không ghi vào dữ liệu hay tệp sao lưu.
+- Bấm vào ô tích không mở hồ sơ khách; bấm vào tên/dòng khách vẫn mở như cũ. Tích được bằng phím cách.
+- Cột “Khách hàng” rộng thêm 32px để chứa ô tích; 5 cột cố định còn lại dịch tương ứng, vẫn cố định khi cuộn ngang.
+- Đây là thay đổi chỉ ở giao diện (`src/app.js`, `src/extra.css`), có thể phát hành dạng cập nhật giao diện. Kiểm thử: `python3 tools/smoke_test_select.py`.
+
 ## 0.17.0
 - **Đơn Ký gửi chưa ghi nhận doanh số.** Kinh doanh đánh dấu Ký gửi ngay trên AMIS; BG chỉ đọc cờ đó. Đơn Ký gửi vẫn được lưu trong sổ đơn (hiện nhãn “Ký gửi (chưa ghi nhận)”) nhưng không cộng vào doanh số. Khi kinh doanh bỏ đánh dấu Ký gửi trên AMIS, lần đồng bộ sau BG tự cộng; đánh dấu lại thì BG tự đảo. Đơn Ký gửi cũng không được tính vào số đơn hợp lệ của khách đang chờ xác nhận. Cách nhận biết do bạn chọn: chọn trường Ký gửi trong bảng ánh xạ rồi tích các giá trị nghĩa là Ký gửi (vd: true hoặc “Ký gửi”); giá trị để trống được xem là không ký gửi.
 - **Xác nhận tên kinh doanh để lấy đúng đơn hàng.** Khóa API do MISA cấp cho ứng dụng (không phải cho từng người) nên có thể đọc được đơn của cả nhóm. BG chỉ lấy và lưu đơn của các tên kinh doanh bạn đã xác nhận; đơn của người khác không được lưu vào BG. Cách làm: chọn trường “Nhân viên kinh doanh” trong bảng ánh xạ, bấm **Quét tên kinh doanh & giá trị Ký gửi** để BG liệt kê các tên thật đang có trên AMIS (kèm số đơn), rồi tích đúng tên của bạn. Chưa xác nhận tên thì **không** đồng bộ. Tên so khớp không phân biệt hoa/thường và dấu. Có thể tích nhiều tên (nếu AMIS ghi nhiều cách) hoặc thêm tên bằng tay.
