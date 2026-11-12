@@ -386,3 +386,6 @@ dialog.cfm p{margin:0;color:var(--text-secondary);line-height:1.5}
 .wide tbody tr.picked td{background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
 .selclear{flex:none;border:0;background:none;padding:2px 6px;min-height:24px;font:inherit;font-size:11px;font-weight:var(--font-weight-semibold);color:var(--text);text-decoration:underline;cursor:pointer;border-radius:6px}
 .selclear:hover{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+
+/* ===== v0.18.0: chuyển đổi file Excel ===== */
+#imp-prev{margin-top:12px}#imp-conv .how summary{cursor:pointer;font-weight:var(--font-weight-semibold)}

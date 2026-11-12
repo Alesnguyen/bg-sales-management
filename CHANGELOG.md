@@ -1,5 +1,18 @@
 # Lịch sử phiên bản
 
+## 0.18.0
+- **Nhập dữ liệu: tự phân tích và chuyển đổi file Excel của người khác về mẫu gốc.** File đúng mẫu gốc (sheet “DOANH SỐ KH 2026” có dòng PTKD) vẫn được đọc trực tiếp như trước. File có bố cục khác (ví dụ file của Linh: cột tự đặt tên, tháng và quý xen kẽ, khu vực ở sheet khác, ô gộp…) không còn bị báo lỗi mà được BG tự phân tích:
+  - Tìm sheet dữ liệu và dòng tiêu đề (kể cả tiêu đề nằm trên 2 dòng), nhận diện cột **theo tên cột, không theo vị trí**: Tên khách hàng, DS thực 2025, Target 2026, DS thực 2026, từng tháng, từng quý (bỏ qua các cột TB, % đạt, DS 2024, cột Tổng).
+  - Mục tiêu từng quý lấy từ số nằm phía trên nhãn “Quý n”; khu vực lấy từ sheet khu vực (kể cả ô gộp theo khu); người phụ trách đoán từ tên file (sửa được).
+  - Quý bỏ trống trong file thì BG tính từ các tháng. Khách xuất hiện nhiều dòng (trùng tên) được **cộng gộp** (hoặc chỉ giữ dòng đầu, tùy chọn). DS 2025 / Target 2026 còn trống ở sheet chính được bổ sung từ sheet tham chiếu (tùy chọn); số liệu hai sheet khác nhau thì giữ số ở sheet chính và liệt kê để kiểm tra. Có thể thêm cả khách chỉ có ở sheet khu vực.
+  - **Đối chiếu tổng** với dòng TỔNG của chính file (DS 2025, Target 2026, DS 2026) và báo khớp/lệch trước khi ghi.
+  - Có bảng cột đã nhận diện cho phép **chỉnh lại từng cột** (kể cả từng tháng, từng quý) nếu file lạ; kết quả xem trước cập nhật ngay. Chưa xác nhận thì chưa ghi gì; việc ghi vẫn là một giao dịch và hoàn tác được như cũ.
+  - Nút **Tải file đã chuyển đổi (.xlsx, đúng mẫu gốc)**: tạo file đúng cấu trúc mà BG đọc (sheet “DOANH SỐ KH 2026”, dòng PTKD, người phụ trách và mục tiêu quý ở dòng kế, quý ở cột I/K/M/O, tháng ở cột Q… ). File này lần sau được đọc trực tiếp, nhập lại cho kết quả “Không đổi” 100%.
+  - Khu vực được lưu thêm ở một cột phụ có tiêu đề “KHU VỰC (BG)” (cột AP, xa các cột của mẫu gốc); BG chỉ đọc cột này khi đúng tiêu đề đó, nên không ảnh hưởng file mẫu gốc cũ.
+  - Phần ghi chú trên Tổng quan hiện “(tự chuyển đổi)” cho lần nhập này. Nếu file không có mục tiêu quý, BG giữ mục tiêu quý đang có.
+- Kiểm thử: `node tests/xlsx-convert.test.js` và `python3 tools/smoke_test_convert.py [file.xlsx]` (đáp án đúng tính độc lập bằng Python; chạy cả với file thật “Linh_2026”).
+- Đây là thay đổi chỉ ở giao diện (`src/xlsx-convert.js`, `src/app.js`, `src/body.html`, `src/extra.css`), có thể phát hành dạng cập nhật giao diện.
+
 ## 0.17.1
 - **Trang Khách hàng: ô tích chọn từng khách và Tổng cộng theo khách được chọn.** Mỗi dòng khách hàng có một ô tích ở đầu cột “Khách hàng”; tích 1 hoặc nhiều khách thì dòng **Tổng cộng** ở cuối bảng chỉ cộng các khách đã tích (Thực tế 2025, Mục tiêu 2026, Thực tế 2026, Tiến độ, doanh số từng quý và từng tháng, KPI tháng). Ví dụ tích Kia Bắc Ninh và Thaco Phạm Văn Đồng thì chỉ hiện tổng của hai khách này. Dòng tổng ghi rõ “Tổng cộng (đã chọn)” và “N khách hàng được chọn”; không tích khách nào thì Tổng cộng giữ nguyên như cũ (theo danh sách đang hiển thị).
 - Ô tích ở tiêu đề cột để chọn / bỏ chọn tất cả khách đang hiển thị (đang theo bộ lọc/tìm kiếm); nút **Bỏ chọn** ngay trong dòng Tổng cộng. Dòng được chọn được tô nổi bật; phần đếm dưới bảng hiện thêm “Đã chọn N”.
