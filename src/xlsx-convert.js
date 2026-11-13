@@ -130,8 +130,149 @@ function findRegionCol(sh, h) {
   return null;
 }
 
+/* ===== Dạng “khối 2 dòng KH/DS”: mỗi năm một sheet, mỗi khách chiếm 2 dòng (KH = kế hoạch/chỉ tiêu, DS = doanh số thực), tháng nằm ngang ===== */
+const KIND_T = /^(kh|ke hoach|target|chi tieu|muc tieu|plan|kpi)$/, KIND_A = /^(ds|doanh so|thuc te|thuc hien|thuc|actual|dt|doanh thu)$/;
+/* Dòng tổng: “TỔNG”, “TỔNG CỘNG”, “TỔNG DS 2026”… (không nhầm với khách tên “Tổng công ty …”) */
+const TOTAL_ROW = /^(tong( cong| ket)?|total|tong (ds|doanh so|chi tieu|kh|ke hoach)\b.*)$/;
+const kindOf = v => { if (typeof v !== "string") return null; const k = key(v); return KIND_T.test(k) ? "KH" : KIND_A.test(k) ? "DS" : null; };
+const GENERIC_NAME_WORDS = new Set(["doanh", "so", "ds", "bg", "bao", "cao", "kh", "khach", "hang", "tong", "file", "data", "sales", "moi", "new", "copy", "final", "bang", "chi", "tieu", "kpi", "thang", "nam", "report", "sheet", "ban", "v1", "v2", "v3", "update", "cap", "nhat"]);
+/* Đoán người phụ trách từ tên file: bỏ năm và các từ chung (“Doanh_số_BG_Ngọc_2026” → “Ngọc”) */
+function ownerFromFile(fileName) {
+  const toks = String(fileName || "").replace(/\.[^.]+$/, "").split(/[_\-()\s]+/).filter(t => t && !/^\d+$/.test(t) && !/^(19|20)\d\d$/.test(t) && !GENERIC_NAME_WORDS.has(key(t)));
+  return toks.join(" ").trim();
+}
+/* Năm của sheet: ưu tiên tiêu đề phía trên bảng (“…TỪNG KH 2026”), rồi nhãn dòng tổng (“TỔNG DS 2026”), rồi tên sheet */
+function sheetYear(sh, N, nameCol, typeCol, totalLabels) {
+  const want = /chi tieu|doanh so|\bds\b|ke hoach|muc tieu|target|\bkh\b|tong/;
+  for (let r = 0; r < N; r++) for (const v of sh.rows[r] || []) if (typeof v === "string") { const k = key(v), y = /(20\d\d)/.exec(k); if (y && want.test(k) && (+y[1] === 2025 || +y[1] === 2026)) return { year: +y[1], src: "tiêu đề “" + txt(v).slice(0, 40) + "”" }; }
+  for (const v of totalLabels) { const y = /(20\d\d)/.exec(key(v)); if (y && (+y[1] === 2025 || +y[1] === 2026)) return { year: +y[1], src: "dòng “" + txt(v) + "”" }; }
+  const y = /(20\d\d)/.exec(sh.name); if (y && (+y[1] === 2025 || +y[1] === 2026)) return { year: +y[1], src: "tên sheet" };
+  return { year: null, src: "" };
+}
+function findBlocks(sh) {
+  const R = sh.rows, W = widthOf(sh);
+  for (let N = 0; N < Math.min(R.length, 30); N++) {
+    const row = R[N] || [], mc = {};
+    for (let c = 0; c < W; c++) { const cl = typeof row[c] === "string" ? classify(row[c], false) : null; if (cl && cl.k === "m" && !mc[cl.mo]) mc[cl.mo] = c; }
+    if (Object.keys(mc).length < 6) continue;
+    const months = Array.from({ length: 12 }, (_, i) => mc[i + 1] == null ? null : mc[i + 1]);
+    let typeCol = -1, bn = 0;
+    for (let c = 0; c < W; c++) { if (months.includes(c)) continue; let t = 0, a = 0; for (let r = N + 1; r < R.length; r++) { const k = kindOf(rawAt(sh, r, c)); if (k === "KH") t++; else if (k === "DS") a++; } if (t >= 2 && a >= 2 && t + a > bn) { bn = t + a; typeCol = c; } }
+    if (typeCol < 0) continue;
+    let nameCol = -1;
+    for (const rr of [N, N - 1, N + 1]) { if (nameCol >= 0 || rr < 0) continue; for (let c = 0; c < typeCol; c++) { const cl = typeof (R[rr] || [])[c] === "string" ? classify(R[rr][c], true) : null; if (cl && cl.k === "name") { nameCol = c; break; } } }
+    if (nameCol < 0) for (let c = typeCol - 1; c >= 0; c--) { let n = 0; for (let r = N + 1; r < R.length; r++) { const v = valAt(sh, r, c); if (typeof v === "string" && cellNum(v) == null && txt(v)) n++; } if (n >= 3) { nameCol = c; break; } }
+    if (nameCol < 0) continue;
+    const cfg = { N, nameCol, typeCol, months };
+    const rd = readBlocks(sh, cfg);
+    if (rd.entries.length < 3) continue;
+    const y = sheetYear(sh, N, nameCol, typeCol, rd.totalLabels);
+    return { ...cfg, year: y.year, yearSrc: y.src, nEntries: new Set(rd.entries.map(e => e.key)).size };
+  }
+  return null;
+}
+/* Đọc các dòng khách của một sheet dạng khối: [{name, key, kind: KH|DS, months[12], r}] + các dòng TỔNG ở cuối */
+function readBlocks(sh, cfg) {
+  const R = sh.rows, entries = [], totals = {}, totalLabels = []; let ended = false;
+  for (let r = cfg.N + 1; r < R.length; r++) {
+    const kind = kindOf(rawAt(sh, r, cfg.typeCol)); if (!kind) continue;
+    const nm = txt(valAt(sh, r, cfg.nameCol)), lead = []; for (let c = 0; c < cfg.typeCol; c++) { const v = rawAt(sh, r, c); if (typeof v === "string" && txt(v)) lead.push(txt(v)); }
+    const isTot = TOTAL_ROW.test(key(nm)) || (!nm && lead.some(t => TOTAL_ROW.test(key(t))));
+    const months = cfg.months.map(c => c == null ? null : cellNum(rawAt(sh, r, c)));
+    if (isTot) { ended = true; totals[kind] = months; [nm, ...lead].forEach(t => { if (t && TOTAL_ROW.test(key(t))) totalLabels.push(t); }); continue; }
+    if (ended || !nm || cellNum(nm) != null) continue;
+    entries.push({ name: nm, key: key(nm), kind, months, r: r + 1 });
+  }
+  return { entries, totals, totalLabels };
+}
+function analyzeBlocks(book, fileName) {
+  const sheets = [];
+  book.sheets.forEach((sh, i) => { const b = findBlocks(sh); if (b) sheets.push({ sheet: i, name: sh.name, ...b }); });
+  if (!sheets.length) return null;
+  const warnings = [], seen = {};
+  sheets.forEach(s => { if (s.year == null) warnings.push("Chưa xác định được năm của sheet “" + s.name + "”: hãy chọn năm ở bảng bên dưới (nếu để “Bỏ qua” thì sheet này không được đọc)."); else (seen[s.year] = seen[s.year] || []).push(s.name); });
+  Object.entries(seen).forEach(([y, a]) => { if (a.length > 1) warnings.push("Các sheet " + a.map(n => "“" + n + "”").join(", ") + " cùng là năm " + y + ": khách trùng tên giữa các sheet được xử lý theo lựa chọn “khách trùng tên”."); });
+  return { ok: true, kind: "blocks", fileName: fileName || "", sheets, ownerGuess: ownerFromFile(fileName), warnings };
+}
+const yIdx = y => y === 2025 ? 0 : y === 2026 ? 1 : -1;
+/* Độ giống giữa hai tên khách (0..1) để gợi ý ghép giữa các sheet khác năm */
+function nameSim(a, b) {
+  const x = key(a).replace(/[^a-z0-9 ]+/g, " ").split(" ").filter(Boolean), y = key(b).replace(/[^a-z0-9 ]+/g, " ").split(" ").filter(Boolean);
+  if (!x.length || !y.length) return 0;
+  const sx = new Set(x), sy = new Set(y); let i = 0; sx.forEach(t => { if (sy.has(t)) i++; });
+  return i / (sx.size + sy.size - i);
+}
+function convertBlocks(book, an, opts) {
+  const o = { owner: an.ownerGuess, dup: "sum", includeSingle: true, qtFromPlan: true, alias: {}, guess: () => "Khác", ...(opts || {}) };
+  const notes = { merged: [], checks: [], single: [], suggest: [], aliasApplied: [], negatives: [], noRegion: 0, sheets: [], conflicts: [], mismatch: [], filledA25: 0, filledT26: 0, refOnly: 0 }, issues = [];
+  // 1) đọc từng sheet → entries theo (khách, năm)
+  const per = [];   // [{year, key, name, kh:[12]|null, ds:[12]|null, rows:[]}]
+  let rawCount = 0; const checks = [];
+  for (const cfg of an.sheets) {
+    const yi = yIdx(cfg.year), sh = book.sheets[cfg.sheet];
+    if (yi < 0) { notes.sheets.push({ name: cfg.name, year: cfg.year, used: false, n: 0 }); continue; }
+    const rd = readBlocks(sh, cfg), by = new Map();
+    for (const e of rd.entries) {
+      let g = by.get(e.key); if (!g) { g = { year: cfg.year, key: e.key, name: e.name, kh: null, ds: null, rows: [], nk: 0, nd: 0 }; by.set(e.key, g); }
+      const f = e.kind === "KH" ? "kh" : "ds", cnt = e.kind === "KH" ? "nk" : "nd";
+      g[cnt]++; g.rows.push(e.r);
+      if (g[cnt] > 1) { if (o.dup === "sum") g[f] = g[f].map((v, i) => v == null && e.months[i] == null ? null : (v || 0) + (e.months[i] || 0)); }
+      else g[f] = e.months.slice();
+      if (e.kind === "DS") e.months.forEach((v, i) => { if (v != null && v < 0 && notes.negatives.length < 40) notes.negatives.push({ name: e.name, year: cfg.year, month: i + 1, v }); });
+    }
+    by.forEach(g => { if (g.nk > 1 || g.nd > 1) notes.merged.push({ name: g.name, rows: g.rows, mode: o.dup, year: cfg.year }); per.push(g); });
+    rawCount += by.size;
+    notes.sheets.push({ name: cfg.name, year: cfg.year, used: true, n: by.size, src: cfg.yearSrc });
+    for (const [k, lab] of [["DS", "DS thực"], ["KH", "Kế hoạch (KH)"]]) if (rd.totals[k]) {
+      const ft = rd.totals[k].reduce((s, v) => s + (v || 0), 0), mine = rd.entries.filter(e => e.kind === k).reduce((s, e) => s + e.months.reduce((t, v) => t + (v || 0), 0), 0);
+      checks.push({ f: lab + " " + cfg.year + " (cả năm, sheet “" + cfg.name + "”)", file: ft, mine, ok: Math.abs(ft - mine) < 2 });
+    }
+  }
+  // 2) ghép khách giữa các năm: cùng tên → cùng khách; tên khác chỉ ghép khi người dùng chọn (alias)
+  const years = [...new Set(per.map(g => g.year))].sort(), maxY = years[years.length - 1];
+  const byKey = new Map(); per.forEach(g => { (byKey.get(g.key) || byKey.set(g.key, []).get(g.key)).push(g); });
+  const target = k => { const a = o.alias[k]; return a && a !== k && byKey.has(a) ? a : k; };
+  const cust = new Map();
+  for (const [k, gs] of byKey) {
+    const tk = target(k), disp = byKey.get(tk)[0].name;
+    let c = cust.get(tk); if (!c) { c = { key: tk, name: disp, d: {}, from: [] }; cust.set(tk, c); }
+    if (tk !== k) { c.from.push(gs[0].name); notes.aliasApplied.push({ from: gs[0].name, to: disp }); }
+    for (const g of gs) {
+      const cur = c.d[g.year];
+      if (!cur) c.d[g.year] = { kh: g.kh && g.kh.slice(), ds: g.ds && g.ds.slice() };
+      else if (o.dup === "sum") { const add = (a, b) => a && b ? a.map((v, i) => v == null && b[i] == null ? null : (v || 0) + (b[i] || 0)) : (a || b && b.slice()); cur.kh = add(cur.kh, g.kh); cur.ds = add(cur.ds, g.ds); }
+    }
+  }
+  // 3) khách chỉ có ở một năm (không phải năm mới nhất) + gợi ý ghép
+  const sumA = a => a ? a.reduce((s, v) => s + (v || 0), 0) : 0;
+  const onlyOld = [...cust.values()].filter(c => c.d[maxY] == null && c.from.length === 0), onlyNew = [...cust.values()].filter(c => c.d[maxY] != null && Object.keys(c.d).length === 1);
+  onlyOld.forEach(c => {
+    const yr = Math.max(...Object.keys(c.d).map(Number)), kh = sumA(c.d[yr].kh);
+    const best = onlyNew.map(n => { const s = nameSim(c.name, n.name), planEq = kh > 0 && Math.abs(kh - sumA(n.d[maxY].kh)) < 2; return { to: n.key, name: n.name, score: Math.max(s, 0) + (planEq && s >= 0.2 ? 0.6 : 0), s, planEq }; }).filter(x => x.score >= 0.5).sort((a, b) => b.score - a.score)[0];
+    notes.single.push({ key: c.key, name: c.name, years: Object.keys(c.d).map(Number), kh, cand: onlyNew.map(n => ({ key: n.key, name: n.name })), suggest: best ? { to: best.to, name: best.name, why: best.planEq ? "cùng kế hoạch cả năm" : "tên gần giống" } : null });
+    if (best) notes.suggest.push({ from: c.key, to: best.to });
+  });
+  notes.refOnly = onlyOld.length;
+  // 4) dựng dòng chuẩn
+  const rows = [], qtSum = [0, 0, 0, 0]; let anyQt = false;
+  for (const c of cust.values()) {
+    if (!o.includeSingle && c.d[maxY] == null) continue;
+    const m = Array.from({ length: 12 }, () => [null, null]); let a25 = null, a26 = null, t26 = null;
+    for (const [ys, d] of Object.entries(c.d)) {
+      const yi = yIdx(+ys); if (yi < 0) continue;
+      if (d.ds) { d.ds.forEach((v, i) => { m[i][yi] = r2(v); }); const s = sumA(d.ds); if (yi === 0) a25 = r2(s); else a26 = r2(s); }
+      if (yi === 1 && d.kh) { const s = d.kh.filter(v => v != null); t26 = s.length ? r2(sumA(d.kh)) : null; d.kh.forEach((v, i) => { if (v != null) { qtSum[Math.floor(i / 3)] += v; anyQt = true; } }); }
+    }
+    const q = [0, 1, 2, 3].map(i => { const s = sumN(m.slice(3 * i, 3 * i + 3).map(p => p[1])); return [r2(s), null]; });
+    let region = o.guess(c.name); notes.noRegion++;
+    rows.push({ id: c.key, name: c.name, a25, t26, a26, q, m, region, updated: Date.now() });
+  }
+  const qt = o.qtFromPlan && anyQt ? qtSum.map(v => v ? r2(v) : null) : [];
+  return { owner: o.owner, qt, rows, issues, hdr: an.sheets[0].N + 1, notes, checks, rawCount, conv: true, blocks: true, years, maxY };
+}
+
 /* ===== Phân tích toàn bộ workbook ===== */
-function analyze(book, fileName) {
+function analyzeColumns(book, fileName) {
   const heads = book.sheets.map((sh, i) => ({ i, sh, h: findHeader(sh) })).filter(x => x.h);
   if (!heads.length) return { ok: false, reason: "Không tìm thấy dòng tiêu đề có cột “Tên khách hàng” ở sheet nào." };
   heads.sort((a, b) => b.h.score - a.h.score || a.i - b.i);
@@ -154,8 +295,17 @@ function analyze(book, fileName) {
     refs.push({ sheet: x.i, name: x.sh.name, N: x.h.N, last: x.h.last, nameCol: x.h.nameCol, regionCol: rc, a25: x.h.a25, t26: x.h.t26 });
   }
   const mainRc = findRegionCol(main.sh, h);
-  const owner = String(fileName || "").replace(/\.[^.]+$/, "").replace(/20\d\d/g, "").split(/[_\-()]/)[0].replace(/\s+/g, " ").trim();
-  return { ok: true, fileName: fileName || "", main: { sheet: main.i, name: main.sh.name, N: h.N, last: h.last, nameCol: h.nameCol, regionCol: mainRc, width: W }, map, refs, qt, ownerGuess: owner, warnings };
+  const owner = ownerFromFile(fileName);
+  return { ok: true, kind: "columns", fileName: fileName || "", main: { sheet: main.i, name: main.sh.name, N: h.N, last: h.last, nameCol: h.nameCol, regionCol: mainRc, width: W }, map, refs, qt, ownerGuess: owner, warnings };
+}
+
+function analyze(book, fileName) { return analyzeBlocks(book, fileName) || analyzeColumns(book, fileName); }
+function convert(book, an, opts) { return an.kind === "blocks" ? convertBlocks(book, an, opts) : convertColumns(book, an, opts); }
+/* Nhãn cột của một sheet (dạng khối) để hiển thị trong ô chọn */
+function blockLabels(book, cfg) {
+  const sh = book.sheets[cfg.sheet], out = [];
+  for (let c = 0; c < widthOf(sh); c++) { const t = [sh.rows[cfg.N], sh.rows[cfg.N - 1]].map(r => r && typeof r[c] === "string" ? txt(r[c]) : "").filter(Boolean)[0] || ""; out.push({ c, text: colL(c) + (t ? " — " + t.slice(0, 28) : "") }); }
+  return out;
 }
 
 /* Nhãn cột để hiển thị trong ô chọn: “H — Tháng 1” */
@@ -193,7 +343,7 @@ function readRef(book, ref) {
 }
 
 /* opts: { owner, dup: "sum" | "first", fillRef: bool, includeRefOnly: bool, guess: name => region } → kết quả có cùng cấu trúc với parse() + báo cáo */
-function convert(book, an, opts) {
+function convertColumns(book, an, opts) {
   const o = { owner: an.ownerGuess, dup: "sum", fillRef: true, includeRefOnly: false, guess: () => "Khác", ...(opts || {}) };
   const sh = book.sheets[an.main.sheet], raw = readRows(sh, an), notes = { merged: [], filledA25: 0, filledT26: 0, conflicts: [], noRegion: 0, refOnly: 0, mismatch: [], ignoredRows: 0 }, issues = [];
   const groups = new Map();
@@ -295,6 +445,6 @@ function buildXlsx(res, fileName) {
   return zipStore([["[Content_Types].xml", ct], ["_rels/.rels", rels], ["xl/workbook.xml", wb], ["xl/_rels/workbook.xml.rels", wrels], ["xl/styles.xml", styles], ["xl/worksheets/sheet1.xml", sheet]]);
 }
 
-const api = { key, cellNum, colL, classify, analyze, colLabels, convert, buildXlsx, SHEET, REGCOL };
+const api = { key, cellNum, colL, classify, analyze, colLabels, blockLabels, convert, buildXlsx, SHEET, REGCOL, ownerFromFile, nameSim };
 if (typeof module !== "undefined" && module.exports) module.exports = api; else root.XlsxConvert = api;
 })(typeof window !== "undefined" ? window : globalThis);

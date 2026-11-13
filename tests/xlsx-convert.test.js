@@ -41,3 +41,30 @@ const zip=X.buildXlsx(r,"Linh_2026.xlsx");assert.equal(zip[0],0x50);assert.equal
 assert(Buffer.from(zip).includes("xl/worksheets/sheet1.xml"));assert(Buffer.from(zip).toString("utf8").includes("PTKD"));
 assert.equal(X.cellNum("1.234.567"),1234567);assert.equal(X.cellNum("1,5"),1.5);assert.equal(X.cellNum("(200)"),-200);assert.equal(X.cellNum("abc"),null);
 console.log("xlsx-convert: tất cả kiểm thử đạt");
+
+// ===== v0.18.1: dạng “mỗi năm một sheet, mỗi khách 2 dòng KH/DS” (mô phỏng file Doanh_số_BG_Ngọc) =====
+assert.equal(X.ownerFromFile("Doanh_số_BG_Ngọc.xlsx"),"Ngọc");assert.equal(X.ownerFromFile("Linh_2026.xlsx"),"Linh");assert.equal(X.ownerFromFile("Nguyễn Năng Nghĩa_2026.xlsx"),"Nguyễn Năng Nghĩa");
+const blk=(year,custs)=>{const R=[],M=[];const set=(r,c,v)=>{(R[r]=R[r]||[])[c]=v};set(year===2026?0:1,2,"CHỈ TIÊU DOANH SỐ TỪNG KH "+year);
+ set(2,0,"STT");set(2,1,"KHÁCH HÀNG");for(let i=0;i<12;i++)set(2,3+i,"Tháng "+(i+1));set(2,15,"Tổng chỉ tiêu cả năm 2024");
+ let r=3;custs.forEach(([n,kh,ds],i)=>{set(r,0,String(i+1));set(r,1,n);set(r,2,"KH");set(r+1,2,"DS");kh.forEach((v,m)=>{if(v!=null)set(r,3+m,v)});ds.forEach((v,m)=>{if(v!=null)set(r+1,3+m,v)});M.push([r,0,r+1,0],[r,1,r+1,1]);r+=2});
+ set(r,0,"TỔNG DS "+year);set(r,2,"KH");set(r+1,2,"DS");M.push([r,0,r+1,1]);for(let m=0;m<12;m++){set(r,3+m,custs.reduce((s,c)=>s+(c[1][m]||0),0));set(r+1,3+m,custs.reduce((s,c)=>s+(c[2][m]||0),0))}
+ return{name:year===2026?"Sheet1":"Sheet2",rows:R,merges:M}};
+const f12=v=>Array(12).fill(v),ex=(a)=>a.concat(Array(12-a.length).fill(null));
+const bk={sheets:[blk(2026,[["Kia A",f12(10),ex([1,null,3])],["Kia Thanh Hóa/Porsche",f12(23),ex([5])],["Hyundai HY",f12(50),ex([7,8])],["Chỉ 2026",f12(1),ex([2])]]),
+                   blk(2025,[["Kia A",f12(9),ex([4,4,4,4,4,4,4,4,4,4,4,4])],["Kia Thanh Hóa (Lấy ngoài)",f12(23),ex([9,null,9])],["Hyundai HY TP",f12(30),ex([1,1])],["Hyundai HY Phố Nối",f12(20),ex([2,null,2])],["Chỉ 2025",f12(0),ex([-5])]])]};
+const ab=X.analyze(bk,"Doanh_số_BG_Ngọc.xlsx");
+assert(ab.ok&&ab.kind==="blocks");assert.deepEqual(ab.sheets.map(x=>x.year),[2026,2025]);assert.equal(ab.ownerGuess,"Ngọc");   // năm lấy từ tiêu đề, không bị nhầm bởi nhãn “…năm 2024”
+let rb=X.convert(bk,ab,{guess:()=>"Khác"});const g=n=>rb.rows.find(c=>c.id===X.key(n));
+assert.equal(rb.rows.length,8);                                                      // 4 (2026) + 4 chỉ có ở 2025: không tự ghép tên khác nhau
+assert.equal(g("Kia A").a25,48);assert.equal(g("Kia A").a26,4);assert.equal(g("Kia A").t26,120);assert.equal(g("Kia A").m[2][0],4);assert.equal(g("Kia A").m[2][1],3);assert.equal(g("Kia A").m[1][1],null);
+assert.equal(g("Chỉ 2025").a26,null);assert.equal(g("Chỉ 2025").a25,-5);assert.equal(g("Chỉ 2026").a25,null);assert.deepEqual(g("Kia A").q.map(x=>x[0]),[4,null,null,null]);
+assert.equal(rb.checks.length,4);assert(rb.checks.every(c=>c.ok));                  // dòng TỔNG của từng sheet (DS và KH) khớp
+assert.deepEqual(rb.qt,[(10+23+50+1)*3,(10+23+50+1)*3,(10+23+50+1)*3,(10+23+50+1)*3]);
+assert.equal(rb.notes.single.length,4);assert.equal(rb.notes.suggest.length,3);       // gợi ý: Hyundai TP, Phố Nối → Hyundai HY; Kia Thanh Hóa (Lấy ngoài) → Kia Thanh Hóa/Porsche
+assert(rb.notes.negatives.some(n=>n.name==="Chỉ 2025"&&n.v===-5));
+const alias={};rb.notes.suggest.forEach(x=>{alias[x.from]=x.to});
+rb=X.convert(bk,ab,{alias,guess:()=>"Khác"});assert.equal(rb.rows.length,5);assert.equal(g("Hyundai HY").a25,(1+1)+(2+2));assert.equal(g("Hyundai HY").m[0][0],3);assert.equal(g("Kia Thanh Hóa/Porsche").a25,18);
+assert.equal(rb.notes.aliasApplied.length,3);
+rb=X.convert(bk,ab,{includeSingle:false,guess:()=>"Khác"});assert.equal(rb.rows.length,4);
+ab.sheets[0].year=null;rb=X.convert(bk,ab,{guess:()=>"Khác"});assert.equal(g("Kia A").a26,null);assert.equal(rb.notes.sheets[0].used,false);   // bỏ qua sheet khi chưa chọn năm
+console.log("xlsx-convert (dạng KH/DS): đạt");

@@ -1,5 +1,17 @@
 # Lịch sử phiên bản
 
+## 0.18.1
+- **Nhập dữ liệu: hỗ trợ file dạng “mỗi năm một sheet, mỗi khách 2 dòng KH/DS”** (ví dụ file “Doanh_số_BG_Ngọc”: Sheet1 = 2026, Sheet2 = 2025; mỗi khách có một dòng KH là kế hoạch từng tháng và một dòng DS là doanh số thực từng tháng, tên khách ở ô gộp 2 dòng, dòng TỔNG ở cuối). BG đọc **cả 2 sheet** và gộp thành một danh sách khách theo đúng mẫu gốc:
+  - Dòng DS năm 2025 → cột 2025 của từng tháng và DS thực 2025; dòng DS năm 2026 → cột 2026 của từng tháng, DS thực 2026 và doanh số từng quý; tổng dòng KH 2026 → Target 2026; mục tiêu từng quý 2026 = tổng dòng KH của các khách (tùy chọn, tắt được).
+  - Năm của mỗi sheet được nhận từ tiêu đề (“…TỪNG KH 2026”), rồi nhãn dòng tổng (“TỔNG DS 2026”), rồi tên sheet; **không** dùng các nhãn cũ sai như “Tổng chỉ tiêu cả năm 2024”. Có ô chọn lại năm hoặc “Bỏ qua sheet này”.
+  - Khách cùng tên ở 2 sheet được gộp thành một khách. Khách **khác tên** giữa các năm (vd “Toyota LS/Hà Nam” 2026 và “Toyota Lạng Sơn” 2025) **không tự ghép**; BG liệt kê các khách chỉ có ở sheet năm cũ, cho chọn ghép vào khách nào ở sheet năm mới, và gợi ý (tên gần giống hoặc cùng kế hoạch cả năm) với nút “Áp dụng gợi ý”.
+  - Đối chiếu tổng từng sheet với dòng TỔNG của chính file (cả DS và KH). Doanh số âm (trả hàng/điều chỉnh) được giữ nguyên và liệt kê. Có tùy chọn thêm/không thêm khách chỉ có ở sheet năm cũ, và chỉnh lại cột tên, cột KH/DS, từng tháng.
+  - Người phụ trách được đoán từ tên file bỏ các từ chung (“Doanh_số_BG_Ngọc” → “Ngọc”).
+  - Lưu ý: file này chỉ có kế hoạch từng tháng cho từng khách, mà BG không có trường mục tiêu theo tháng cho từng khách nên chỉ giữ tổng cả năm (Target 2026) và tổng từng quý.
+- Dạng cột (file “Linh_2026”) hoạt động như 0.18.0; BG tự chọn đúng dạng.
+- Kiểm thử: `python3 tools/smoke_test_convert_blocks.py [file.xlsx]` (đáp án đúng tính độc lập bằng Python) và `node tests/xlsx-convert.test.js`.
+- Đây là thay đổi chỉ ở giao diện (`src/xlsx-convert.js`, `src/app.js`), có thể phát hành dạng cập nhật giao diện.
+
 ## 0.18.0
 - **Nhập dữ liệu: tự phân tích và chuyển đổi file Excel của người khác về mẫu gốc.** File đúng mẫu gốc (sheet “DOANH SỐ KH 2026” có dòng PTKD) vẫn được đọc trực tiếp như trước. File có bố cục khác (ví dụ file của Linh: cột tự đặt tên, tháng và quý xen kẽ, khu vực ở sheet khác, ô gộp…) không còn bị báo lỗi mà được BG tự phân tích:
   - Tìm sheet dữ liệu và dòng tiêu đề (kể cả tiêu đề nằm trên 2 dòng), nhận diện cột **theo tên cột, không theo vị trí**: Tên khách hàng, DS thực 2025, Target 2026, DS thực 2026, từng tháng, từng quý (bỏ qua các cột TB, % đạt, DS 2024, cột Tổng).
